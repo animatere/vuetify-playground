@@ -16,43 +16,39 @@
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
 
-      <!-- playground Dropdown -->
+      <!-- Playground Dropdown -->
       <div class="dropdown">
-        <router-link to="/playground" class="nav-item">Playground</router-link>
+        <router-link to="/playground" class="nav-item" @click="closeDropdown">Playground</router-link>
         <div class="dropdown-content" style="background-color: #4ea8de">
-          <router-link to="/counter" class="dropdown-item">Counter</router-link>
-          <router-link to="/catplay" class="dropdown-item">Catplay</router-link>
-          <router-link to="/playground" class="dropdown-item"
-            >Coming soon...</router-link
-          >
+          <router-link to="/counter" class="dropdown-item" @click="closeDropdown">Counter</router-link>
+          <router-link to="/catplay" class="dropdown-item" @click="closeDropdown">Catplay</router-link>
+          <router-link to="/playground" class="dropdown-item" @click="closeDropdown">Coming soon...</router-link>
         </div>
       </div>
 
-      <router-link to="/watch" class="nav-item">Watch</router-link>
-      <router-link to="/table-views" class="nav-item">TableViews</router-link>
-      <router-link to="/layout" class="nav-item">Layout</router-link>
-      <router-link to="/tasks" class="nav-item">Tasks</router-link>
-      <router-link to="/forms" class="nav-item">Forms</router-link>
-      <router-link to="/todo" class="nav-item">ToDo</router-link>
+      <router-link to="/watch" class="nav-item" @click="closeDropdown">Watch</router-link>
+      <router-link to="/table-views" class="nav-item" @click="closeDropdown">TableViews</router-link>
+      <router-link to="/layout" class="nav-item" @click="closeDropdown">Layout</router-link>
+      <router-link to="/tasks" class="nav-item" @click="closeDropdown">Tasks</router-link>
+      <router-link to="/forms" class="nav-item" @click="closeDropdown">Forms</router-link>
+      <router-link to="/todo" class="nav-item" @click="closeDropdown">ToDo</router-link>
 
       <!-- User Icon and Dropdown -->
       <div class="user-dropdown">
         <v-icon class="mdi-account" icon="mdi-user" @click="toggleUserMenu"></v-icon>
         <div v-if="userMenuOpen" style="width: 150px; right: 0" class="user-dropdown-menu">
-          <router-link to="/user-profile" class="dropdown-item">
-          Profile
+          <router-link to="/user-profile" class="dropdown-item" @click="closeDropdown">
+            Profile
           </router-link>
-          <router-link to="/user-settings" class="dropdown-item">
-            Settings</router-link
-          >
+          <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">
+            Settings
+          </router-link>
           <p @click="logoutClicked" class="nav-item">
             <v-icon class="mdi-account" icon="mdi-logout" @click="toggleUserMenu"></v-icon>
-            Logout</p
-          >
+            Logout
+          </p>
         </div>
       </div>
-
-
     </div>
 
     <div class="navbar-menu" @click="toggleMenu">
@@ -63,18 +59,14 @@
 
     <!-- Mobile Dropdown Menu -->
     <div v-if="menuOpen" class="navbar-dropdown">
-      <router-link to="/home" class="dropdown-item">Home</router-link>
-      <router-link to="/playground" class="dropdown-item"
-        >Playground</router-link
-      >
-      <router-link to="/watch" class="dropdown-item">Watch</router-link>
-      <router-link to="/table-views" class="dropdown-item"
-        >TableViews</router-link
-      >
-      <router-link to="/layout" class="dropdown-item">Layout</router-link>
-      <router-link to="/tasks" class="dropdown-item">Tasks</router-link>
-      <router-link to="/forms" class="dropdown-item">Forms</router-link>
-      <router-link to="/todo" class="dropdown-item">ToDo</router-link>
+      <router-link to="/home" class="dropdown-item" @click="closeDropdown">Home</router-link>
+      <router-link to="/playground" class="dropdown-item" @click="closeDropdown">Playground</router-link>
+      <router-link to="/watch" class="dropdown-item" @click="closeDropdown">Watch</router-link>
+      <router-link to="/table-views" class="dropdown-item" @click="closeDropdown">TableViews</router-link>
+      <router-link to="/layout" class="dropdown-item" @click="closeDropdown">Layout</router-link>
+      <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">Tasks</router-link>
+      <router-link to="/forms" class="dropdown-item" @click="closeDropdown">Forms</router-link>
+      <router-link to="/todo" class="dropdown-item" @click="closeDropdown">ToDo</router-link>
     </div>
   </nav>
   <nav v-else class="navbar">
@@ -84,7 +76,7 @@
     </div>
     <!-- Mobile Dropdown Menu -->
     <div v-if="menuOpen" class="navbar-dropdown">
-      <router-link to="/home">Home</router-link>
+      <router-link to="/home" @click="closeDropdown">Home</router-link>
     </div>
   </nav>
 </template>
@@ -124,12 +116,20 @@ async function logoutClicked() {
   router.push("/login");
   eventStore.addEvent("Benutzer hat sich ausgeloggt");
 }
+
 function toggleMenu() {
   menuOpen.value = !menuOpen.value;
 }
+
 function toggleUserMenu() {
   userMenuOpen.value = !userMenuOpen.value; // Toggle the user menu visibility
 }
+
+function closeDropdown() {
+  menuOpen.value = false;  // Schließt das mobile Menü
+  userMenuOpen.value = false;  // Schließt das Benutzer-Dropdown
+}
+
 function handleResize() {
   if (window.innerWidth > 768) {
     menuOpen.value = false;

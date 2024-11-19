@@ -1,4 +1,6 @@
 <script lang="ts">
+import { VForm } from 'vuetify/components'
+
 export default {
   data: () => ({
     name: "",
@@ -9,15 +11,15 @@ export default {
     //   // value => (value && value.length <= 10) || 'Name must be 10 characters or less',
     // ],
     emailRules: [
-      (value) => !!value || "Email is required. ",
-      (value) => value.includes("@") || "No valid email address.",
-      (value) => value.indexOf("@") !== 0 || "Email should have username.",
-      (value) =>
+      (value: string) => !!value || "Email is required. ",
+      (value: string) => value.includes("@") || "No valid email address.",
+      (value: string) => value.indexOf("@") !== 0 || "Email should have username.",
+      (value: string) =>
         value.indexOf(".") - value.indexOf("@") > 1 ||
         "Email should contain a valid domain.",
     ],
     agreeToTermsRules: [
-      (value) => !!value || "You must agree this Terms and Conditions",
+      (value: string) => !!value || "You must agree this Terms and Conditions",
     ],
     select: null,
     items: ["Item 1", "Item 2", "Item 3", "Item 4"],
@@ -28,15 +30,15 @@ export default {
 
   methods: {
     async validate() {
-      const { valid } = await this.$refs.signUpform.validate();
+      const { valid } = await (this.$refs.signUpform as VForm).validate();
       console.log(this.formValidity);
       return valid;
     },
     resetForm() {
-      this.$refs.signUpform.reset();
+      (this.$refs.signUpform as VForm).reset();
     },
     resetValidation() {
-      this.$refs.signUpform.resetValidation();
+      (this.$refs.signUpform as VForm).resetValidation();
     },
   },
 };
@@ -98,9 +100,5 @@ export default {
 }
 .v-btn {
   margin-right: 5px;
-}
-
-.v-container {
-  //color: black;
 }
 </style>

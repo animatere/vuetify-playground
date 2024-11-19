@@ -5,7 +5,6 @@ import { useTodoListStore } from "@/stores/TodoListStore";
 const todo = ref("");
 const store = useTodoListStore();
 const todoValidity = ref(false);
-const toDoRules = [(value) => !!value || "Empty item can not be added."];
 
 function addItemAndClear(item: string) {
   if (item.length === 0) {

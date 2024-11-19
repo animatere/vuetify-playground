@@ -11,7 +11,7 @@ export const useUserStore = defineStore("user", {
       password: "",
       loggedIn: false,
       registered: false,
-    },
+    } as UserData,
     validAuthTokens: [
       {
         id: 1,
@@ -158,11 +158,8 @@ export const useUserStore = defineStore("user", {
     setUser(user: UserData) {
       this.currentUser = user;
     },
-    loadUser() {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (user.username) {
-        this.setUser(user);
-      }
-    },
+    loadUser(): UserData {
+      return this.currentUser;
+    }
   },
 });

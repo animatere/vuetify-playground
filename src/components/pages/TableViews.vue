@@ -179,17 +179,8 @@ const currentItem = ref("");
 const currentWorkArea = ref("");
 const selected = ref([]);
 
-function selectedItem(event, row) {
-  console.log("reached selectedItem");
-  currentItem.value = row.item.username;
-  currentWorkArea.value = row.item.work_area;
-  snackbar.value = true;
-  console.log(snackbar.value);
-}
-
 watchEffect(() => {
   selected.value.forEach((item) => {
-    console.log(item.id);
   });
 });
 </script>
@@ -220,9 +211,6 @@ watchEffect(() => {
           return-object
           show-select
           :search="search"
-          :item-class="
-            (item, index) => (index === selectedItemIndex ? 'selected-row' : '')
-          "
         >
         </v-data-table>
       </v-card>

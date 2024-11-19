@@ -40,13 +40,14 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="closeDialog">Schließen</v-btn>
+        <v-btn @click="closeDialog">Schließen</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
+
 export default {
   name: "TaskDialog",
   props: {
@@ -62,8 +63,8 @@ export default {
   emits: ["update:isOpen"],
   data() {
     return {
-      comments: [],
-      newComment: "",
+      comments: [] as string[],
+      newComment: "" as string,
     };
   },
   methods: {
