@@ -1,0 +1,96 @@
+<template>
+  <v-container>
+    <v-row class="mb-6">
+      <v-col cols="12" class="text-center">
+        <h1 class="settings-title">Einstellungen</h1>
+        <p class="settings-subtitle">
+          Passen Sie Ihre Anwendung nach Ihren Wünschen an.
+        </p>
+      </v-col>
+    </v-row>
+
+    <!-- Theme-Einstellungen -->
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card class="settings-card">
+          <v-card-title>Design</v-card-title>
+          <v-card-text>
+            <p>Wählen Sie Ihr Standard-Theme:</p>
+            <v-radio-group v-model="theme" row @change="updateTheme">
+              <v-radio label="Hell" value="light"></v-radio>
+              <v-radio label="Dunkel" value="dark"></v-radio>
+            </v-radio-group>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <!-- Benachrichtigungen (Platzhalter für weitere Einstellungen) -->
+      <v-col cols="12" md="6">
+        <v-card class="settings-card">
+          <v-card-title>Benachrichtigungen</v-card-title>
+          <v-card-text>
+            <v-switch
+              v-model="settings.notifications"
+              label="Benachrichtigungen aktivieren"
+            ></v-switch>
+            <v-switch
+              v-model="settings.emailNotifications"
+              label="E-Mail-Benachrichtigungen"
+            ></v-switch>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="text-center mt-6">
+        <v-btn color="primary" large @click="saveSettings">
+          Änderungen speichern
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import { useTheme } from "vuetify";
+import { useUserStore } from "@/stores/UserStore";
+
+const themeManager = useTheme();
+
+const store = useUserStore();
+const settings = ref({
+  notifications: true,
+  emailNotifications: false,
+});
+
+// Aktuelles Theme
+const theme = ref(store.theme || "light");
+
+// Funktion: Theme wechseln
+function updateTheme() {
+  themeManager.global.name.value = theme.value; // Vuetify's global theme aktualisieren
+  store.setTheme(theme.value); // Im Store speichern
+}
+
+// Funktion: Einstellungen speichern
+function saveSettings() {
+  store.saveSettings({ theme: theme.value, ...settings.value });
+}
+</script>
+
+<style>
+.settings-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.settings-subtitle {
+  font-size: 1.25rem;
+}
+
+.settings-card {
+  margin-bottom: 20px;
+  padding: 20px;
+}
+</style>

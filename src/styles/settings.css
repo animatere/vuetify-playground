@@ -1,0 +1,43 @@
+body,
+.v-application {
+  /* Hintergrundfarbe für die gesamte App */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Bahnschrift", Arial, sans-serif;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.v-footer {
+  margin-top: auto;
+}
+
+th {
+  background-color: #aeaeae !important;
+  font-size: large;
+  color: black;
+}
+
+td {
+  color: black;
+}
+
+/*modify table header position*/
+th span {
+  margin-left: 110px !important;
+}
+
+.v-container {
+  padding: 25px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
