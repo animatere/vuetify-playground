@@ -22,7 +22,7 @@ export default {
       if (textContent.value.length > 0) {
         isTyping.value = true;
         console.log(textContent.value);
-        const showTypingStatus = setTimeout(() => {
+        setTimeout(() => {
           isTyping.value = false;
         }, 700);
       }

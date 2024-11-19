@@ -167,6 +167,11 @@ function clearEventLog() {
 .profile-card {
   margin-bottom: 20px;
   padding: 20px;
+  height:50vh;
+}
+
+.profile-card:hover {
+  background-color: #e1e1e1;
 }
 
 .info-item {

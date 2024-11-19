@@ -44,3 +44,8 @@ export interface UserData {
   loggedIn: boolean;
   registered: boolean;
 }
+
+export interface Comment {
+  id: number;
+  text: string;
+}

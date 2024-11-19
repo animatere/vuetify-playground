@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useUserStore } from "@/stores/UserStore";
+// import { useUserStore } from "@/stores/UserStore";
 
 const email = ref("");
 const username = ref("");
 const password = ref("");
-const store = useUserStore();
-const { signup } = store;
+// ToDo: muss noch implementiert werden
+// const store = useUserStore();
+// const { signup } = store;
 
 function submitForm(submitEvent: Event) {
   submitEvent.preventDefault(); // Verhindert den Standard-Submit
@@ -14,15 +15,14 @@ function submitForm(submitEvent: Event) {
   console.log("Email:", email.value);
   console.log("Password:", password.value);
 
-  // Login-Funktion aufrufen mit den Werten
-  signup({
-    id: 0,
-    username: username.value,
-    email: email.value,
-    password: password.value,
-    loggedIn: false,
-    registered: false,
-  });
+  // signup({
+  //   id: 0,
+  //   username: username.value,
+  //   email: email.value,
+  //   password: password.value,
+  //   loggedIn: false,
+  //   registered: false,
+  // });
 }
 </script>
 

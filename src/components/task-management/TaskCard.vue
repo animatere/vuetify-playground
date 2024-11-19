@@ -1,5 +1,5 @@
 <template>
-  <v-col class="mb-2" lg:4 sm:12>
+  <v-col class="mb-2" sm="12" md="6" lg="4" >
     <v-card class="paintBlack">
       <v-tooltip bottom>
         <template v-slot:activator="{ props }">

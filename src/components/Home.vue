@@ -36,7 +36,7 @@
           <v-card-text
             >Zeige aktuelle Benachrichtigungen und Updates an.</v-card-text
           >
-          <v-btn @click="showCurrentUser()">Anzeigen</v-btn>
+          <v-btn>Anzeigen</v-btn>
           <!--          <v-btn to="/notifications">Benachrichtigungen anzeigen</v-btn>-->
         </v-card>
       </v-col>

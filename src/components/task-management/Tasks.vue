@@ -330,10 +330,10 @@ function getTasksByCategory(category: string) {
 }
 
 function arrayToCsv() {
-  const array = [Object.keys(tasks[0])];
+  const array: string[][] = [Object.keys(tasks[0])];
 
   tasks.forEach((task) => {
-    array.push(Object.values(task));
+    array.push(Object.values(task).map(String));
   });
 
   return array;

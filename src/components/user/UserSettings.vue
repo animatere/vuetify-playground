@@ -92,5 +92,10 @@ function saveSettings() {
 .settings-card {
   margin-bottom: 20px;
   padding: 20px;
+  height: 30vh;
+}
+
+.settings-card:hover {
+  background-color: #e1e1e1;
 }
 </style>
