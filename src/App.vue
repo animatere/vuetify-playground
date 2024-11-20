@@ -1,11 +1,13 @@
 <template>
   <v-app :class="currentTheme === 'dark' ? 'theme--dark' : 'theme--light'">
     <navbar></navbar>
-    <v-btn @click="toggleTheme">
-      <p v-if="currentTheme === 'dark'">Current Theme: dark Theme</p>
-      <p v-else-if="currentTheme === 'light'">Current Theme: light Theme</p>
-      <p v-else>Current Theme: light Theme</p>
-    </v-btn>
+    <div class="toggle-theme">
+      <v-btn @click="toggleTheme" class="theme-toggle-btn">
+        <p v-if="currentTheme === 'dark'">Current Theme: dark Theme</p>
+        <p v-else-if="currentTheme === 'light'">Current Theme: light Theme</p>
+        <p v-else>Current Theme: light Theme</p>
+      </v-btn>
+    </div>
     <router-view> </router-view>
     <notification></notification>
     <app-footer></app-footer>
@@ -45,4 +47,10 @@ nav {
     }
   }
 }
+
+.theme-toggle-btn{
+  width: 100% !important;
+  margin: 0;
+}
+
 </style>

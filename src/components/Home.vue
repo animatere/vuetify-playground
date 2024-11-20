@@ -44,8 +44,8 @@
 
     <v-row class="user-buttons">
       <v-col cols="12">
-        <v-btn to="/user-profile">Zu meinem Profil</v-btn>
-        <v-btn to="/user-settings">Einstellungen</v-btn>
+        <v-btn class="profile-button" to="/user-profile">Profil</v-btn>
+        <v-btn class="settings-button" to="/user-settings">Einstellungen</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -92,5 +92,14 @@ onMounted(() => {
 
 .user-nav-items .v-btn {
   width: 300px;
+}
+
+.profile-button {
+  margin-bottom: 10px;
+  width: 180px;
+}
+
+.settings-button {
+  width: 180px;
 }
 </style>

@@ -1,10 +1,15 @@
 <template>
-  <v-footer class="my-footer">
+  <v-footer
+    v-if="isAuthenticated"
+    class="my-footer"
+    :absolute="!isFullHeight"
+    app
+  >
     <v-row justify="center" no-gutters>
       <v-btn
         v-for="link in links"
         :key="link"
-        class="mx-2"
+        class="mx-2 footer-button"
         color="black"
         rounded="xl"
         variant="text"
@@ -17,67 +22,37 @@
     </v-row>
   </v-footer>
 </template>
-<script lang="ts">
-export default {
-  data: () => ({
-    links: ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"],
-    desserts: [
-      {
-        name: "Frozen Yogurt",
-        calories: 159,
-      },
-      {
-        name: "Ice cream sandwich",
-        calories: 237,
-      },
-      {
-        name: "Eclair",
-        calories: 262,
-      },
-      {
-        name: "Cupcake",
-        calories: 305,
-      },
-      {
-        name: "Gingerbread",
-        calories: 356,
-      },
-      {
-        name: "Jelly bean",
-        calories: 375,
-      },
-      {
-        name: "Lollipop",
-        calories: 392,
-      },
-      {
-        name: "Honeycomb",
-        calories: 408,
-      },
-      {
-        name: "Donut",
-        calories: 452,
-      },
-      {
-        name: "KitKat",
-        calories: 518,
-      },
-    ],
-  }),
-};
+
+<script setup lang="ts">
+import { useUserStore } from "@/stores/UserStore";
+import { storeToRefs } from "pinia";
+import { ref, computed } from "vue";
+
+const store = useUserStore();
+const { isAuthenticated } = storeToRefs(store);
+
+// Links im Footer
+const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
+
+// Dynamische Höhenberechnung für den Footer
+const isFullHeight = computed(() => document.body.offsetHeight < window.innerHeight);
 </script>
 
-<style>
-.v-footer {
-  max-height: 100px;
-}
-
-v-btn {
+<style scoped>
+.footer-button {
   color: black;
+  width: 100px !important;
 }
 
 .my-footer {
   background-color: #4ea8de !important;
+  width: 100%;
+  height: auto !important;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 !important;
 }
 
 .foot-links:hover {

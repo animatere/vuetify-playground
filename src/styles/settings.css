@@ -17,10 +17,6 @@ body,
   flex: 1;
 }
 
-.v-footer {
-  margin-top: auto;
-}
-
 th {
   background-color: #aeaeae !important;
   font-size: large;

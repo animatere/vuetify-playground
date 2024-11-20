@@ -71,17 +71,16 @@
       <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">Tasks</router-link>
       <router-link to="/forms" class="dropdown-item" @click="closeDropdown">Forms</router-link>
       <router-link to="/todo" class="dropdown-item" @click="closeDropdown">ToDo</router-link>
+      <router-link to="/user-profile" class="dropdown-item" @click="closeDropdown">Profile</router-link>
+      <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">Settings</router-link>
     </div>
   </nav>
   <nav v-else class="navbar">
     <!-- User Navbar -->
-    <div class="navbar-logo">
-      <router-link to="/home">Home</router-link>
-    </div>
+      <router-link to="/home" style="text-decoration: none">
+        <v-icon class="mdi-account" icon="mdi-home"></v-icon>
+      </router-link>
     <!-- Mobile Dropdown Menu -->
-    <div v-if="menuOpen" class="navbar-dropdown">
-      <router-link to="/home" @click="closeDropdown">Home</router-link>
-    </div>
   </nav>
 </template>
 

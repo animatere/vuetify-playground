@@ -47,8 +47,8 @@ function notifyMessage(message: string, type: string) {
 </script>
 
 <template>
-  <v-container class="d-flex justify-center" style="height: 50vh">
-    <v-card elevation="2" width="400">
+  <v-container class="d-flex justify-center">
+    <v-card elevation="2">
       <v-card-title class="justify-center">Login</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitForm">
