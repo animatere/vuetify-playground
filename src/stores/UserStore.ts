@@ -59,7 +59,6 @@ export const useUserStore = defineStore("user", {
   }),
 
   actions: {
-    // Login-Funktion
     async login(user: UserData) {
       const userExists = this.mockUsers.find(
         (mockuser) =>
@@ -74,16 +73,15 @@ export const useUserStore = defineStore("user", {
         const token = await this.createToken(user);
 
         if (token != null) {
-          // Token im Browser speichern
           localStorage.setItem("authToken", token);
           this.validAuthTokens.push({
             id: this.validAuthTokens.length,
             tokenValue: token,
           });
 
-          // Benutzer als eingeloggt markieren
           this.currentUser = { ...userExists, loggedIn: true };
-          this.isAuthenticated = true; // Auth-Status setzen
+          this.isAuthenticated = true;
+          localStorage.setItem("username", this.currentUser.username);
           console.log("Login erfolgreich");
 
           return true;
@@ -97,6 +95,32 @@ export const useUserStore = defineStore("user", {
         console.error("Login fehlgeschlagen: Benutzer nicht gefunden");
         return false;
       }
+    },
+
+    async signupUser(user: UserData) {
+      if (user.username !== "" && user.email !== "" && user.password) {
+
+        const userExists = this.mockUsers.find(
+          (mockuser) =>
+            mockuser.username === user.username ||
+            mockuser.email === user.email
+        );
+
+        if(!userExists) {
+          user.id = this.mockUsers.length;
+          user.registered = true;
+          this.mockUsers.push(user);
+
+          await this.login(user);
+          return true;
+        }
+
+        else{
+          console.log("User bereits in Datenbank.")
+          return false;
+        }
+      }
+      return false;
     },
 
     // Token erstellen
@@ -159,6 +183,9 @@ export const useUserStore = defineStore("user", {
       this.currentUser = user;
     },
     loadUser(): UserData {
+      if(this.currentUser === null){
+
+      }
       return this.currentUser;
     }
   },

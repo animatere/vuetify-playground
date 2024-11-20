@@ -148,7 +148,6 @@ function resetEditData() {
   editData.password = currentUser.value.password;
 }
 
-// Event Log löschen
 function clearEventLog() {
   eventStore.clearEvents();
 }

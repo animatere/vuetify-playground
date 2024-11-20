@@ -16,7 +16,6 @@
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
 
-      <!-- Playground Dropdown -->
       <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">Playground</router-link>
         <div class="dropdown-content" style="background-color: #4ea8de">
@@ -43,7 +42,7 @@
           <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">
             Settings
           </router-link>
-          <p @click="logoutClicked" class="nav-item">
+          <p @click="logoutClicked" class="logout-btn">
             <v-icon class="mdi-account" icon="mdi-logout" @click="toggleUserMenu"></v-icon>
             Logout
           </p>
@@ -56,6 +55,11 @@
       <span :class="{ open: menuOpen }"></span>
       <span :class="{ open: menuOpen }"></span>
     </div>
+
+    <p @click="logoutClicked" class="logout-btn">
+      <v-icon class="mdi-account" icon="mdi-logout" ></v-icon>
+      Logout
+    </p>
 
     <!-- Mobile Dropdown Menu -->
     <div v-if="menuOpen" class="navbar-dropdown">
@@ -350,6 +354,10 @@ onBeforeUnmount(() => {
   color: white;
 }
 
+.logout-btn{
+  display: none;
+}
+
 @media (max-width: 768px) {
   .navbar-links {
     display: none;
@@ -357,6 +365,11 @@ onBeforeUnmount(() => {
 
   .navbar-menu {
     display: flex;
+  }
+
+  .logout-btn{
+    display: inline;
+    cursor: pointer;
   }
 }
 
