@@ -42,7 +42,7 @@
           <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">
             Settings
           </router-link>
-          <p @click="logoutClicked" class="logout-btn">
+          <p @click="logoutClicked" class="dropdown-item">
             <v-icon class="mdi-account" icon="mdi-logout" @click="toggleUserMenu"></v-icon>
             Logout
           </p>
