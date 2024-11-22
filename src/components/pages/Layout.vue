@@ -16,7 +16,6 @@ const items = [
     alt: "Picture missing: Sales Performance Analysis",
   },
 ];
-
 </script>
 
 <template>

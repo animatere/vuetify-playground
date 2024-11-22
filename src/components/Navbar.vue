@@ -10,40 +10,89 @@
         />
       </router-link>
       <router-link to="/home">
-        <h4 style="color: black">Vue3 Training</h4>
+        <h4 class="pageTitle" style="color: black">Vue3 Training</h4>
       </router-link>
     </div>
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
 
       <div class="dropdown">
-        <router-link to="/playground" class="nav-item" @click="closeDropdown">Playground</router-link>
+        <router-link to="/playground" class="nav-item" @click="closeDropdown"
+          >Playground</router-link
+        >
         <div class="dropdown-content" style="background-color: #4ea8de">
-          <router-link to="/counter" class="dropdown-item" @click="closeDropdown">Counter</router-link>
-          <router-link to="/catplay" class="dropdown-item" @click="closeDropdown">Catplay</router-link>
-          <router-link to="/playground" class="dropdown-item" @click="closeDropdown">Coming soon...</router-link>
+          <router-link
+            to="/counter"
+            class="dropdown-item"
+            @click="closeDropdown"
+            >Counter</router-link
+          >
+          <router-link
+            to="/catplay"
+            class="dropdown-item"
+            @click="closeDropdown"
+            >Catplay</router-link
+          >
+          <router-link
+            to="/playground"
+            class="dropdown-item"
+            @click="closeDropdown"
+            >Coming soon...</router-link
+          >
         </div>
       </div>
 
-      <router-link to="/watch" class="nav-item" @click="closeDropdown">Watch</router-link>
-      <router-link to="/table-views" class="nav-item" @click="closeDropdown">TableViews</router-link>
-      <router-link to="/layout" class="nav-item" @click="closeDropdown">Layout</router-link>
-      <router-link to="/tasks" class="nav-item" @click="closeDropdown">Tasks</router-link>
-      <router-link to="/forms" class="nav-item" @click="closeDropdown">Forms</router-link>
-      <router-link to="/todo" class="nav-item" @click="closeDropdown">ToDo</router-link>
+      <router-link to="/watch" class="nav-item" @click="closeDropdown"
+        >Watch</router-link
+      >
+      <router-link to="/table-views" class="nav-item" @click="closeDropdown"
+        >TableViews</router-link
+      >
+      <router-link to="/layout" class="nav-item" @click="closeDropdown"
+        >Layout</router-link
+      >
+      <router-link to="/tasks" class="nav-item" @click="closeDropdown"
+        >Tasks</router-link
+      >
+      <router-link to="/forms" class="nav-item" @click="closeDropdown"
+        >Forms</router-link
+      >
+      <router-link to="/todo" class="nav-item" @click="closeDropdown"
+        >ToDo</router-link
+      >
 
       <!-- User Icon and Dropdown -->
       <div class="user-dropdown">
-        <v-icon class="mdi-account" icon="mdi-user" @click="toggleUserMenu"></v-icon>
-        <div v-if="userMenuOpen" style="width: 150px; right: 0" class="user-dropdown-menu">
-          <router-link to="/user-profile" class="dropdown-item" @click="closeDropdown">
+        <v-icon
+          class="mdi-account"
+          icon="mdi-user"
+          @click="toggleUserMenu"
+        ></v-icon>
+        <div
+          v-if="userMenuOpen"
+          style="width: 150px; right: 0"
+          class="user-dropdown-menu"
+        >
+          <router-link
+            to="/user-profile"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
             Profile
           </router-link>
-          <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">
+          <router-link
+            to="/user-settings"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
             Settings
           </router-link>
           <p @click="logoutClicked" class="dropdown-item">
-            <v-icon class="mdi-account" icon="mdi-logout" @click="toggleUserMenu"></v-icon>
+            <v-icon
+              class="mdi-account"
+              icon="mdi-logout"
+              @click="toggleUserMenu"
+            ></v-icon>
             Logout
           </p>
         </div>
@@ -57,29 +106,58 @@
     </div>
 
     <p @click="logoutClicked" class="logout-btn">
-      <v-icon class="mdi-account" icon="mdi-logout" ></v-icon>
+      <v-icon class="mdi-account" icon="mdi-logout"></v-icon>
       Logout
     </p>
 
     <!-- Mobile Dropdown Menu -->
     <div v-if="menuOpen" class="navbar-dropdown">
-      <router-link to="/home" class="dropdown-item" @click="closeDropdown">Home</router-link>
-      <router-link to="/playground" class="dropdown-item" @click="closeDropdown">Playground</router-link>
-      <router-link to="/watch" class="dropdown-item" @click="closeDropdown">Watch</router-link>
-      <router-link to="/table-views" class="dropdown-item" @click="closeDropdown">TableViews</router-link>
-      <router-link to="/layout" class="dropdown-item" @click="closeDropdown">Layout</router-link>
-      <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">Tasks</router-link>
-      <router-link to="/forms" class="dropdown-item" @click="closeDropdown">Forms</router-link>
-      <router-link to="/todo" class="dropdown-item" @click="closeDropdown">ToDo</router-link>
-      <router-link to="/user-profile" class="dropdown-item" @click="closeDropdown">Profile</router-link>
-      <router-link to="/user-settings" class="dropdown-item" @click="closeDropdown">Settings</router-link>
+      <router-link to="/home" class="dropdown-item" @click="closeDropdown"
+        >Home</router-link
+      >
+      <router-link to="/playground" class="dropdown-item" @click="closeDropdown"
+        >Playground</router-link
+      >
+      <router-link to="/watch" class="dropdown-item" @click="closeDropdown"
+        >Watch</router-link
+      >
+      <router-link
+        to="/table-views"
+        class="dropdown-item"
+        @click="closeDropdown"
+        >TableViews</router-link
+      >
+      <router-link to="/layout" class="dropdown-item" @click="closeDropdown"
+        >Layout</router-link
+      >
+      <router-link to="/tasks" class="dropdown-item" @click="closeDropdown"
+        >Tasks</router-link
+      >
+      <router-link to="/forms" class="dropdown-item" @click="closeDropdown"
+        >Forms</router-link
+      >
+      <router-link to="/todo" class="dropdown-item" @click="closeDropdown"
+        >ToDo</router-link
+      >
+      <router-link
+        to="/user-profile"
+        class="dropdown-item"
+        @click="closeDropdown"
+        >Profile</router-link
+      >
+      <router-link
+        to="/user-settings"
+        class="dropdown-item"
+        @click="closeDropdown"
+        >Settings</router-link
+      >
     </div>
   </nav>
   <nav v-else class="navbar">
     <!-- User Navbar -->
-      <router-link to="/home" style="text-decoration: none">
-        <v-icon class="mdi-account" icon="mdi-home"></v-icon>
-      </router-link>
+    <router-link to="/home" style="text-decoration: none">
+      <v-icon class="mdi-account" icon="mdi-home"></v-icon>
+    </router-link>
     <!-- Mobile Dropdown Menu -->
   </nav>
 </template>
@@ -129,8 +207,8 @@ function toggleUserMenu() {
 }
 
 function closeDropdown() {
-  menuOpen.value = false;  // Schließt das mobile Menü
-  userMenuOpen.value = false;  // Schließt das Benutzer-Dropdown
+  menuOpen.value = false; // Schließt das mobile Menü
+  userMenuOpen.value = false; // Schließt das Benutzer-Dropdown
 }
 
 function handleResize() {
@@ -158,6 +236,7 @@ onBeforeUnmount(() => {
   color: #333;
   position: relative;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .navbar-logo {
@@ -268,7 +347,10 @@ onBeforeUnmount(() => {
 
 .navbar-dropdown {
   display: grid; /* Verwende ein Grid für das Layout */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Kacheln mit automatischer Anpassung */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Kacheln mit automatischer Anpassung */
   gap: 10px; /* Abstand zwischen den Kacheln */
   position: absolute;
   top: 100%;
@@ -292,7 +374,9 @@ onBeforeUnmount(() => {
   text-decoration: none;
   font-size: 1.2rem;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Leichter Schatten für Kacheln */
-  transition: transform 0.3s, box-shadow 0.3s; /* Animierte Übergänge */
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s; /* Animierte Übergänge */
 }
 
 .navbar-dropdown .dropdown-item:hover {
@@ -326,7 +410,6 @@ onBeforeUnmount(() => {
   padding: 0.5rem;
   border-radius: 5px;
   z-index: 1;
-  margin-top: 2px;
 }
 
 .user-dropdown:hover .user-dropdown-menu {
@@ -353,7 +436,7 @@ onBeforeUnmount(() => {
   color: white;
 }
 
-.logout-btn{
+.logout-btn {
   display: none;
 }
 
@@ -366,14 +449,18 @@ onBeforeUnmount(() => {
     display: flex;
   }
 
-  .logout-btn{
+  .logout-btn {
     display: inline;
     cursor: pointer;
+  }
+
+  .navbar-logo {
+    display: none;
   }
 }
 
 @media (max-width: 1170px) {
-  .navbar-logo {
+  .pageTitle {
     display: none;
   }
 }

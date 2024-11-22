@@ -180,8 +180,7 @@ const currentWorkArea = ref("");
 const selected = ref([]);
 
 watchEffect(() => {
-  selected.value.forEach((item) => {
-  });
+  selected.value.forEach((item) => {});
 });
 </script>
 

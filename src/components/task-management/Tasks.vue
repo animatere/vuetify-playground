@@ -1,6 +1,4 @@
 <script setup lang="ts">
-// import { Tasks } from '@/interfaces/interfaces'
-
 const tasks = [
   {
     id: 1,
@@ -514,5 +512,4 @@ function shareTasks() {
     margin-top: 15px;
   }
 }
-
 </style>

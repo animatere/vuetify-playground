@@ -1,5 +1,5 @@
 <script lang="ts">
-import { VForm } from 'vuetify/components'
+import { VForm } from "vuetify/components";
 
 export default {
   data: () => ({
@@ -13,7 +13,8 @@ export default {
     emailRules: [
       (value: string) => !!value || "Email is required. ",
       (value: string) => value.includes("@") || "No valid email address.",
-      (value: string) => value.indexOf("@") !== 0 || "Email should have username.",
+      (value: string) =>
+        value.indexOf("@") !== 0 || "Email should have username.",
       (value: string) =>
         value.indexOf(".") - value.indexOf("@") > 1 ||
         "Email should contain a valid domain.",
@@ -67,12 +68,22 @@ export default {
             >
             </v-checkbox>
           </v-col>
-          <v-btn color="primary" class="validation-btn" type="submit" :disabled="!formValidity"
+          <v-btn
+            color="primary"
+            class="validation-btn"
+            type="submit"
+            :disabled="!formValidity"
             >Submit</v-btn
           >
-          <v-btn color="warning" class="validation-btn" @click="resetForm">Reset</v-btn>
-          <v-btn color="error" class="validation-btn" @click="resetValidation">Reset Validation</v-btn>
-          <v-btn color="info" class="validation-btn" @click="validate">Validate</v-btn>
+          <v-btn color="warning" class="validation-btn" @click="resetForm"
+            >Reset</v-btn
+          >
+          <v-btn color="error" class="validation-btn" @click="resetValidation"
+            >Reset Validation</v-btn
+          >
+          <v-btn color="info" class="validation-btn" @click="validate"
+            >Validate</v-btn
+          >
         </v-form>
       </v-col>
     </v-row>
@@ -84,7 +95,7 @@ export default {
   margin-top: 15px;
   padding: 35px;
 }
-.validation-btn{
+.validation-btn {
   margin-right: 5px !important;
   width: 180px !important;
 }
