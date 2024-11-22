@@ -121,9 +121,7 @@ const eventStore = useEventStore();
 const { currentUser } = storeToRefs(userStore);
 
 onMounted(() => {
-  if (!currentUser.value.username) {
-    currentUser.value = userStore.loadUser();
-  }
+
 });
 
 const editData = reactive({
