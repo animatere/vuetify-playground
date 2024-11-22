@@ -3,29 +3,40 @@
     <navbar></navbar>
     <div class="toggle-theme">
       <v-btn @click="toggleTheme" class="theme-toggle-btn">
-        <p v-if="currentTheme === 'dark'">Current Theme: dark Theme</p>
-        <p v-else-if="currentTheme === 'light'">Current Theme: light Theme</p>
-        <p v-else>Current Theme: light Theme</p>
+        <p>Current Theme: {{ currentTheme }}</p>
       </v-btn>
     </div>
-    <router-view> </router-view>
+    <router-view></router-view>
     <notification></notification>
     <app-footer></app-footer>
   </v-app>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+import { storeToRefs } from "pinia";
 import { useTheme } from "vuetify";
 
+const store = useUserStore();
+const { userSettings } = storeToRefs(store);
 const theme = useTheme();
-let currentTheme = ref(theme.global.name.value);
+const currentTheme = ref(userSettings.value.theme || "light");
+
+watch(
+  () => userSettings.value.theme,
+  (newTheme) => {
+    currentTheme.value = newTheme;
+    theme.global.name.value = newTheme;
+  },
+);
 
 function toggleTheme() {
-  theme.global.name.value =
-    theme.global.name.value === "dark" ? "light" : "dark";
-  currentTheme.value = theme.global.name.value;
+  const newTheme = currentTheme.value === "dark" ? "light" : "dark";
+  store.saveSettings({ ...userSettings.value, theme: newTheme });
 }
 </script>
+
 <style lang="css">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -48,9 +59,8 @@ nav {
   }
 }
 
-.theme-toggle-btn{
-  width: 100% !important;
+.theme-toggle-btn {
+  width: 100%;
   margin: 0;
 }
-
 </style>

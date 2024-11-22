@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
 const store = useUserStore();
 const { isAuthenticated } = storeToRefs(store);
@@ -35,7 +35,9 @@ const { isAuthenticated } = storeToRefs(store);
 const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
 
 // Dynamische Höhenberechnung für den Footer
-const isFullHeight = computed(() => document.body.offsetHeight < window.innerHeight);
+const isFullHeight = computed(
+  () => document.body.offsetHeight < window.innerHeight,
+);
 </script>
 
 <style scoped>
@@ -48,11 +50,9 @@ const isFullHeight = computed(() => document.body.offsetHeight < window.innerHei
   background-color: #4ea8de !important;
   width: 100%;
   height: auto !important;
-  padding: 10px 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 0 !important;
 }
 
 .foot-links:hover {

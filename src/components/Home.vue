@@ -4,7 +4,7 @@
       <v-col cols="12">
         <p>Willkommen zurück,</p>
         <p style="font-weight: bold; font-size: 40px">
-          {{ currentUser.username }}!
+          {{ currentUser.username || "Gast" }}!
         </p>
         <p>Es freut uns, dass du wieder da bist. Was möchtest du heute tun?</p>
       </v-col>
@@ -15,37 +15,39 @@
         <v-card class="user-nav-items">
           <v-card-title>Aufgaben verwalten</v-card-title>
           <v-card-text>Verwalte deine Aufgaben und To-Dos.</v-card-text>
-          <v-btn to="/tasks">Anzeigen</v-btn>
+          <v-btn to="/tasks" color="primary">Anzeigen</v-btn>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
         <v-card class="user-nav-items">
           <v-card-title>Playground</v-card-title>
-          <v-card-text
-            >Experimentiere im Playground mit verschiedenen
-            Widgets.</v-card-text
-          >
-          <v-btn to="/playground">Anzeigen</v-btn>
+          <v-card-text>
+            Experimentiere im Playground mit verschiedenen Widgets.
+          </v-card-text>
+          <v-btn to="/playground" color="primary">Anzeigen</v-btn>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
         <v-card class="user-nav-items">
           <v-card-title>Benachrichtigungen</v-card-title>
-          <v-card-text
-            >Zeige aktuelle Benachrichtigungen und Updates an.</v-card-text
-          >
-          <v-btn>Anzeigen</v-btn>
-          <!--          <v-btn to="/notifications">Benachrichtigungen anzeigen</v-btn>-->
+          <v-card-text>
+            Zeige aktuelle Benachrichtigungen und Updates an.
+          </v-card-text>
+          <v-btn to="/notifications" color="primary">Anzeigen</v-btn>
         </v-card>
       </v-col>
     </v-row>
 
     <v-row class="user-buttons">
       <v-col cols="12">
-        <v-btn class="profile-button" to="/user-profile">Profil</v-btn>
-        <v-btn class="settings-button" to="/user-settings">Einstellungen</v-btn>
+        <v-btn class="profile-button" to="/user-profile" color="secondary">
+          Profil
+        </v-btn>
+        <v-btn class="settings-button" to="/user-settings" color="secondary">
+          Einstellungen
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -53,18 +55,28 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { useTheme } from "vuetify";
 
 const store = useUserStore();
 const { currentUser } = storeToRefs(store);
+const theme = useTheme();
 
 onMounted(() => {
   if (!store.currentUser.username) {
-    // Optional: Benutzer aus einer Quelle laden, falls nicht gesetzt
     store.loadUser();
   }
+  theme.global.name.value = store.userSettings.theme || "light";
 });
+
+watch(
+  () => currentUser.value,
+  (newValue) => {
+    console.log("currentUser hat sich geändert:", newValue);
+  },
+  { deep: true },
+);
 </script>
 
 <style>
@@ -91,15 +103,17 @@ onMounted(() => {
 }
 
 .user-nav-items .v-btn {
-  width: 300px;
+  width: 100%;
 }
 
-.profile-button {
-  margin-bottom: 10px;
-  width: 180px;
-}
-
+.profile-button,
 .settings-button {
   width: 180px;
+}
+
+@media (max-width: 660px) {
+  .user-buttons .v-btn {
+    margin-top: 25px;
+  }
 }
 </style>

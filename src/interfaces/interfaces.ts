@@ -48,4 +48,21 @@ export interface UserData {
 export interface Comment {
   id: number;
   text: string;
+  userId: string;
+}
+
+export interface UserTokenData {
+  id: number;
+  userId: number;
+  tokenValue: string;
+  // status: "active" | "inactive";
+  expires: string;
+}
+
+export interface UserSettings {
+  id: number;
+  emailNotifications: boolean;
+  notifications: boolean;
+  theme: string;
+  userId: number;
 }
