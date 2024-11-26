@@ -16,8 +16,6 @@ export default {
     const textContent = ref("");
     const isTyping = ref(false);
 
-    // Stop Funktion möglich bei bestimmter Voraussetzung
-    // const stop = /**/
     watchEffect(() => {
       if (textContent.value.length > 0) {
         isTyping.value = true;
@@ -27,6 +25,7 @@ export default {
         }, 700);
       }
     });
+    
     return {
       isTyping,
       textContent,

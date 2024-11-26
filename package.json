@@ -8,10 +8,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.11.10",
     "@mdi/font": "7.4.47",
     "@vueuse/core": "^11.3.0",
     "axios": "^1.7.7",
     "core-js": "^3.37.1",
+    "firebase": "^11.0.2",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6",
     "jose": "^5.9.6",
     "prettier": "^3.3.3",
     "register-service-worker": "^1.7.2",
@@ -22,6 +26,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.24.7",
+    "@playwright/test": "^1.49.0",
     "@types/node": "^20.17.6",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/cli-plugin-pwa": "~5.0.0",

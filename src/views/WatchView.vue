@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Watch from "@/components/pages/Watch.vue";
+import Watch from "@/components/training/Chat.vue";
 
 export default {
   name: "WatchView",

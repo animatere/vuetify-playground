@@ -19,14 +19,10 @@ const eventStore = useEventStore();
 async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
-  const success = await login({
-    id: 0,
-    username: username.value,
-    email: email.value,
-    password: password.value,
-    loggedIn: false,
-    registered: false,
-  });
+  const success = await login(
+    email.value,
+    password.value
+  );
 
   if (success) {
     await reload();

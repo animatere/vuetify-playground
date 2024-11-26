@@ -9,7 +9,7 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const store = useUserStore();
-const { signupUser } = store;
+const { signup } = store;
 const notificationsStore = useNotificationsStore();
 notificationsStore.setPosition("top-left");
 const eventStore = useEventStore();
@@ -22,14 +22,10 @@ async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
   if (username.value !== "" && email.value !== "" && password.value !== "") {
-    const success = await signupUser({
-      id: 0,
-      username: username.value,
-      email: email.value,
-      password: password.value,
-      loggedIn: false,
-      registered: false,
-    });
+    const success = await signup(
+      email.value,
+      password.value
+    );
 
     if (success) {
       await reload();

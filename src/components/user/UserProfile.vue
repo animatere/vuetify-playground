@@ -120,9 +120,7 @@ const userStore = useUserStore();
 const eventStore = useEventStore();
 const { currentUser } = storeToRefs(userStore);
 
-onMounted(() => {
-
-});
+onMounted(() => {});
 
 const editData = reactive({
   username: currentUser.value.username,

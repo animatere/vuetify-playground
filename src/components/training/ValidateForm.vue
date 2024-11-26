@@ -3,13 +3,8 @@ import { VForm } from "vuetify/components";
 
 export default {
   data: () => ({
-    name: "",
     agreeToTerms: false,
     email: "",
-    // nameRules: () => [
-    //   value => !!value || 'Name is required',
-    //   // value => (value && value.length <= 10) || 'Name must be 10 characters or less',
-    // ],
     emailRules: [
       (value: string) => !!value || "Email is required. ",
       (value: string) => value.includes("@") || "No valid email address.",
@@ -32,7 +27,6 @@ export default {
   methods: {
     async validate() {
       const { valid } = await (this.$refs.signUpform as VForm).validate();
-      console.log(this.formValidity);
       return valid;
     },
     resetForm() {

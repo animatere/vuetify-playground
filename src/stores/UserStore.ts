@@ -1,272 +1,189 @@
-import { UserData, UserSettings, UserTokenData } from '@/interfaces/interfaces';
-import { defineStore } from "pinia";
-import { SignJWT } from "jose";
+import { UserSettings } from '@/interfaces/interfaces';
+import { defineStore } from 'pinia';
 import axios from 'axios';
-import { useTheme } from 'vuetify';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
+import { auth } from '../../firebase';
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => ({
-    currentUser: {
-      id: 0,
-      username: "",
-      email: "",
-      password: "",
-      loggedIn: false,
-      registered: false,
-    } as UserData,
+    currentUser: { } as User,
+    userSettings: { } as UserSettings, // Benutzereinstellungen können `null` sein
     loading: false,
-    error: null,
-    validAuthTokens: [] as UserTokenData[],
-    isAuthenticated: false,
-    dbUsers: [] as UserData[],
-    userSettings: {
-      id: 0,
-      userId: 0,
-      theme: "light",
-      notifications: true,
-      emailNotifications: false,
-    } as UserSettings,
-    theme: ref(useTheme()),
+    error: null as string | null, // Für Fehlernachrichten
   }),
 
   actions: {
-    async login (user: UserData) {
-      const success = await this.fetchUsers();
-      if (!success) {
-        console.error("Login fehlgeschlagen: Benutzer konnten nicht geladen werden");
-        return false;
-      }
-
-      const userExists = this.dbUsers.find(
-        (dbUser) =>
-          dbUser.username === user.username &&
-          dbUser.password === user.password
-      );
-
-      if (userExists) {
-        const token = await this.createToken(userExists);
-        if (token) {
-          localStorage.setItem("authToken", token);
-          this.validAuthTokens.push({
-            id: this.validAuthTokens.length + 1,
-            userId: userExists.id,
-            expires: "",
-            tokenValue: token,
-          });
-
-          this.currentUser = {
-            ...userExists,
-            loggedIn: true,
-          };
-          this.isAuthenticated = true;
-
-          localStorage.setItem("user", JSON.stringify(this.currentUser));
-          await this.loadSettings();
-          console.log("Login erfolgreich");
-          return true;
-        }
-      }
-
-      console.error("Login fehlgeschlagen: Benutzername oder Passwort falsch");
-      return false;
-    },
-
-    async fetchUsers () {
+    /**
+     * Registriere einen neuen Benutzer
+     */
+    async signup(email: string, password: string): Promise<boolean> {
       this.loading = true;
       this.error = null;
+
       try {
-        const response = await axios.get('https://vue3-training-2f8fd-default-rtdb.firebaseio.com/Users.json');
-        const users = response.data
-          ? Object.keys(response.data).map(key => ({
-            id: key,
-            ...response.data[key],
-          }))
-          : [];
-        this.dbUsers = users.map(u => u.users).flat();
-        console.log("Benutzerdaten erfolgreich geladen");
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        this.currentUser = userCredential.user;
+        console.log('Benutzer erfolgreich registriert:', this.currentUser);
+
+        // Initiale Benutzereinstellungen speichern
+        const initialSettings: UserSettings = {
+          id: this.currentUser.uid,
+          userId: this.currentUser.uid,
+          theme: 'light',
+          notifications: true,
+          emailNotifications: false,
+        };
+        await this.saveSettings(initialSettings);
         return true;
-      } catch (err) {
-        console.error("Fehler beim Laden der Benutzerdaten:", err);
+      } catch (error: any) {
+        this.error = error.message || 'Registrierung fehlgeschlagen';
+        console.error('Fehler bei der Registrierung:', error);
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    async signupUser(user: UserData) {
-      if (!user.username || !user.email || !user.password) {
-        console.error("Signup fehlgeschlagen: Ungültige Benutzerdaten");
-        return false;
-      }
-
-      const userExists = this.dbUsers.find(
-        (dbUser) => dbUser.username === user.username || dbUser.email === user.email
-      );
-
-      if (userExists) {
-        console.error("Signup fehlgeschlagen: Benutzer existiert bereits");
-        return false;
-      }
-
-      user.id = this.dbUsers.length + 1; // Setze die ID basierend auf der Benutzerliste
-      user.registered = true;
-      console.log("Registriere Benutzer:", user);
+    /**
+     * Melde einen Benutzer an
+     */
+    async login(email: string, password: string): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
 
       try {
-        await axios.post('https://vue3-training-2f8fd-default-rtdb.firebaseio.com/Users.json', { users: [...this.dbUsers, user] });
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        this.currentUser = userCredential.user;
+        console.log('Benutzer erfolgreich angemeldet:', this.currentUser);
 
-        // Erstelle Standard-Einstellungen mit korrektem userId
-        const defaultSettings = {
-          id: user.id,
-          userId: user.id, // Verknüpfe die Settings mit der User-ID
-          theme: "light",
-          notifications: true,
-          emailNotifications: false,
-        } as UserSettings;
-
-        await this.saveSettings(defaultSettings);
-        return await this.login(user); // Login nach erfolgreicher Registrierung
-      } catch (err) {
-        console.error("Fehler beim Registrieren des Benutzers:", err);
+        // Benutzereinstellungen laden
+        await this.loadSettings();
+        return true;
+      } catch (error: any) {
+        this.error = error.message || 'Anmeldung fehlgeschlagen';
+        console.error('Fehler bei der Anmeldung:', error);
         return false;
-      }
-    },
-    async createToken (user: UserData) {
-      try {
-        const payload = {
-          id: user.id,
-          username: user.username
-        };
-        const secret = new TextEncoder().encode("my_secret_key");
-        return await new SignJWT(payload)
-          .setProtectedHeader({ alg: "HS256" })
-          .setIssuedAt()
-          .setExpirationTime("1h")
-          .sign(secret);
-      } catch (err) {
-        console.error("Fehler beim Generieren des Tokens:", err);
-        return null;
+      } finally {
+        this.loading = false;
       }
     },
 
-    logout () {
-      this.currentUser = {
-        id: 0,
-        username: "",
-        email: "",
-        password: "",
-        loggedIn: false,
-        registered: false,
-      };
-      this.isAuthenticated = false;
-      this.userSettings = {
-        id: 0,
-        userId: 0,
-        theme: "light",
-        notifications: true,
-        emailNotifications: false,
-      };
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
-      console.log("Logout erfolgreich");
+    /**
+     * Melde den aktuellen Benutzer ab
+     */
+    async logout(): Promise<void> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await signOut(auth);
+        this.currentUser = {} as User;
+        this.userSettings = {} as UserSettings;
+        console.log('Benutzer erfolgreich abgemeldet.');
+      } catch (error: any) {
+        this.error = error.message || 'Abmeldung fehlgeschlagen';
+        console.error('Fehler bei der Abmeldung:', error);
+      } finally {
+        this.loading = false;
+      }
     },
 
-    async saveSettings(settings: UserSettings) {
-      try {
-        // Lade alle bestehenden Einstellungen
-        const response = await axios.get(
-          'https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings.json'
-        );
+    /**
+     * Überwache den aktuellen Benutzerstatus
+     */
+    watchCurrentUser(): void {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          this.currentUser = user;
+          console.log('Benutzerstatus geändert: Angemeldet:', user);
+          console.log("current User: ", this.currentUser);
 
-        const existingSettings = response.data
-          ? Object.keys(response.data).map(key => ({
-            firebaseId: key,
-            ...response.data[key],
-          }))
-          : [];
-
-        // Prüfen, ob Einstellungen für den aktuellen Benutzer existieren
-        const userSetting = existingSettings.find(
-          (s: UserSettings) => s.userId === this.currentUser.id
-        );
-
-        if (userSetting) {
-          // Aktualisiere bestehende Einstellungen
-          await axios.put(
-            `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${userSetting.firebaseId}.json`,
-            { ...userSetting, ...settings }
-          );
-          console.log("Benutzereinstellungen aktualisiert:", settings);
+          // Benutzereinstellungen automatisch laden
+          await this.loadSettings();
         } else {
-          // Speichere neue Einstellungen und nutze die generierte Firebase-ID als `id`
-          const response = await axios.post(
-            'https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings.json',
-            settings
-          );
+          this.currentUser = {} as User;
+          this.userSettings = {} as UserSettings;
+          console.log('Benutzerstatus geändert: Abgemeldet.');
+        }
+      });
+    },
 
-          const firebaseId = response.data.name; // Firebase generiert eine eindeutige ID
-          const newSettings = {
-            ...settings,
-            id: firebaseId, // Speichere die Firebase-ID als `id`
-            userId: this.currentUser.id,
-          };
+    async checkAuth(): Promise<boolean> {
+      return new Promise((resolve) => {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.currentUser = user;
+            console.log("Benutzerstatus wiederhergestellt:", user);
 
-          await axios.put(
-            `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${firebaseId}.json`,
-            newSettings
-          );
+            // Lade Einstellungen
+            await this.loadSettings();
+            return true;
+          } else {
+            this.currentUser = {} as User;
+            console.log("Kein Benutzer eingeloggt.");
+            return false;
+          }
+        });
+      });
+    },
 
-          console.log("Neue Benutzereinstellungen gespeichert:", newSettings);
+    /**
+     * Speichere die Benutzereinstellungen in Firebase
+     */
+    async saveSettings(settings: UserSettings): Promise<boolean> {
+      try {
+        if (!this.currentUser) {
+          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.');
+          return false;
         }
 
-        // Lokale Einstellungen aktualisieren
-        this.userSettings = { ...this.userSettings, ...settings };
+
+        settings.userId = this.currentUser.uid;
+
+        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
+
+        // Speichere die Einstellungen spezifisch für den Benutzer
+        await axios.put(userSettingsRef, settings);
+        console.log('Benutzereinstellungen gespeichert:', settings);
+
+        this.userSettings = settings;
         return true;
       } catch (err) {
-        console.error("Fehler beim Speichern der Benutzereinstellungen:", err);
+        console.error('Fehler beim Speichern der Benutzereinstellungen:', err);
         return false;
       }
     },
 
-    async loadSettings() {
+    /**
+     * Lade die Benutzereinstellungen aus Firebase
+     */
+    async loadSettings(): Promise<void> {
       try {
-        const response = await axios.get(
-          'https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings.json'
-        );
-
-        const settings = response.data
-          ? Object.keys(response.data).map(key => ({
-            id: key, // Verwende die Firebase-ID als `id`
-            ...response.data[key],
-          }))
-          : [];
-
-        // Filtere die Einstellungen des aktuellen Benutzers
-        const userSettings = settings.find(
-          (s: UserSettings) => s.userId === this.currentUser.id
-        );
-
-        if (userSettings) {
-          this.userSettings = userSettings;
-          console.log("Benutzereinstellungen geladen:", this.userSettings);
-        } else {
-          console.warn("Keine Benutzereinstellungen gefunden");
+        if (!this.currentUser) {
+          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht laden.');
+          return;
         }
+
+        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
+
+        const response = await axios.get(userSettingsRef);
+
+        if (response.data) {
+          this.userSettings = response.data;
+          console.log('Benutzereinstellungen geladen:', this.userSettings);
+        } else {
+          console.warn('Keine Benutzereinstellungen für den aktuellen Benutzer gefunden');
+          this.currentUser = {} as User;
+          this.userSettings = {} as UserSettings;        }
       } catch (err) {
-        console.error("Fehler beim Laden der Benutzereinstellungen:", err);
+        console.error('Fehler beim Laden der Benutzereinstellungen:', err);
       }
     },
-    loadUser() {
-      const localUser = localStorage.getItem("user");
-      if (localUser) {
-        this.currentUser = JSON.parse(localUser);
-        this.isAuthenticated = true;
-        console.log("Benutzer erfolgreich aus localStorage geladen:", this.currentUser);
-      } else {
-        console.warn("Kein Benutzer im localStorage gefunden.");
-      }
-    }
   },
-
-
 });

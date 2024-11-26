@@ -25,7 +25,7 @@
           <v-card-text>
             Experimentiere im Playground mit verschiedenen Widgets.
           </v-card-text>
-          <v-btn to="/playground" color="primary">Anzeigen</v-btn>
+          <v-btn color="primary">Anzeigen</v-btn>
         </v-card>
       </v-col>
 
@@ -35,7 +35,7 @@
           <v-card-text>
             Zeige aktuelle Benachrichtigungen und Updates an.
           </v-card-text>
-          <v-btn to="/notifications" color="primary">Anzeigen</v-btn>
+          <v-btn color="primary">Anzeigen</v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -60,14 +60,15 @@ import { storeToRefs } from "pinia";
 import { useTheme } from "vuetify";
 
 const store = useUserStore();
-const { currentUser } = storeToRefs(store);
+const { currentUser, userSettings } = storeToRefs(store);
 const theme = useTheme();
 
-onMounted(() => {
-  if (!store.currentUser.username) {
-    store.loadUser();
+onMounted(async () => {
+  if (!currentUser.value) {
+    console.log("Kein Benutzer eingeloggt, versuche zu laden...");
+    store.watchCurrentUser();
   }
-  theme.global.name.value = store.userSettings.theme || "light";
+  theme.global.name.value = userSettings.value?.theme || "light";
 });
 
 watch(
@@ -75,7 +76,7 @@ watch(
   (newValue) => {
     console.log("currentUser hat sich geändert:", newValue);
   },
-  { deep: true },
+  { immediate: true },
 );
 </script>
 

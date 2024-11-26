@@ -17,54 +17,56 @@
       <router-link to="/home" class="nav-item">Home</router-link>
 
       <div class="dropdown">
-        <router-link to="/playground" class="nav-item" @click="closeDropdown"
-          >Playground</router-link
-        >
+        <router-link to="/playground" class="nav-item" @click="closeDropdown">
+          Training
+        </router-link>
         <div class="dropdown-content" style="background-color: #4ea8de">
           <router-link
             to="/counter"
             class="dropdown-item"
             @click="closeDropdown"
-            >Counter</router-link
           >
+            Counter
+          </router-link>
           <router-link
             to="/catplay"
             class="dropdown-item"
             @click="closeDropdown"
-            >Catplay</router-link
           >
+            Catplay
+          </router-link>
+          <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">
+            Tasks
+          </router-link>
           <router-link
-            to="/playground"
+            to="/validate-form"
             class="dropdown-item"
             @click="closeDropdown"
-            >Coming soon...</router-link
           >
+            Validate Forms
+          </router-link>
+          <router-link to="/todo" class="dropdown-item" @click="closeDropdown">
+            ToDo
+          </router-link>
+          <router-link to="/layout" class="dropdown-item" @click="closeDropdown">
+            Layout
+          </router-link>
+          <router-link to="/chat" class="dropdown-item" @click="closeDropdown">
+            Chat
+          </router-link>
+          <router-link
+            to="/table-views"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            TableViews
+          </router-link>
         </div>
       </div>
 
-      <router-link to="/watch" class="nav-item" @click="closeDropdown"
-        >Watch</router-link
-      >
-      <router-link to="/table-views" class="nav-item" @click="closeDropdown"
-        >TableViews</router-link
-      >
-      <router-link to="/layout" class="nav-item" @click="closeDropdown"
-        >Layout</router-link
-      >
-      <router-link to="/tasks" class="nav-item" @click="closeDropdown"
-        >Tasks</router-link
-      >
-      <router-link to="/forms" class="nav-item" @click="closeDropdown"
-        >Forms</router-link
-      >
-      <router-link to="/todo" class="nav-item" @click="closeDropdown"
-        >ToDo</router-link
-      >
-
-      <!-- User Icon and Dropdown -->
       <div class="user-dropdown">
         <v-icon
-          class="mdi-account"
+          class="mdi-account toggleUserMenu"
           icon="mdi-user"
           @click="toggleUserMenu"
         ></v-icon>
@@ -87,7 +89,7 @@
           >
             Settings
           </router-link>
-          <p @click="logoutClicked" class="dropdown-item">
+          <p @click="logoutClicked" class="dropdown-item logout-button">
             <v-icon
               class="mdi-account"
               icon="mdi-logout"
@@ -106,50 +108,49 @@
     </div>
 
     <p @click="logoutClicked" class="logout-btn">
-      <v-icon class="mdi-account" icon="mdi-logout"></v-icon>
-      Logout
+      <v-icon
+        class="mdi-account logout-button"
+        icon="mdi-logout"
+        value="Logout"
+      ></v-icon>
     </p>
 
-    <!-- Mobile Dropdown Menu -->
     <div v-if="menuOpen" class="navbar-dropdown">
       <router-link to="/home" class="dropdown-item" @click="closeDropdown"
-        >Home</router-link
-      >
-      <router-link to="/playground" class="dropdown-item" @click="closeDropdown"
-        >Playground</router-link
+      >Home</router-link
       >
       <router-link to="/watch" class="dropdown-item" @click="closeDropdown"
-        >Watch</router-link
+      >Watch</router-link
       >
       <router-link
         to="/table-views"
         class="dropdown-item"
         @click="closeDropdown"
-        >TableViews</router-link
+      >TableViews</router-link
       >
       <router-link to="/layout" class="dropdown-item" @click="closeDropdown"
-        >Layout</router-link
+      >Layout</router-link
       >
       <router-link to="/tasks" class="dropdown-item" @click="closeDropdown"
-        >Tasks</router-link
+      >Tasks</router-link
       >
       <router-link to="/forms" class="dropdown-item" @click="closeDropdown"
-        >Forms</router-link
+      >Forms</router-link
       >
       <router-link to="/todo" class="dropdown-item" @click="closeDropdown"
-        >ToDo</router-link
+      >ToDo</router-link
       >
       <router-link
         to="/user-profile"
         class="dropdown-item"
         @click="closeDropdown"
-        >Profile</router-link
+      >Profile</router-link
       >
       <router-link
         to="/user-settings"
         class="dropdown-item"
         @click="closeDropdown"
-        >Settings</router-link
+      >Settings</router-link
       >
     </div>
   </nav>
@@ -163,39 +164,24 @@
 </template>
 
 <script setup lang="ts">
-import { useEventStore } from "@/stores/EventStore";
-import { storeToRefs } from "pinia";
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 
 const store = useUserStore();
+const { currentUser } = storeToRefs(store);
 const router = useRouter();
+
 const menuOpen = ref(false);
 const userMenuOpen = ref(false);
-const { isAuthenticated } = storeToRefs(store);
-const eventStore = useEventStore();
 
-// Prüfen, ob der Benutzer eingeloggt ist
-async function checkUserToken() {
-  console.log("Prüfe, ob ein Token existiert...");
-  isAuthenticated.value = !!localStorage.getItem("authToken");
-  console.log("Token Status:", isAuthenticated.value);
-}
-
-onMounted(() => {
-  checkUserToken();
-});
-
-watch(isAuthenticated, (newValue) => {
-  console.log("Auth Status geändert:", newValue);
-});
+// Überprüfe, ob ein Benutzer eingeloggt ist
+const isAuthenticated = computed(() => !!currentUser.value);
 
 async function logoutClicked() {
   await store.logout();
-  isAuthenticated.value = false;
   router.push("/login");
-  eventStore.addEvent("Benutzer hat sich ausgeloggt");
 }
 
 function toggleMenu() {
@@ -203,27 +189,13 @@ function toggleMenu() {
 }
 
 function toggleUserMenu() {
-  userMenuOpen.value = !userMenuOpen.value; // Toggle the user menu visibility
+  userMenuOpen.value = !userMenuOpen.value;
 }
 
 function closeDropdown() {
-  menuOpen.value = false; // Schließt das mobile Menü
-  userMenuOpen.value = false; // Schließt das Benutzer-Dropdown
+  menuOpen.value = false;
+  userMenuOpen.value = false;
 }
-
-function handleResize() {
-  if (window.innerWidth > 768) {
-    menuOpen.value = false;
-  }
-}
-
-onMounted(() => {
-  window.addEventListener("resize", handleResize);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("resize", handleResize);
-});
 </script>
 
 <style>
@@ -288,7 +260,7 @@ onBeforeUnmount(() => {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  right: -50px;
   background-color: #ffffff;
   min-width: 160px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);

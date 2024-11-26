@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent, ref, computed } from "vue";
 import { Item } from "@/interfaces/interfaces";
-import Counter from "@/components/playground/Counter.vue";
+import Counter from "@/components/training/Counter.vue";
 
 export default defineComponent({
   components: { Counter },
