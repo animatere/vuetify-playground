@@ -101,15 +101,12 @@ export const useUserStore = defineStore('user', {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           this.currentUser = user;
-          console.log('Benutzerstatus geändert: Angemeldet:', user);
-          console.log("current User: ", this.currentUser);
 
           // Benutzereinstellungen automatisch laden
           await this.loadSettings();
         } else {
           this.currentUser = {} as User;
           this.userSettings = {} as UserSettings;
-          console.log('Benutzerstatus geändert: Abgemeldet.');
         }
       });
     },
@@ -142,7 +139,6 @@ export const useUserStore = defineStore('user', {
           console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.');
           return false;
         }
-
 
         settings.userId = this.currentUser.uid;
 

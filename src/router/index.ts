@@ -15,6 +15,8 @@ import Catplay from "@/components/training/Catplay.vue";
 import Counter from "@/components/training/Counter.vue";
 import ValidateForm from "@/components/training/ValidateForm.vue";
 import { useUserStore } from '@/stores/UserStore'
+import { onAuthStateChanged } from "firebase/auth";
+
 
 
 import HomeView from "../views/HomeView.vue";
@@ -27,17 +29,21 @@ const requireAuth = (to: any, from: any, next: any) => {
   if (auth.currentUser) {
     next();
   } else {
-    next("/login");
+    next("/");
   }
 };
 
-// const onlyNotLoggedUser = (to: any, from: any, next: any) => {
-//   if (!auth.currentUser) {
-//     next();
-//   } else {
-//     console.log("Already logged in.");
-//   }
-// };
+const onlyNotLoggedUser = (to: any, from: any, next: any) => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("User is authenticated, redirecting to /home");
+      next("/home");
+    } else {
+      console.log("User is not authenticated, allowing access");
+      next();
+    }
+  });
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -46,19 +52,19 @@ const router = createRouter({
       path: "/",
       name: "landingpage",
       component: LandingPage,
-      // beforeEnter: onlyNotLoggedUser,
+      beforeEnter: onlyNotLoggedUser,
     },
     {
       path: "/login",
       name: "login",
       component: Login,
-      // beforeEnter: onlyNotLoggedUser,
+      beforeEnter: onlyNotLoggedUser,
     },
     {
       path: "/signup",
       name: "signup",
       component: SignUp,
-      // beforeEnter: onlyNotLoggedUser,
+      beforeEnter: onlyNotLoggedUser,
     },
     {
       path: "/home",

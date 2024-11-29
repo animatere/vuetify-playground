@@ -164,23 +164,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useUserStore } from "@/stores/UserStore";
-import { storeToRefs } from "pinia";
+import { ref, onMounted } from "vue";
+import { auth } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "vue-router";
 
-const store = useUserStore();
-const { currentUser } = storeToRefs(store);
-const router = useRouter();
-
+const isAuthenticated = ref(false); //
 const menuOpen = ref(false);
 const userMenuOpen = ref(false);
 
-// Überprüfe, ob ein Benutzer eingeloggt ist
-const isAuthenticated = computed(() => !!currentUser.value);
+const router = useRouter();
 
+// Überprüfe den Authentifizierungsstatus bei der Initialisierung
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    isAuthenticated.value = !!user; // true, wenn ein User existiert
+  });
+});
+
+// Logout-Funktion
 async function logoutClicked() {
-  await store.logout();
+  await auth.signOut();
+  isAuthenticated.value = false; // Authentifizierung zurücksetzen
   router.push("/login");
 }
 
@@ -196,6 +201,7 @@ function closeDropdown() {
   menuOpen.value = false;
   userMenuOpen.value = false;
 }
+
 </script>
 
 <style>

@@ -40,7 +40,7 @@
                   :color="currentUser.registered ? 'blue' : 'grey'"
                   text-color="white"
                 >
-                  {{ currentUser.registered ? "Ja" : "Nein" }}
+                  {{currentUser.registered ? "Ja" : "Nein"}}
                 </v-chip>
               </span>
             </div>
@@ -175,12 +175,12 @@ function clearEventLog() {
   font-weight: bold;
 }
 
-.profile-card .v-list-item {
+.profile-card v-list-item {
   border-bottom: 1px solid #919191;
   padding-bottom: 10px;
 }
 
-.profile-card .v-list-item:last-child {
+.profile-card v-list-item:last-child {
   border-bottom: none;
 }
 </style>

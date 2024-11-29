@@ -4,7 +4,7 @@
       <v-col cols="12">
         <p>Willkommen zurück,</p>
         <p style="font-weight: bold; font-size: 40px">
-          {{ currentUser.username || "Gast" }}!
+          {{ currentUser.displayName || "Gast" }}!
         </p>
         <p>Es freut uns, dass du wieder da bist. Was möchtest du heute tun?</p>
       </v-col>
@@ -69,6 +69,7 @@ onMounted(async () => {
     store.watchCurrentUser();
   }
   theme.global.name.value = userSettings.value?.theme || "light";
+
 });
 
 watch(
