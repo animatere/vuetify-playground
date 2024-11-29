@@ -2,10 +2,10 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <p>Willkommen zurück,</p>
-        <p style="font-weight: bold; font-size: 40px">
-          {{ currentUser.displayName || "Gast" }}!
+        <p v-if="editData.username" style="font-weight: bold; font-size: 40px">
+          {{ editData.username }}!
         </p>
+        <p v-else>Benutzer wird geladen ...</p>
         <p>Es freut uns, dass du wieder da bist. Was möchtest du heute tun?</p>
       </v-col>
     </v-row>
@@ -55,30 +55,26 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
-import { onMounted, watch } from "vue";
+import { onMounted, reactive } from "vue";
 import { storeToRefs } from "pinia";
-import { useTheme } from "vuetify";
 
 const store = useUserStore();
-const { currentUser, userSettings } = storeToRefs(store);
-const theme = useTheme();
+const { currentUser } = storeToRefs(store);
 
-onMounted(async () => {
-  if (!currentUser.value) {
-    console.log("Kein Benutzer eingeloggt, versuche zu laden...");
-    store.watchCurrentUser();
-  }
-  theme.global.name.value = userSettings.value?.theme || "light";
-
+const editData = reactive({
+  username: currentUser.value?.displayName,
+  email: currentUser.value?.email as string,
+  // ToDo: add real database: get access to all user data to load them
+  password: currentUser.value?.password,
+  // password: "Test12345",
+  loggedIn: !!currentUser,
+  registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now
 });
 
-watch(
-  () => currentUser.value,
-  (newValue) => {
-    console.log("currentUser hat sich geändert:", newValue);
-  },
-  { immediate: true },
-);
+onMounted(async () => {
+  console.log("Mounted Home: ", editData);
+});
+
 </script>
 
 <style>

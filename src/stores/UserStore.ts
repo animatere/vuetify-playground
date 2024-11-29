@@ -12,10 +12,10 @@ import { auth } from '../../firebase';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    currentUser: { } as User,
-    userSettings: { } as UserSettings, // Benutzereinstellungen können `null` sein
-    loading: false,
-    error: null as string | null, // Für Fehlernachrichten
+    currentUser : ref<User | null>(null), // Reaktiver Benutzerzustand
+    userSettings : ref<UserSettings | null>(null),
+    loading : ref(false),
+    error : ref<string | null>(null),
   }),
 
   actions: {
