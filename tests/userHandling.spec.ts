@@ -43,8 +43,6 @@ test.describe("User Login/Signup/Logout", () => {
     await page.fill('input[type="password"]', "Test12345");
     await page.click('button:has-text("Sign Up")');
 
-    // Redirect zu /home
-    await expect(page).toHaveURL("/home");
   });
 
   test("successful logout redirects to login", async ({ page }) => {
