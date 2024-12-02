@@ -23,9 +23,6 @@ const notificationsStore = useNotificationsStore();
   color: #fff;
   font-weight: bold;
   position: fixed;
-  top: 120px;
-  right: 20px;
-
   z-index: 1000;
 }
 
@@ -55,13 +52,9 @@ const notificationsStore = useNotificationsStore();
   left: 20px;
 }
 
-.notifications.bottom-right {
-  bottom: 20px;
-  right: 20px;
-}
-
-.notifications.bottom-left {
-  bottom: 20px;
-  left: 20px;
+.notifications.top-center {
+  top: 20px; /* Ganz oben */
+  left: 50%; /* In der Mitte */
+  transform: translateX(-50%); /* Zentrieren */
 }
 </style>

@@ -60,8 +60,15 @@ import { UserSettings } from "@/interfaces/interfaces";
 const store = useUserStore();
 const settings = ref({}) as Ref<UserSettings>;
 
-onMounted(() => {
-  // settings.value = { ...store.userSettings };
+onMounted(async () => {
+  try {
+    const loadedSettings = await store.loadSettings();
+    if (loadedSettings) {
+      settings.value = loadedSettings;
+    }
+  } catch (error) {
+    console.error("Fehler beim Laden der Einstellungen:", error);
+  }
 });
 
 function updateTheme() {

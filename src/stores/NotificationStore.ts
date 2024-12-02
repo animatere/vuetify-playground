@@ -6,8 +6,7 @@ export const useNotificationsStore = defineStore("notifications", {
     position: "top-right" as
       | "top-right"
       | "top-left"
-      | "bottom-right"
-      | "bottom-left",
+      | "top-center",
   }),
   actions: {
     addNotification(message: string, type: string = "info") {
@@ -20,7 +19,10 @@ export const useNotificationsStore = defineStore("notifications", {
       this.notifications = this.notifications.filter((n) => n.id !== id);
     },
     setPosition(
-      newPosition: "top-right" | "top-left" | "bottom-right" | "bottom-left",
+      newPosition:
+        | "top-right"
+        | "top-left"
+        | "top-center",
     ) {
       this.position = newPosition;
     },
