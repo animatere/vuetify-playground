@@ -24,12 +24,14 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/stores/UserStore";
-import { storeToRefs } from "pinia";
+// import { useUserStore } from "@/stores/UserStore";
+// import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-const store = useUserStore();
-const { isAuthenticated } = storeToRefs(store);
+// const store = useUserStore();
+// ToDo: Footer anpassen, sodass dieser nur bei eingeloggten usern angezeigt wird
+// const { isAuthenticated } = storeToRefs(store);
+const isAuthenticated = true;
 
 // Links im Footer
 const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];

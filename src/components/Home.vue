@@ -65,7 +65,7 @@ const editData = reactive({
   username: currentUser.value?.displayName,
   email: currentUser.value?.email as string,
   // ToDo: add real database: get access to all user data to load them
-  password: currentUser.value?.password,
+  // password: currentUser.value?.password,
   // password: "Test12345",
   loggedIn: !!currentUser,
   registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now

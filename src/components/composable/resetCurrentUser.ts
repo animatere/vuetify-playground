@@ -2,7 +2,7 @@ import { UserData } from '@/interfaces/interfaces'
 
 export function userResetCurrentUser() {
   return {
-      id: 0,
+      id: "",
       username: "",
       email: "",
       password: "",

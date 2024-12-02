@@ -61,7 +61,7 @@ const store = useUserStore();
 const settings = ref({}) as Ref<UserSettings>;
 
 onMounted(() => {
-  settings.value = { ...store.userSettings };
+  // settings.value = { ...store.userSettings };
 });
 
 function updateTheme() {
