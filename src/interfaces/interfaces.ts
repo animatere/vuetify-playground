@@ -1,3 +1,5 @@
+import { TaskCategory } from '@/Enums/TaskCategory'
+
 export interface Variant {
   id: number;
   color: string;
@@ -23,7 +25,7 @@ export type Employees = Employee[];
 
 export interface Tasks {
   id: number;
-  category: string;
+  category: TaskCategory;
   title: string;
   priority: string;
   dueDate: string;
@@ -37,7 +39,7 @@ export interface ToDo {
 }
 
 export interface UserData {
-  id: number;
+  id: string;
   username: string;
   email: string;
   password: string;
@@ -48,4 +50,21 @@ export interface UserData {
 export interface Comment {
   id: number;
   text: string;
+  userId: string;
+}
+
+export interface UserTokenData {
+  id: number;
+  userId: number;
+  tokenValue: string;
+  // status: "active" | "inactive";
+  expires: string;
+}
+
+export interface UserSettings {
+  id: string;
+  userId: string;
+  theme: string;
+  notifications: boolean;
+  emailNotifications: boolean;
 }

@@ -1,21 +1,49 @@
+import Chat from '@/components/training/Chat.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import { auth } from "../../firebase";
+
 import LandingPage from "@/components/LandingPage.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import UserSettings from "@/components/user/UserSettings.vue";
-import { createRouter, createWebHistory } from "vue-router";
-
-import Forms from "@/components/pages/Forms.vue";
-import Layout from "@/components/pages/Layout.vue";
-import TableViews from "@/components/pages/TableViews.vue";
+import Layout from "@/components/training/Layout.vue";
+import TableViews from "@/components/training/TableViews.vue";
 import Tasks from "@/components/task-management/Tasks.vue";
 import ToDoApp from "@/components/todo/ToDoApp.vue";
 import Login from "@/components/user/Login.vue";
 import SignUp from "@/components/user/SignUp.vue";
+import Catplay from "@/components/training/Catplay.vue";
+import Counter from "@/components/training/Counter.vue";
+import ValidateForm from "@/components/training/ValidateForm.vue";
+import { useUserStore } from '@/stores/UserStore'
+import { onAuthStateChanged } from "firebase/auth";
+
+
+
 import HomeView from "../views/HomeView.vue";
-import WatchView from "@/views/WatchView.vue";
-import PlayGroundView from "@/views/PlayGroundView.vue";
-import PortalView from "@/views/PortalView.vue";
-import Catplay from "@/components/playground/Catplay.vue";
-import Counter from "@/components/playground/Counter.vue";
+
+const requireAuth = (to: any, from: any, next: any) => {
+  console.log("ROUTE AUTHORIZE: ", auth.currentUser);
+  const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
+
+  userStore.checkAuth();
+  if (auth.currentUser) {
+    next();
+  } else {
+    next("/");
+  }
+};
+
+const onlyNotLoggedUser = (to: any, from: any, next: any) => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("User is authenticated, redirecting to /home");
+      next("/home");
+    } else {
+      console.log("User is not authenticated, allowing access");
+      next();
+    }
+  });
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -24,203 +52,93 @@ const router = createRouter({
       path: "/",
       name: "landingpage",
       component: LandingPage,
-      beforeEnter: (to, from, next) => {
-        if (!localStorage.getItem("authToken")) {
-          next();
-        } else {
-          console.log("Already logged in.");
-        }
-      },
-    },
-    {
-      path: "/home",
-      name: "home",
-      component: HomeView,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: onlyNotLoggedUser,
     },
     {
       path: "/login",
       name: "login",
       component: Login,
-      beforeEnter: (to, from, next) => {
-        if (!localStorage.getItem("authToken")) {
-          next();
-        } else {
-          console.log("Already logged in.");
-          next("/home");
-        }
-      },
+      beforeEnter: onlyNotLoggedUser,
     },
     {
       path: "/signup",
       name: "signup",
       component: SignUp,
-      beforeEnter: (to, from, next) => {
-        if (!localStorage.getItem("authToken")) {
-          next();
-        } else {
-          console.log("Already logged in.");
-          next("/home");
-        }
-      },
+      beforeEnter: onlyNotLoggedUser,
     },
     {
-      path: "/watch",
-      name: "watch",
-      component: WatchView,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      path: "/home",
+      name: "home",
+      component: HomeView,
+      beforeEnter: requireAuth,
     },
     {
-      path: "/playground",
-      name: "playground",
-      component: PlayGroundView,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      path: "/chat",
+      name: "chat",
+      component: Chat,
+      beforeEnter: requireAuth,
     },
-    {
-      path: "/portal",
-      name: "portal",
-      component: PortalView,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
-    },
+    // {
+    //   path: "/training",
+    //   name: "playground",
+    //   component: PlayGroundView,
+    //   beforeEnter: requireAuth,
+    // },
     {
       path: "/catplay",
       name: "catplay",
       component: Catplay,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/counter",
       name: "counter",
       component: Counter,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/table-views",
       name: "tableViews",
       component: TableViews,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/layout",
       name: "layout",
       component: Layout,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/tasks",
       name: "tasks",
       component: Tasks,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
-      path: "/forms",
-      name: "forms",
-      component: Forms,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      path: "/validate-form",
+      name: "validateForm",
+      component: ValidateForm,
+      beforeEnter: requireAuth,
     },
     {
       path: "/todo",
       name: "todo",
       component: ToDoApp,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/user-settings",
       name: "user-settings",
       component: UserSettings,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
     {
       path: "/user-profile",
       name: "user-profile",
       component: UserProfile,
-      beforeEnter: (to, from, next) => {
-        if (localStorage.getItem("authToken")) {
-          next();
-        } else {
-          next("/");
-        }
-      },
+      beforeEnter: requireAuth,
     },
   ],
 });
-
-// router.beforeEach((to, from, next) => {
-//
-//   console.log("to", to);
-//   console.log("from", from);
-// })
 
 export default router;

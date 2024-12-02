@@ -1,192 +1,185 @@
-import { UserData } from "@/interfaces/interfaces";
-import { defineStore } from "pinia";
-import { SignJWT } from "jose";
+import { UserSettings } from '@/interfaces/interfaces';
+import { defineStore } from 'pinia';
+import axios from 'axios';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User,
+} from 'firebase/auth';
+import { auth } from '../../firebase';
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => ({
-    currentUser: {
-      id: 0,
-      username: "",
-      email: "",
-      password: "",
-      loggedIn: false,
-      registered: false,
-    } as UserData,
-    validAuthTokens: [
-      {
-        id: 1,
-        tokenValue:
-          "eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJBbGV4IiwiaWF0IjoxNzMxNjgxNzUxLCJleHAiOjE3MzE2ODUzNTF9.pgIorxJ7qFe-Cv-cgY5q5Vrxxf7ZTs1B5iy-fxXq9-Y",
-      },
-      {
-        id: 2,
-        tokenValue:
-          "NTF9.pgIorxJ7qFe-Cv-cgY5q5Vrxxf7ZTs1B5iy-fxXq9-YJpZCI6MSwidXNlcm5hbWUiOiJBbGV4IiwiaWF0IjoxNzMxNjgxNzUxLCJleHAiOjE3MzE2ODUzeyJhbGciOiJIUzI1NiJ9.ey",
-      },
-    ],
-    isAuthenticated: false,
-    mockUsers: [
-      {
-        id: 1,
-        username: "Alex",
-        email: "alex.wolf@trizelos.com",
-        password: "Test12345",
-        loggedIn: false,
-        registered: true,
-      },
-      {
-        id: 2,
-        username: "Test",
-        email: "test@trizelos.com",
-        password: "Test12345",
-        loggedIn: false,
-        registered: true,
-      },
-      {
-        id: 3,
-        username: "Admin",
-        email: "admin@trizelos.com",
-        password: "Test12345",
-        loggedIn: false,
-        registered: true,
-      },
-    ],
-    theme: "light",
-    settings: {
-      notifications: true,
-      emailNotifications: false,
-    },
+    currentUser : ref<User | null>(null), // Reaktiver Benutzerzustand
+    userSettings : ref<UserSettings | null>(null),
+    loading : ref(false),
+    error : ref<string | null>(null),
   }),
 
   actions: {
-    async login(user: UserData) {
-      const userExists = this.mockUsers.find(
-        (mockuser) =>
-          mockuser.username === user.username &&
-          mockuser.password === user.password
-          // ToDo: Zurücksetzen => Auskommentiert, da es das debuggen einfacher macht
-          // &&
-          // mockuser.email === user.email
-      );
-      if (userExists) {
-        // Token erstellen
-        const token = await this.createToken(user);
+    /**
+     * Registriere einen neuen Benutzer
+     */
+    async signup(email: string, password: string): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
 
-        if (token != null) {
-          localStorage.setItem("authToken", token);
-          this.validAuthTokens.push({
-            id: this.validAuthTokens.length,
-            tokenValue: token,
-          });
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        this.currentUser = userCredential.user;
+        console.log('Benutzer erfolgreich registriert:', this.currentUser);
 
-          this.currentUser = { ...userExists, loggedIn: true };
-          this.isAuthenticated = true;
-          localStorage.setItem("username", this.currentUser.username);
-          console.log("Login erfolgreich");
+        // Initiale Benutzereinstellungen speichern
+        const initialSettings: UserSettings = {
+          id: this.currentUser.uid,
+          userId: this.currentUser.uid,
+          theme: 'light',
+          notifications: true,
+          emailNotifications: false,
+        };
+        await this.saveSettings(initialSettings);
+        return true;
+      } catch (error: any) {
+        this.error = error.message || 'Registrierung fehlgeschlagen';
+        console.error('Fehler bei der Registrierung:', error);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
 
-          return true;
+    /**
+     * Melde einen Benutzer an
+     */
+    async login(email: string, password: string): Promise<boolean> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        this.currentUser = userCredential.user;
+        console.log('Benutzer erfolgreich angemeldet:', this.currentUser);
+
+        // Benutzereinstellungen laden
+        await this.loadSettings();
+        return true;
+      } catch (error: any) {
+        this.error = error.message || 'Anmeldung fehlgeschlagen';
+        console.error('Fehler bei der Anmeldung:', error);
+        return false;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /**
+     * Melde den aktuellen Benutzer ab
+     */
+    async logout(): Promise<void> {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await signOut(auth);
+        this.currentUser = {} as User;
+        this.userSettings = {} as UserSettings;
+        console.log('Benutzer erfolgreich abgemeldet.');
+      } catch (error: any) {
+        this.error = error.message || 'Abmeldung fehlgeschlagen';
+        console.error('Fehler bei der Abmeldung:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /**
+     * Überwache den aktuellen Benutzerstatus
+     */
+    watchCurrentUser(): void {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          this.currentUser = user;
+
+          // Benutzereinstellungen automatisch laden
+          await this.loadSettings();
         } else {
-          console.log(
-            "Token konnte nicht generiert werden, User wurde nicht gespeichert.",
-          );
+          this.currentUser = {} as User;
+          this.userSettings = {} as UserSettings;
+        }
+      });
+    },
+
+    async checkAuth(): Promise<boolean> {
+      return new Promise((resolve) => {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            this.currentUser = user;
+            console.log("Benutzerstatus wiederhergestellt:", user);
+
+            // Lade Einstellungen
+            await this.loadSettings();
+            return true;
+          } else {
+            this.currentUser = {} as User;
+            console.log("Kein Benutzer eingeloggt.");
+            return false;
+          }
+        });
+      });
+    },
+
+    /**
+     * Speichere die Benutzereinstellungen in Firebase
+     */
+    async saveSettings(settings: UserSettings): Promise<boolean> {
+      try {
+        if (!this.currentUser) {
+          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.');
           return false;
         }
-      } else {
-        console.error("Login fehlgeschlagen: Benutzer nicht gefunden");
+
+        settings.userId = this.currentUser.uid;
+
+        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
+
+        // Speichere die Einstellungen spezifisch für den Benutzer
+        await axios.put(userSettingsRef, settings);
+        console.log('Benutzereinstellungen gespeichert:', settings);
+
+        this.userSettings = settings;
+        return true;
+      } catch (err) {
+        console.error('Fehler beim Speichern der Benutzereinstellungen:', err);
         return false;
       }
     },
 
-    async signupUser(user: UserData) {
-      if (user.username !== "" && user.email !== "" && user.password) {
-
-        const userExists = this.mockUsers.find(
-          (mockuser) =>
-            mockuser.username === user.username ||
-            mockuser.email === user.email
-        );
-
-        if(!userExists) {
-          user.id = this.mockUsers.length;
-          user.registered = true;
-          this.mockUsers.push(user);
-
-          await this.login(user);
-          return true;
+    /**
+     * Lade die Benutzereinstellungen aus Firebase
+     */
+    async loadSettings(): Promise<void> {
+      try {
+        if (!this.currentUser) {
+          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht laden.');
+          return;
         }
 
-        else{
-          console.log("User bereits in Datenbank.")
-          return false;
-        }
-      }
-      return false;
-    },
+        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
 
-    // Token erstellen
-    async createToken(user: UserData) {
-      const payload = { id: user.id, username: user.username };
-      const secret = new TextEncoder().encode("my_secret_key");
-      const token = await new SignJWT(payload)
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime("1h")
-        .sign(secret);
+        const response = await axios.get(userSettingsRef);
 
-      return token;
-    },
-
-    // Logout-Funktion
-    logout() {
-      // Den aktuellen Benutzer zurücksetzen
-      this.currentUser = {
-        id: 0,
-        username: "",
-        email: "",
-        password: "",
-        loggedIn: false,
-        registered: false,
-      };
-      this.isAuthenticated = false; // Auth-Status auf false setzen
-
-      // Entfernen des Tokens aus dem LocalStorage
-      localStorage.removeItem("authToken");
-      console.log("Logout erfolgreich");
-
-      return true;
-    },
-
-    checkAuthStatus() {
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        this.isAuthenticated = true;
-      } else {
-        this.isAuthenticated = false;
+        if (response.data) {
+          this.userSettings = response.data;
+          console.log('Benutzereinstellungen geladen:', this.userSettings);
+        } else {
+          console.warn('Keine Benutzereinstellungen für den aktuellen Benutzer gefunden');
+          this.currentUser = {} as User;
+          this.userSettings = {} as UserSettings;        }
+      } catch (err) {
+        console.error('Fehler beim Laden der Benutzereinstellungen:', err);
       }
     },
-
-    setTheme(theme: string) {
-      this.theme = theme;
-    },
-    saveSettings(settings: Record<string, any>) {
-      this.settings = { ...this.settings, ...settings };
-      localStorage.setItem("userSettings", JSON.stringify(this.settings));
-    },
-    loadSettings() {
-      const stored = localStorage.getItem("userSettings");
-      if (stored) {
-        this.settings = JSON.parse(stored);
-      }
-    },
-
-    setUser(user: UserData) {
-      this.currentUser = user;
-    },
-    loadUser(): UserData {
-      if(this.currentUser === null){
-
-      }
-      return this.currentUser;
-    }
   },
 });

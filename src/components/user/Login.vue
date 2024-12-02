@@ -19,14 +19,10 @@ const eventStore = useEventStore();
 async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
-  const success = await login({
-    id: 0,
-    username: username.value,
-    email: email.value,
-    password: password.value,
-    loggedIn: false,
-    registered: false,
-  });
+  const success = await login(
+    email.value,
+    password.value
+  );
 
   if (success) {
     await reload();
@@ -47,8 +43,8 @@ function notifyMessage(message: string, type: string) {
 </script>
 
 <template>
-  <v-container class="d-flex justify-center" style="height: 50vh">
-    <v-card elevation="2" width="400">
+  <v-container class="d-flex justify-center">
+    <v-card elevation="2">
       <v-card-title class="justify-center">Login</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitForm">

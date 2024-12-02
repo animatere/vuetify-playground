@@ -1,29 +1,69 @@
 <template>
   <v-app :class="currentTheme === 'dark' ? 'theme--dark' : 'theme--light'">
     <navbar></navbar>
-    <v-btn @click="toggleTheme">
-      <p v-if="currentTheme === 'dark'">Current Theme: dark Theme</p>
-      <p v-else-if="currentTheme === 'light'">Current Theme: light Theme</p>
-      <p v-else>Current Theme: light Theme</p>
-    </v-btn>
-    <router-view> </router-view>
+    <div class="toggle-theme">
+      <v-btn @click="toggleTheme" class="theme-toggle-btn">
+        <p>Current Theme: {{ currentTheme }}</p>
+      </v-btn>
+    </div>
+    <router-view></router-view>
     <notification></notification>
     <app-footer></app-footer>
   </v-app>
 </template>
 
 <script setup lang="ts">
+import { UserSettings } from '@/interfaces/interfaces'
+import { ref, watch, onMounted } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+import { storeToRefs } from "pinia";
 import { useTheme } from "vuetify";
 
+const store = useUserStore();
+const { userSettings, currentUser } = storeToRefs(store); // Zugriff auf Benutzerdaten
 const theme = useTheme();
-let currentTheme = ref(theme.global.name.value);
+const currentTheme = ref("light"); // Standardwert für Theme
 
-function toggleTheme() {
-  theme.global.name.value =
-    theme.global.name.value === "dark" ? "light" : "dark";
-  currentTheme.value = theme.global.name.value;
+// Überwache Änderungen an den Benutzereinstellungen
+watch(
+  () => userSettings.value?.theme,
+  (newTheme) => {
+    if (newTheme) {
+      currentTheme.value = newTheme;
+      theme.global.name.value = newTheme; // Vuetify-Theme aktualisieren
+    }
+  },
+);
+
+// Beim Start der App: Benutzerstatus und Einstellungen überwachen
+onMounted(async () => {
+  store.watchCurrentUser(); // Überwache den Benutzerstatus
+
+  // Warte auf das Laden der Benutzereinstellungen
+  if (currentUser.value) {
+    await store.loadSettings(); // Benutzereinstellungen laden
+  }
+
+  // Stelle sicher, dass das Theme korrekt initialisiert ist
+  currentTheme.value = userSettings.value?.theme || "light";
+  theme.global.name.value = currentTheme.value;
+});
+
+// Theme umschalten und speichern
+async function toggleTheme() {
+  const newTheme = currentTheme.value === "dark" ? "light" : "dark";
+  currentTheme.value = newTheme;
+  theme.global.name.value = newTheme;
+
+  try {
+    // Einstellungen speichern
+    await store.saveSettings(userSettings?.value ?? {} as UserSettings);
+  } catch (error) {
+    console.error("Fehler beim Speichern der Einstellungen:", error);
+  }
 }
 </script>
+
 <style lang="css">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -44,5 +84,10 @@ nav {
       color: #42b983;
     }
   }
+}
+
+.theme-toggle-btn {
+  width: 100%;
+  margin: 0;
 }
 </style>

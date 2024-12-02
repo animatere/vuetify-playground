@@ -3,8 +3,10 @@
     <!-- Profilüberschrift -->
     <v-row class="mb-6">
       <v-col cols="12" class="text-center">
-        <h1 class="profile-title">Willkommen, {{ currentUser.username }}!</h1>
-        <p class="profile-subtitle">Hier sind deine Profildetails.</p>
+        <p v-if="editData.username" style="font-weight: bold; font-size: 40px">
+          {{ editData.username }}!
+        </p>
+        <p v-else>Benutzer wird geladen...</p>        <p class="profile-subtitle">Hier sind deine Profildetails.</p>
       </v-col>
     </v-row>
 
@@ -16,20 +18,20 @@
           <v-card-text>
             <div class="info-item">
               <span class="info-label">Benutzername:</span>
-              <span class="info-value">{{ currentUser.username }}</span>
+              <span class="info-value">{{ editData.username }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">E-Mail:</span>
-              <span class="info-value">{{ currentUser.email }}</span>
+              <span class="info-value">{{ editData.email }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Status:</span>
               <span class="info-value">
                 <v-chip
-                  :color="currentUser.loggedIn ? 'green' : 'red'"
+                  :color="editData.loggedIn ? 'green' : 'red'"
                   text-color="white"
                 >
-                  {{ currentUser.loggedIn ? "Online" : "Offline" }}
+                  {{ editData.loggedIn ? "Online" : "Offline" }}
                 </v-chip>
               </span>
             </div>
@@ -37,10 +39,10 @@
               <span class="info-label">Registriert:</span>
               <span class="info-value">
                 <v-chip
-                  :color="currentUser.registered ? 'blue' : 'grey'"
+                  :color="editData.registered ? 'blue' : 'grey'"
                   text-color="white"
                 >
-                  {{ currentUser.registered ? "Ja" : "Nein" }}
+                  {{editData.registered ? "Ja" : "Nein"}}
                 </v-chip>
               </span>
             </div>
@@ -121,31 +123,37 @@ const eventStore = useEventStore();
 const { currentUser } = storeToRefs(userStore);
 
 onMounted(() => {
-  if (!currentUser.value.username) {
-    currentUser.value = userStore.loadUser();
-  }
+  console.log("Mounted UserProfile: ", editData);
 });
 
 const editData = reactive({
-  username: currentUser.value.username,
-  email: currentUser.value.email,
-  password: currentUser.value.password,
+  username: currentUser.value?.displayName,
+  email: currentUser.value?.email as string,
+  // ToDo: add real database: get access to all user data to load them
+  password: currentUser.value?.password,
+  // password: "Test12345",
+  loggedIn: !!currentUser,
+  registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now
 });
 
 const formValid = ref(false);
 
+// ToDo: add real database: get access to all user data to change them
 function saveProfile() {
-  currentUser.value.username = editData.username;
-  currentUser.value.email = editData.email;
-  currentUser.value.password = editData.password;
+  // currentUser.value.username = editData.username;
+  // currentUser.value.email = editData.email;
+  // currentUser.value.password = editData.password;
 
   eventStore.addEvent("Profilinformationen wurden geändert.");
 }
 
+// ToDo: add real database: this mockup should be replaced with real data
 function resetEditData() {
-  editData.username = currentUser.value.username;
-  editData.email = currentUser.value.email;
-  editData.password = currentUser.value.password;
+  editData.username = currentUser.value?.displayName;
+  editData.email = currentUser.value?.email as string;
+  // editData.password = currentUser.value.password;
+  editData.loggedIn = !!currentUser,
+  editData.registered = !!currentUser
 }
 
 function clearEventLog() {
@@ -166,11 +174,7 @@ function clearEventLog() {
 .profile-card {
   margin-bottom: 20px;
   padding: 20px;
-  height:50vh;
-}
-
-.profile-card:hover {
-  background-color: #e1e1e1;
+  height: 50vh;
 }
 
 .info-item {
@@ -183,12 +187,12 @@ function clearEventLog() {
   font-weight: bold;
 }
 
-.profile-card .v-list-item {
+.profile-card v-list-item {
   border-bottom: 1px solid #919191;
   padding-bottom: 10px;
 }
 
-.profile-card .v-list-item:last-child {
+.profile-card v-list-item:last-child {
   border-bottom: none;
 }
 </style>

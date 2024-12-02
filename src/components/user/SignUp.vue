@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import router from '@/router'
-import { useEventStore } from '@/stores/EventStore'
-import { useNotificationsStore } from '@/stores/NotificationStore'
+import router from "@/router";
+import { useEventStore } from "@/stores/EventStore";
+import { useNotificationsStore } from "@/stores/NotificationStore";
 import { ref } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 
@@ -9,7 +9,7 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const store = useUserStore();
-const { signupUser } = store;
+const { signup } = store;
 const notificationsStore = useNotificationsStore();
 notificationsStore.setPosition("top-left");
 const eventStore = useEventStore();
@@ -21,15 +21,11 @@ function notifyMessage(message: string, type: string) {
 async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
-  if(username.value !== "" && email.value !== "" && password.value !== "") {
-    const success = await signupUser({
-      id: 0,
-      username: username.value,
-      email: email.value,
-      password: password.value,
-      loggedIn: false,
-      registered: false,
-    });
+  if (username.value !== "" && email.value !== "" && password.value !== "") {
+    const success = await signup(
+      email.value,
+      password.value
+    );
 
     if (success) {
       await reload();
@@ -42,12 +38,9 @@ async function submitForm(submitEvent: Event) {
     function reload() {
       router.push("/home");
     }
+  } else {
+    console.log("Signup fehlgeschlagen.");
   }
-  else {
-    console.log("Signup fehlgeschlagen.")
-  }
-
-
 }
 </script>
 

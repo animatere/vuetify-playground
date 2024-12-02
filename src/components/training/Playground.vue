@@ -6,8 +6,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Catplay from "@/components/playground/Catplay.vue";
-import Counter from "@/components/playground/Counter.vue";
+import Catplay from "@/components/training/Catplay.vue";
+import Counter from "@/components/training/Counter.vue";
 
 export default defineComponent({
   components: { Counter, Catplay },

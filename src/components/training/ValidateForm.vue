@@ -1,19 +1,15 @@
 <script lang="ts">
-import { VForm } from 'vuetify/components'
+import { VForm } from "vuetify/components";
 
 export default {
   data: () => ({
-    name: "",
     agreeToTerms: false,
     email: "",
-    // nameRules: () => [
-    //   value => !!value || 'Name is required',
-    //   // value => (value && value.length <= 10) || 'Name must be 10 characters or less',
-    // ],
     emailRules: [
       (value: string) => !!value || "Email is required. ",
       (value: string) => value.includes("@") || "No valid email address.",
-      (value: string) => value.indexOf("@") !== 0 || "Email should have username.",
+      (value: string) =>
+        value.indexOf("@") !== 0 || "Email should have username.",
       (value: string) =>
         value.indexOf(".") - value.indexOf("@") > 1 ||
         "Email should contain a valid domain.",
@@ -31,7 +27,6 @@ export default {
   methods: {
     async validate() {
       const { valid } = await (this.$refs.signUpform as VForm).validate();
-      console.log(this.formValidity);
       return valid;
     },
     resetForm() {
@@ -58,20 +53,6 @@ export default {
           >
           </v-text-field>
           <v-autocomplete label="Components" :items="items"> </v-autocomplete>
-          <!--        <v-file-input-->
-          <!--          label="Attached profile picture"-->
-          <!--        >-->
-          <!--        </v-file-input>-->
-
-          <!--        <v-text-field-->
-          <!--          label="Birthday"-->
-          <!--          v-model="birthday"-->
-          <!--          readonly>-->
-          <!--        </v-text-field>-->
-
-          <!--        <v-date-picker-->
-          <!--          v-model="birthday">-->
-          <!--        </v-date-picker><br>-->
           <v-col style="margin: 25px">
             <v-checkbox
               label="Agree to terms & conditions"
@@ -81,12 +62,22 @@ export default {
             >
             </v-checkbox>
           </v-col>
-          <v-btn color="primary" type="submit" :disabled="!formValidity"
+          <v-btn
+            color="primary"
+            class="validation-btn"
+            type="submit"
+            :disabled="!formValidity"
             >Submit</v-btn
           >
-          <v-btn color="warning" @click="resetForm">Reset</v-btn>
-          <v-btn color="error" @click="resetValidation">Reset Validation</v-btn>
-          <v-btn color="info" @click="validate">Validate</v-btn>
+          <v-btn color="warning" class="validation-btn" @click="resetForm"
+            >Reset</v-btn
+          >
+          <v-btn color="error" class="validation-btn" @click="resetValidation"
+            >Reset Validation</v-btn
+          >
+          <v-btn color="info" class="validation-btn" @click="validate"
+            >Validate</v-btn
+          >
         </v-form>
       </v-col>
     </v-row>
@@ -98,7 +89,14 @@ export default {
   margin-top: 15px;
   padding: 35px;
 }
-.v-btn {
-  margin-right: 5px;
+.validation-btn {
+  margin-right: 5px !important;
+  width: 180px !important;
+}
+
+@media (max-width: 800px) {
+  .validation-btn {
+    margin-top: 15px;
+  }
 }
 </style>

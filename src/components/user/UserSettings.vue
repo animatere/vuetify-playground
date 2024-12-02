@@ -16,7 +16,7 @@
           <v-card-title>Design</v-card-title>
           <v-card-text>
             <p>Wählen Sie Ihr Standard-Theme:</p>
-            <v-radio-group v-model="theme" row @change="updateTheme">
+            <v-radio-group v-model="settings.theme" @change="updateTheme" row>
               <v-radio label="Hell" value="light"></v-radio>
               <v-radio label="Dunkel" value="dark"></v-radio>
             </v-radio-group>
@@ -24,7 +24,7 @@
         </v-card>
       </v-col>
 
-      <!-- Benachrichtigungen (Platzhalter für weitere Einstellungen) -->
+      <!-- Benachrichtigungen -->
       <v-col cols="12" md="6">
         <v-card class="settings-card">
           <v-card-title>Benachrichtigungen</v-card-title>
@@ -41,6 +41,7 @@
         </v-card>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12" class="text-center mt-6">
         <v-btn color="primary" large @click="saveSettings">
@@ -52,30 +53,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useTheme } from "vuetify";
+import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
-
-const themeManager = useTheme();
+import { UserSettings } from "@/interfaces/interfaces";
 
 const store = useUserStore();
-const settings = ref({
-  notifications: true,
-  emailNotifications: false,
+const settings = ref({}) as Ref<UserSettings>;
+
+onMounted(() => {
+  settings.value = { ...store.userSettings };
 });
 
-// Aktuelles Theme
-const theme = ref(store.theme || "light");
-
-// Funktion: Theme wechseln
 function updateTheme() {
-  themeManager.global.name.value = theme.value; // Vuetify's global theme aktualisieren
-  store.setTheme(theme.value); // Im Store speichern
+  store.saveSettings(settings.value);
 }
 
-// Funktion: Einstellungen speichern
 function saveSettings() {
-  store.saveSettings({ theme: theme.value, ...settings.value });
+  store.saveSettings(settings.value);
 }
 </script>
 
@@ -93,9 +87,5 @@ function saveSettings() {
   margin-bottom: 20px;
   padding: 20px;
   height: 30vh;
-}
-
-.settings-card:hover {
-  background-color: #e1e1e1;
 }
 </style>

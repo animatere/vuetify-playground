@@ -1,24 +1,3 @@
-<script setup lang="ts">
-const items = [
-  {
-    id: 1,
-    url: "https://cdn.boldbi.com/wp/blogs/sales-opportunities/opportunities-by-created.webp",
-    alt: "Picture missing: Oppurtinities by Created Date",
-  },
-  {
-    id: 2,
-    url: "https://garysmithpartnership.com/wp-content/uploads/2019/03/PIPELI1.jpg",
-    alt: "Picture missing: Pipeline by Close Day",
-  },
-  {
-    id: 3,
-    url: "https://cdn.venngage.com/template/thumbnail/small/c3818539-d91a-49ba-b26a-98ea90bbeb19.webp",
-    alt: "Picture missing: Sales Performance Analysis",
-  },
-];
-
-</script>
-
 <template>
   <v-container>
     <v-row>
@@ -158,6 +137,26 @@ const items = [
     </v-row>
   </v-container>
 </template>
+
+<script setup lang="ts">
+  const items = [
+    {
+      id: 1,
+      url: "https://cdn.boldbi.com/wp/blogs/sales-opportunities/opportunities-by-created.webp",
+      alt: "Picture missing: Oppurtinities by Created Date",
+    },
+    {
+      id: 2,
+      url: "https://garysmithpartnership.com/wp-content/uploads/2019/03/PIPELI1.jpg",
+      alt: "Picture missing: Pipeline by Close Day",
+    },
+    {
+      id: 3,
+      url: "https://cdn.venngage.com/template/thumbnail/small/c3818539-d91a-49ba-b26a-98ea90bbeb19.webp",
+      alt: "Picture missing: Sales Performance Analysis",
+    },
+  ];
+</script>
 
 <style scoped>
 .v-card {
