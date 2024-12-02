@@ -13,22 +13,20 @@ const { login } = store;
 const router = useRouter();
 
 const notificationsStore = useNotificationsStore();
-notificationsStore.setPosition("top-left");
 const eventStore = useEventStore();
 
 async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
-  const success = await login(
-    email.value,
-    password.value
-  );
+  const success = await login(email.value, password.value);
 
   if (success) {
-    await reload();
+    notificationsStore.setPosition("top-center");
     notifyMessage("Login erfolgreich!", "success");
+    await reload();
     eventStore.addEvent("Benutzer hat sich eingeloggt");
   } else {
+    notificationsStore.setPosition("top-center");
     notifyMessage("Login fehlgeschlagen!", "error");
   }
 
@@ -38,6 +36,7 @@ async function submitForm(submitEvent: Event) {
 }
 
 function notifyMessage(message: string, type: string) {
+  notificationsStore.setPosition("top-center");
   notificationsStore.addNotification(message, type);
 }
 </script>

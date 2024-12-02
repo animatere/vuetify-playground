@@ -135,10 +135,16 @@ export const useUserStore = defineStore('user', {
      */
     async saveSettings(settings: UserSettings): Promise<boolean> {
       try {
-        if (!this.currentUser) {
+        if (!this.currentUser || !settings.userId) {
           console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.');
           return false;
         }
+
+        if(!settings.emailNotifications)
+          settings.emailNotifications = false;
+
+        if(!settings.notifications)
+          settings.notifications = false;
 
         settings.userId = this.currentUser.uid;
 
@@ -159,11 +165,17 @@ export const useUserStore = defineStore('user', {
     /**
      * Lade die Benutzereinstellungen aus Firebase
      */
-    async loadSettings(): Promise<void> {
+    async loadSettings(): Promise<UserSettings> {
       try {
         if (!this.currentUser) {
           console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht laden.');
-          return;
+          return { 
+            id: "",
+            userId: "",
+            theme: "light",
+            notifications: false,
+            emailNotifications: false
+          } as UserSettings
         }
 
         const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
@@ -173,13 +185,23 @@ export const useUserStore = defineStore('user', {
         if (response.data) {
           this.userSettings = response.data;
           console.log('Benutzereinstellungen geladen:', this.userSettings);
+          return this.userSettings as UserSettings;
         } else {
           console.warn('Keine Benutzereinstellungen für den aktuellen Benutzer gefunden');
           this.currentUser = {} as User;
-          this.userSettings = {} as UserSettings;        }
+          this.userSettings = {} as UserSettings; }
+
       } catch (err) {
         console.error('Fehler beim Laden der Benutzereinstellungen:', err);
       }
+      return { 
+        id: "",
+        userId: "",
+        theme: "light",
+        notifications: false,
+        emailNotifications: false
+      } as UserSettings;
+
     },
   },
 });

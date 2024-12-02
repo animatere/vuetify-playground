@@ -20,43 +20,37 @@ import { storeToRefs } from "pinia";
 import { useTheme } from "vuetify";
 
 const store = useUserStore();
-const { userSettings, currentUser } = storeToRefs(store); // Zugriff auf Benutzerdaten
+const { userSettings, currentUser } = storeToRefs(store);
 const theme = useTheme();
-const currentTheme = ref("light"); // Standardwert für Theme
+const currentTheme = ref("light");
 
-// Überwache Änderungen an den Benutzereinstellungen
 watch(
   () => userSettings.value?.theme,
   (newTheme) => {
     if (newTheme) {
       currentTheme.value = newTheme;
-      theme.global.name.value = newTheme; // Vuetify-Theme aktualisieren
+      theme.global.name.value = newTheme;
     }
   },
 );
 
-// Beim Start der App: Benutzerstatus und Einstellungen überwachen
 onMounted(async () => {
-  store.watchCurrentUser(); // Überwache den Benutzerstatus
+  store.watchCurrentUser();
 
-  // Warte auf das Laden der Benutzereinstellungen
   if (currentUser.value) {
-    await store.loadSettings(); // Benutzereinstellungen laden
+    await store.loadSettings();
   }
 
-  // Stelle sicher, dass das Theme korrekt initialisiert ist
   currentTheme.value = userSettings.value?.theme || "light";
   theme.global.name.value = currentTheme.value;
 });
 
-// Theme umschalten und speichern
 async function toggleTheme() {
   const newTheme = currentTheme.value === "dark" ? "light" : "dark";
   currentTheme.value = newTheme;
   theme.global.name.value = newTheme;
 
   try {
-    // Einstellungen speichern
     await store.saveSettings(userSettings?.value ?? {} as UserSettings);
   } catch (error) {
     console.error("Fehler beim Speichern der Einstellungen:", error);
