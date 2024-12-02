@@ -22,7 +22,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import HomeView from "../views/HomeView.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
-  console.log("ROUTE AUTHORIZE: ", auth.currentUser);
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
 
   userStore.checkAuth();
@@ -36,10 +35,8 @@ const requireAuth = (to: any, from: any, next: any) => {
 const onlyNotLoggedUser = (to: any, from: any, next: any) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("User is authenticated, redirecting to /home");
       next("/home");
     } else {
-      console.log("User is not authenticated, allowing access");
       next();
     }
   });

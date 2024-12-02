@@ -56,9 +56,20 @@
 import { ref, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { UserSettings } from "@/interfaces/interfaces";
+import { storeToRefs } from "pinia";
 
 const store = useUserStore();
+const { userSettings } = storeToRefs(store);
 const settings = ref({}) as Ref<UserSettings>;
+
+watch(
+  () => userSettings.value?.theme,
+  (newTheme) => {
+    if (newTheme) {
+      settings.value.theme = newTheme;
+    }
+  },
+);
 
 onMounted(async () => {
   try {
