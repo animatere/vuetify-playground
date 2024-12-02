@@ -54,22 +54,21 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
-import { onMounted, reactive } from "vue";
+import { onMounted } from "vue";
 import { storeToRefs } from "pinia";
 
 const store = useUserStore();
 const { currentUser } = storeToRefs(store);
 const userName = ref("");
 
-const editData = reactive({
-  username: currentUser.value?.displayName,
-  email: currentUser.value?.email as string,
-  // ToDo: add real database: get access to all user data to load them
-  // password: currentUser.value?.password,
-  // password: "Test12345",
-  loggedIn: !!currentUser,
-  registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now
-});
+watch(
+  () => currentUser.value?.displayName,
+  (newDisplayName) => {
+    if (newDisplayName) {
+      userName.value = newDisplayName;
+    }
+  },
+);
 
 onMounted(async () => {
   try {
