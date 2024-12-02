@@ -2,10 +2,9 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <p v-if="editData.username" style="font-weight: bold; font-size: 40px">
-          {{ editData.username }}!
+        <p style="font-weight: bold; font-size: 40px">
+          {{ userName }}!
         </p>
-        <p v-else>Benutzer wird geladen ...</p>
         <p>Es freut uns, dass du wieder da bist. Was möchtest du heute tun?</p>
       </v-col>
     </v-row>
@@ -60,6 +59,7 @@ import { storeToRefs } from "pinia";
 
 const store = useUserStore();
 const { currentUser } = storeToRefs(store);
+const userName = ref("");
 
 const editData = reactive({
   username: currentUser.value?.displayName,
@@ -72,8 +72,17 @@ const editData = reactive({
 });
 
 onMounted(async () => {
-  console.log("Mounted Home: ", editData);
+  try {
+    await store.checkAuth();
+    if (currentUser.value?.displayName) {
+      userName.value = currentUser.value.displayName;
+      console.log("User wurde erfolgreich geladen!")
+    }
+  } catch (error) {
+    console.error("Fehler beim Laden des Users:", error);
+  }
 });
+
 
 </script>
 

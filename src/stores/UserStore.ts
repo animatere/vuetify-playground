@@ -94,23 +94,6 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    /**
-     * Überwache den aktuellen Benutzerstatus
-     */
-    watchCurrentUser(): void {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          this.currentUser = user;
-
-          // Benutzereinstellungen automatisch laden
-          await this.loadSettings();
-        } else {
-          this.currentUser = {} as User;
-          this.userSettings = {} as UserSettings;
-        }
-      });
-    },
-
     async checkAuth(): Promise<boolean> {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {

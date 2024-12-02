@@ -20,7 +20,7 @@ import { storeToRefs } from "pinia";
 import { useTheme } from "vuetify";
 
 const store = useUserStore();
-const { userSettings, currentUser } = storeToRefs(store);
+const { userSettings } = storeToRefs(store);
 const theme = useTheme();
 const currentTheme = ref("light");
 
@@ -35,11 +35,7 @@ watch(
 );
 
 onMounted(async () => {
-  store.watchCurrentUser();
-
-  if (currentUser.value) {
-    await store.loadSettings();
-  }
+  store.checkAuth();
 
   currentTheme.value = userSettings.value?.theme || "light";
   theme.global.name.value = currentTheme.value;
@@ -51,7 +47,22 @@ async function toggleTheme() {
   theme.global.name.value = newTheme;
 
   try {
-    await store.saveSettings(userSettings?.value ?? {} as UserSettings);
+    await store.loadSettings();
+
+    if(userSettings.value){
+      const newSettings = {
+        id: userSettings.value.id,
+        userId: userSettings.value.userId,
+        theme: newTheme,
+        notifications: userSettings.value.notifications,
+        emailNotifications: userSettings.value.emailNotifications,
+      } as UserSettings
+
+      await store.saveSettings(newSettings);
+      console.log("speiche user settings nach toggle");
+    }
+
+
   } catch (error) {
     console.error("Fehler beim Speichern der Einstellungen:", error);
   }
