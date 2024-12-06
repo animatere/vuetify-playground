@@ -19,13 +19,12 @@ export default {
     watchEffect(() => {
       if (textContent.value.length > 0) {
         isTyping.value = true;
-        console.log(textContent.value);
         setTimeout(() => {
           isTyping.value = false;
         }, 700);
       }
     });
-    
+
     return {
       isTyping,
       textContent,

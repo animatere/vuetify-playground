@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserSettings } from '@/interfaces/interfaces'
+import { UserSettings } from "@/interfaces/interfaces";
 import { ref, watch, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
@@ -49,20 +49,17 @@ async function toggleTheme() {
   try {
     await store.loadSettings();
 
-    if(userSettings.value){
+    if (userSettings.value) {
       const newSettings = {
         id: userSettings.value.id,
         userId: userSettings.value.userId,
         theme: newTheme,
         notifications: userSettings.value.notifications,
         emailNotifications: userSettings.value.emailNotifications,
-      } as UserSettings
+      } as UserSettings;
 
       await store.saveSettings(newSettings);
-      console.log("speiche user settings nach toggle");
     }
-
-
   } catch (error) {
     console.error("Fehler beim Speichern der Einstellungen:", error);
   }

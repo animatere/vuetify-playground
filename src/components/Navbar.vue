@@ -1,5 +1,6 @@
 <template>
-  <nav v-if="isAuthenticated" class="navbar">
+  <!-- navbar for logged in user -->
+  <nav v-if="defaultUser.id" class="navbar">
     <div class="navbar-logo">
       <router-link to="/home">
         <img
@@ -48,7 +49,11 @@
           <router-link to="/todo" class="dropdown-item" @click="closeDropdown">
             ToDo
           </router-link>
-          <router-link to="/layout" class="dropdown-item" @click="closeDropdown">
+          <router-link
+            to="/layout"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
             Layout
           </router-link>
           <router-link to="/chat" class="dropdown-item" @click="closeDropdown">
@@ -60,6 +65,42 @@
             @click="closeDropdown"
           >
             TableViews
+          </router-link>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <router-link to="/playground" class="nav-item" @click="closeDropdown">
+          Shop
+        </router-link>
+        <div class="dropdown-content" style="background-color: #4ea8de">
+          <router-link
+            to="/shop-item-overview"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Item-overview
+          </router-link>
+          <router-link
+            to="/shop-single-item"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Single-Item
+          </router-link>
+          <router-link
+            to="/shop-shopping-cart"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Shopping-Cart
+          </router-link>
+          <router-link
+            to="/shop-payment-page"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Payment Page
           </router-link>
         </div>
       </div>
@@ -117,75 +158,113 @@
 
     <div v-if="menuOpen" class="navbar-dropdown">
       <router-link to="/home" class="dropdown-item" @click="closeDropdown"
-      >Home</router-link
+        >Home</router-link
       >
       <router-link to="/watch" class="dropdown-item" @click="closeDropdown"
-      >Watch</router-link
+        >Watch</router-link
       >
       <router-link
         to="/table-views"
         class="dropdown-item"
         @click="closeDropdown"
-      >TableViews</router-link
+        >TableViews</router-link
       >
       <router-link to="/layout" class="dropdown-item" @click="closeDropdown"
-      >Layout</router-link
+        >Layout</router-link
       >
       <router-link to="/tasks" class="dropdown-item" @click="closeDropdown"
-      >Tasks</router-link
+        >Tasks</router-link
       >
       <router-link to="/forms" class="dropdown-item" @click="closeDropdown"
-      >Forms</router-link
+        >Forms</router-link
       >
       <router-link to="/todo" class="dropdown-item" @click="closeDropdown"
-      >ToDo</router-link
+        >ToDo</router-link
       >
       <router-link
         to="/user-profile"
         class="dropdown-item"
         @click="closeDropdown"
-      >Profile</router-link
+        >Profile</router-link
       >
       <router-link
         to="/user-settings"
         class="dropdown-item"
         @click="closeDropdown"
-      >Settings</router-link
+        >Settings</router-link
       >
     </div>
   </nav>
+
+  <!-- navbar for not logged in user -->
   <nav v-else class="navbar">
-    <!-- User Navbar -->
     <router-link to="/home" style="text-decoration: none">
       <v-icon class="mdi-account" icon="mdi-home"></v-icon>
     </router-link>
-    <!-- Mobile Dropdown Menu -->
   </nav>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { auth } from "../../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "vue-router";
+import { UserData } from "@/interfaces/interfaces";
+import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/UserStore";
+import { checkUserLoggedin } from "./composable/checkUserLoggedin";
 
-const isAuthenticated = ref(false); //
 const menuOpen = ref(false);
 const userMenuOpen = ref(false);
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
 
 const router = useRouter();
+let defaultUser = ref<UserData>({
+  id: "",
+  username: "",
+  email: "",
+  password: "",
+  loggedIn: false,
+  registered: false,
+});
 
-// Überprüfe den Authentifizierungsstatus bei der Initialisierung
-onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
-    isAuthenticated.value = !!user; // true, wenn ein User existiert
-  });
+watch(
+  () => currentUser.value,
+  (newCurrentUser) => {
+    if (newCurrentUser.uid) {
+      defaultUser.value = {
+        id: newCurrentUser.uid.toString(),
+        username: newCurrentUser.email?.split("@")[0],
+        email: newCurrentUser.email as string,
+        password: "Test12345",
+        loggedIn: !!newCurrentUser, // placeholder
+        registered: !newCurrentUser.emailVerified, // placeholder
+      } as UserData;
+    } else {
+      defaultUser.value = {
+        id: "",
+        username: "",
+        email: "",
+        password: "",
+        loggedIn: false,
+        registered: false,
+      };
+    }
+  },
+);
+
+onMounted(async () => {
+  try {
+    await userStore.checkAuth();
+    defaultUser.value = await checkUserLoggedin();
+  } catch (error: any) {
+    console.error("Fehler bei userStore.checkAuth():", error);
+  }
 });
 
 // Logout-Funktion
 async function logoutClicked() {
   await auth.signOut();
-  isAuthenticated.value = false; // Authentifizierung zurücksetzen
   router.push("/login");
 }
 
@@ -201,7 +280,6 @@ function closeDropdown() {
   menuOpen.value = false;
   userMenuOpen.value = false;
 }
-
 </script>
 
 <style>

@@ -1,4 +1,4 @@
-import { TaskCategory } from '@/Enums/TaskCategory'
+import { TaskCategory } from "@/Enums/TaskCategory";
 
 export interface Variant {
   id: number;
@@ -25,6 +25,7 @@ export type Employees = Employee[];
 
 export interface Tasks {
   id: number;
+  userId: string;
   category: TaskCategory;
   title: string;
   priority: string;

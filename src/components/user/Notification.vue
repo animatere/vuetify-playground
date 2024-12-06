@@ -22,7 +22,6 @@ const notificationsStore = useNotificationsStore();
   border-radius: 5px;
   color: #fff;
   font-weight: bold;
-  position: fixed;
   z-index: 1000;
 }
 

@@ -1,4 +1,4 @@
-import Chat from '@/components/training/Chat.vue'
+import Chat from "@/components/training/Chat.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "../../firebase";
 
@@ -14,10 +14,8 @@ import SignUp from "@/components/user/SignUp.vue";
 import Catplay from "@/components/training/Catplay.vue";
 import Counter from "@/components/training/Counter.vue";
 import ValidateForm from "@/components/training/ValidateForm.vue";
-import { useUserStore } from '@/stores/UserStore'
+import { useUserStore } from "@/stores/UserStore";
 import { onAuthStateChanged } from "firebase/auth";
-
-
 
 import HomeView from "../views/HomeView.vue";
 

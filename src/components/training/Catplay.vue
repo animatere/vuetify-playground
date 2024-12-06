@@ -1,54 +1,56 @@
 <template>
-  <h1>{{ title }}</h1>
+  <div class="catplay">
+    <h1>{{ title }}</h1>
 
-  <div v-if="selectedItem.quantity > 5" style="color: red; font-size: larger">
-    On Sale!
-  </div>
-  <div
-    v-else-if="selectedItem.quantity === 0"
-    style="color: red; font-size: larger"
-  >
-    Out of stock!
-  </div>
-  <div v-else><br /></div>
-
-  <div class="mood-btns">
-    <h1>Select one Mood</h1>
-    <v-btn variant="outlined" @click="red">Angry</v-btn>
-    <v-btn variant="flat" @click="green">Chill</v-btn><br />
-    <v-btn variant="elevated" @click="blue">Sleepy</v-btn>
-    <v-btn variant="tonal" @click="orange">Friends</v-btn><br />
-    <v-btn variant="text" @click="grey">Cute</v-btn>
-    <v-btn variant="plain" @click="yellow">Fighting</v-btn><br />
-  </div>
-
-  <div class="currentCat">
-    <img
-      :style="{
-        border: 'solid ' + selectedItem.color + ' 5px',
-        borderRadius: '25px',
-        width: '500px',
-        height: '450px',
-      }"
-      :src="selectedItem.image"
-      alt=""
-    /><br />
-  </div>
-  <div class="picNavigator">
-    <v-btn @click="last" :disabled="picCount === 0">Last</v-btn>
-    <v-btn @click="next" :disabled="item.variants.length === picCount + 1"
-      >Next</v-btn
-    ><br />
-  </div>
-  <h1>Color Select</h1>
-  <div class="colorSelect">
+    <div v-if="selectedItem.quantity > 5" style="color: red; font-size: larger">
+      On Sale!
+    </div>
     <div
-      v-for="variant in item.variants"
-      :key="variant.id"
-      @click="changeOnClick(variant.id)"
-      class="color-circle"
-      :style="{ backgroundColor: variant.color }"
-    ></div>
+      v-else-if="selectedItem.quantity === 0"
+      style="color: red; font-size: larger"
+    >
+      Out of stock!
+    </div>
+    <div v-else><br /></div>
+
+    <div class="mood-btns">
+      <h1>Select one Mood</h1>
+      <v-btn variant="outlined" @click="red">Angry</v-btn>
+      <v-btn variant="flat" @click="green">Chill</v-btn><br />
+      <v-btn variant="elevated" @click="blue">Sleepy</v-btn>
+      <v-btn variant="tonal" @click="orange">Friends</v-btn><br />
+      <v-btn variant="text" @click="grey">Cute</v-btn>
+      <v-btn variant="plain" @click="yellow">Fighting</v-btn><br />
+    </div>
+
+    <div class="currentCat">
+      <img
+        :style="{
+          border: 'solid ' + selectedItem.color + ' 5px',
+          borderRadius: '25px',
+          width: '500px',
+          height: '450px',
+        }"
+        :src="selectedItem.image"
+        alt=""
+      /><br />
+    </div>
+    <div class="picNavigator">
+      <v-btn @click="last" :disabled="picCount === 0">Last</v-btn>
+      <v-btn @click="next" :disabled="item.variants.length === picCount + 1"
+        >Next</v-btn
+      ><br />
+    </div>
+    <h1>Color Select</h1>
+    <div class="colorSelect">
+      <div
+        v-for="variant in item.variants"
+        :key="variant.id"
+        @click="changeOnClick(variant.id)"
+        class="color-circle"
+        :style="{ backgroundColor: variant.color }"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -154,8 +156,6 @@ export default defineComponent({
 
     const changeOnClick = (id: number) => {
       const variant = item.variants.find((v) => v.id === id);
-      console.log(id);
-
       if (variant) {
         selectedItem.value = variant;
         picCount.value = item.variants.findIndex((cat) => cat.id === id);
@@ -192,6 +192,10 @@ v-btn {
   padding: 0.5rem 1rem;
   cursor: pointer;
   width: 150px;
+}
+
+.catplay {
+  height: 110vh;
 }
 
 .color-circle {
