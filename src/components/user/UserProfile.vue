@@ -3,8 +3,8 @@
     <!-- Profilüberschrift -->
     <v-row class="mb-6">
       <v-col cols="12" class="text-center">
-        <p v-if="myUser.username" style="font-weight: bold; font-size: 40px">
-          {{ myUser.username }}!
+        <p v-if="defaultUser.username" style="font-weight: bold; font-size: 40px">
+          {{ defaultUser.username }}!
         </p>
         <p v-else>Benutzer wird geladen...</p>
         <p class="profile-subtitle">Hier sind deine Profildetails.</p>
@@ -19,20 +19,20 @@
           <v-card-text>
             <div class="info-item">
               <span class="info-label">Benutzername:</span>
-              <span class="info-value">{{ myUser.username }}</span>
+              <span class="info-value">{{ defaultUser.username }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">E-Mail:</span>
-              <span class="info-value">{{ myUser.email }}</span>
+              <span class="info-value">{{ defaultUser.email }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Status:</span>
               <span class="info-value">
                 <v-chip
-                  :color="myUser.loggedIn ? 'green' : 'red'"
+                  :color="defaultUser.loggedIn ? 'green' : 'red'"
                   text-color="white"
                 >
-                  {{ myUser.loggedIn ? "Online" : "Offline" }}
+                  {{ defaultUser.loggedIn ? "Online" : "Offline" }}
                 </v-chip>
               </span>
             </div>
@@ -40,10 +40,10 @@
               <span class="info-label">Registriert:</span>
               <span class="info-value">
                 <v-chip
-                  :color="myUser.registered ? 'blue' : 'grey'"
+                  :color="defaultUser.registered ? 'blue' : 'grey'"
                   text-color="white"
                 >
-                  {{ myUser.registered ? "Ja" : "Nein" }}
+                  {{ defaultUser.registered ? "Ja" : "Nein" }}
                 </v-chip>
               </span>
             </div>
@@ -59,18 +59,18 @@
             <v-form ref="profileForm" v-model="formValid">
               <v-text-field
                 label="Benutzername"
-                v-model="myUser.username"
+                v-model="defaultUser.username"
                 required
               ></v-text-field>
               <v-text-field
                 label="E-Mail"
-                v-model="myUser.email"
+                v-model="defaultUser.email"
                 type="email"
                 required
               ></v-text-field>
               <v-text-field
                 label="Passwort"
-                v-model="myUser.password"
+                v-model="defaultUser.password"
                 type="password"
                 required
               ></v-text-field>
@@ -125,18 +125,19 @@ const userStore = useUserStore();
 const eventStore = useEventStore();
 const { currentUser } = storeToRefs(userStore);
 
-let myUser = ref<UserData>({
+let defaultUser = ref<UserData>({
   id: "",
   username: "",
   email: "",
-  password: "Test12345",
+  password: "",
   loggedIn: false,
   registered: false,
 });
 
-onMounted(() => {
+
+onMounted(async () => {
   try {
-    checkUserLoggedin();
+    defaultUser.value = await checkUserLoggedin();
   } catch (error: any) {
     console.error("Fehler bei userStore.checkAuth():", error);
   }
@@ -144,16 +145,25 @@ onMounted(() => {
 
 watch(
   () => currentUser.value,
-  (newUser) => {
-    if (newUser) {
-      myUser.value = {
-        id: newUser.uid.toString(),
-        username: newUser.displayName as string,
-        email: newUser.email as string,
-        password: "",
-        loggedIn: !!newUser,
-        registered: !newUser.emailVerified,
+  (newCurrentUser) => {
+    if (newCurrentUser.uid) {
+      defaultUser.value = {
+        id: newCurrentUser.uid.toString(),
+        username: newCurrentUser.email?.split("@")[0],
+        email: newCurrentUser.email as string,
+        password: "Test12345",
+        loggedIn: !!newCurrentUser, // placeholder
+        registered: !newCurrentUser.emailVerified, // placeholder
       } as UserData;
+    } else {
+      defaultUser.value = {
+        id: "",
+        username: "",
+        email: "",
+        password: "",
+        loggedIn: false,
+        registered: false,
+      };
     }
   },
 );

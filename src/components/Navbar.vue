@@ -228,6 +228,15 @@ let defaultUser = ref<UserData>({
   registered: false,
 });
 
+onMounted(async () => {
+  try {
+    await userStore.checkAuth();
+    defaultUser.value = await checkUserLoggedin();
+  } catch (error: any) {
+    console.error("Fehler bei userStore.checkAuth():", error);
+  }
+});
+
 watch(
   () => currentUser.value,
   (newCurrentUser) => {
@@ -252,15 +261,6 @@ watch(
     }
   },
 );
-
-onMounted(async () => {
-  try {
-    await userStore.checkAuth();
-    defaultUser.value = await checkUserLoggedin();
-  } catch (error: any) {
-    console.error("Fehler bei userStore.checkAuth():", error);
-  }
-});
 
 // Logout-Funktion
 async function logoutClicked() {
