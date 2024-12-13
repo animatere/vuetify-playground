@@ -108,7 +108,6 @@ export const useUserStore = defineStore("user", {
         onAuthStateChanged(auth, async (user) => {
           if (user) {
             this.currentUser = user;
-            console.log("Benutzerstatus wiederhergestellt");
 
             await this.loadSettings();
             return true;
@@ -143,7 +142,6 @@ export const useUserStore = defineStore("user", {
 
         // Speichere die Einstellungen spezifisch für den Benutzer
         await axios.put(userSettingsRef, settings);
-        console.log("Benutzereinstellungen gespeichert");
 
         this.userSettings = settings;
         return true;

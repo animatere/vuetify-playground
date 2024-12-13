@@ -1,6 +1,6 @@
 {
-  "name": "vuetify-playground",
-  "version": "0.0.0",
+  "name": "wowa-solutions",
+  "version": "0.0.1",
   "scripts": {
     "build": "vue-tsc --noEmit && vite build",
     "dev": "vite",
