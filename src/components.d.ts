@@ -12,6 +12,7 @@ declare module 'vue' {
     Chat: typeof import('./components/training/Chat.vue')['default']
     Counter: typeof import('./components/training/Counter.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
+    ItemOverview: typeof import('./components/shop/ItemOverview.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     Layout: typeof import('./components/training/Layout.vue')['default']
     Login: typeof import('./components/user/Login.vue')['default']

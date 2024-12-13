@@ -18,6 +18,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { onAuthStateChanged } from "firebase/auth";
 
 import HomeView from "../views/HomeView.vue";
+import ItemOverview from "@/components/shop/ItemOverview.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -131,6 +132,12 @@ const router = createRouter({
       path: "/user-profile",
       name: "user-profile",
       component: UserProfile,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/shop-item-overview",
+      name: "item-overview",
+      component: ItemOverview,
       beforeEnter: requireAuth,
     },
   ],
