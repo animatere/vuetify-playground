@@ -27,8 +27,8 @@
     <!-- Main Content -->
     <v-main>
       <v-container>
-        <!-- Categories -->
         <v-row>
+          <!-- Sidebar Filters -->
           <v-col cols="12" md="3">
             <v-card class="pa-3">
               <v-list>
@@ -59,17 +59,28 @@
             </v-card>
           </v-col>
 
-          <!-- Products -->
+          <!-- Products Overview -->
           <v-col cols="12" md="9">
             <v-row>
               <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4">
                 <v-card class="mb-4">
-                  <v-img :src="product.image" height="200px"></v-img>
-                  <v-card-title>{{ product.name }}</v-card-title>
-                  <v-card-subtitle>${{ product.price }}</v-card-subtitle>
+                  <v-img :src="product.link" height="200px" contain></v-img>
+                  <v-card-title>{{ product.title }}</v-card-title>
+                  <v-card-subtitle>Brand: {{ product.brand }} - ${{ product.price }}</v-card-subtitle>
+                  <v-card-text>
+                    <ul>
+                      <li v-for="detail in product.details" :key="detail">{{ detail }}</li>
+                    </ul>
+                  </v-card-text>
                   <v-card-actions>
-                    <v-btn text @click="openProductDialog(product)">View</v-btn>
-                    <v-btn text @click="addToCart(product, selectedQuantity)">Add to Cart</v-btn>
+                    <v-btn icon text @click="openProductDialog(product)" class="card-actions-btn">
+                      <v-icon class="card-actions-icon">mdi-magnify</v-icon>
+                      <p class="card-actions-text">View</p>
+                    </v-btn><br>
+                    <v-btn icon text :disabled="!product.inStock" @click="addToCart(product, selectedQuantity)" class="card-actions-btn">
+                      <v-icon class="card-actions-icon">mdi-cart</v-icon>
+                      <p class="card-actions-text">Add</p>
+                    </v-btn>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -87,7 +98,8 @@
         <v-list>
           <v-list-item v-for="item in cartItems" :key="item.id">
             <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-title>{{ item.link }}</v-list-item-title>
+              <v-list-item-subtitle>Brand: {{ item.brand }}</v-list-item-subtitle>
               <v-list-item-subtitle>Quantity: {{ item.quantity }}</v-list-item-subtitle>
               <v-list-item-subtitle>Total: ${{ (item.price * item.quantity).toFixed(2) }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -109,24 +121,33 @@
     <v-dialog v-model="productDialogVisible" max-width="800px">
       <v-card>
         <v-card-title>
-          <span class="text-h5">{{ selectedProduct?.name }}</span>
+          <span class="text-h5">{{ selectedProduct?.title }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <v-img :src="selectedProduct?.image" contain max-height="300px"></v-img>
+                <v-img :src="selectedProduct?.link" contain max-height="300px"></v-img>
               </v-col>
               <v-col cols="12" md="6">
-                <p>{{ selectedProduct?.description }}</p>
-                <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+                <p><strong>Description:</strong> {{ selectedProduct?.description }}</p>
+                <p><strong>Ingredients:</strong></p>
+                <ul>
+                  <li v-for="ing in selectedProduct?.incredience" :key="ing">{{ ing }}</li>
+                </ul>
                 <v-select
-                  v-model="selectedQuantity"
-                  :items="quantityOptions"
-                  label="Select Quantity"
+                  v-model="selectedProduct.selectedVariant"
+                  :items="selectedProduct?.variants"
+                  item-text="name"
+                  item-value="id"
+                  label="Select Variant"
                   outlined
                 ></v-select>
-                <v-btn color="primary" @click="addToCart(selectedProduct, selectedQuantity)">Add to Cart</v-btn>
+                <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+                <v-btn color="primary" @click="addToCart(selectedProduct, selectedQuantity)">
+                  <v-icon class="card-actions-icon">mdi-cart</v-icon>
+                  <p class="card-actions-text">Add to Cart</p>
+                </v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -147,11 +168,13 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       search: "",
-      categories: ["Gaming Mice", "Keyboards", "Headsets", "Monitors", "Chairs"],
+      categories: ["Accessory", "Audio", "Display", "Furniture"],
       selectedCategories: [],
       priceRange: [0, 500],
       cartVisible: false,
@@ -159,17 +182,8 @@ export default {
       selectedProduct: null,
       selectedQuantity: 1,
       quantityOptions: Array.from({ length: 20 }, (_, i) => i + 1),
-      cartItems: [
-        { id: 1, name: "Gaming Mouse - Pro X", price: 79.99, quantity: 1 },
-        { id: 2, name: "Mechanical Keyboard - RGB", price: 129.99, quantity: 1 },
-      ],
-      products: [
-        { id: 1, name: "Gaming Mouse - Pro X", price: 79.99, category: "Gaming Mice", image: "https://via.placeholder.com/150", description: "High-performance gaming mouse with customizable buttons and RGB lighting." },
-        { id: 2, name: "Mechanical Keyboard - RGB", price: 129.99, category: "Keyboards", image: "https://via.placeholder.com/150", description: "Durable mechanical keyboard with customizable RGB backlighting and ergonomic design." },
-        { id: 3, name: "Surround Sound Headset", price: 99.99, category: "Headsets", image: "https://via.placeholder.com/150", description: "Comfortable headset with immersive surround sound and noise-cancelling microphone." },
-        { id: 4, name: "4K Gaming Monitor", price: 499.99, category: "Monitors", image: "https://via.placeholder.com/150", description: "Ultra HD gaming monitor with high refresh rate and vibrant colors." },
-        { id: 5, name: "Ergonomic Gaming Chair", price: 199.99, category: "Chairs", image: "https://via.placeholder.com/150", description: "Comfortable gaming chair with adjustable lumbar support and premium materials." },
-      ],
+      cartItems: [],
+      products: [],
       cartAnimation: false,
     };
   },
@@ -181,22 +195,41 @@ export default {
     filteredProducts() {
       let filtered = this.products;
 
+      // Kategorie-Filterung
       if (this.selectedCategories.length > 0) {
-        filtered = filtered.filter(product => this.selectedCategories.includes(product.category));
-      }
-
-      if (this.search.trim() !== "") {
         filtered = filtered.filter(product =>
-          product.name.toLowerCase().includes(this.search.toLowerCase())
+          product.title.includes(this.selectedCategories) || 
+          product.brand.includes(this.selectedCategories) || 
+          product.product.includes(this.selectedCategories)
         );
       }
 
-      filtered = filtered.filter(product => product.price >= this.priceRange[0] && product.price <= this.priceRange[1]);
+      // Suchfeld-Filterung
+      if (this.search.trim() !== "") {
+        filtered = filtered.filter(product =>
+          product.title.toLowerCase().includes(this.search.toLowerCase()) ||
+          product.description.toLowerCase().includes(this.search.toLowerCase()) ||
+          product.brand.toLowerCase().includes(this.search.toLowerCase())
+        );
+      }
+
+      // Preis-Range-Filterung
+      filtered = filtered.filter(
+        product => product.price >= this.priceRange[0] && product.price <= this.priceRange[1]
+      );
 
       return filtered;
     },
   },
   methods: {
+    async fetchProducts() {
+      try {
+        const response = await axios.get("http://localhost:4000/items");
+        this.products = response.data;
+      } catch (error) {
+        console.error("Error loading products:", error);
+      }
+    },
     openProductDialog(product) {
       this.selectedProduct = product;
       this.productDialogVisible = true;
@@ -220,6 +253,9 @@ export default {
       this.cartAnimation = true;
     },
   },
+  async mounted() {
+    await this.fetchProducts();
+  },
 };
 </script>
 
@@ -239,6 +275,50 @@ export default {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%!important;
+}
+
+.product-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.product-title,
+.product-subtitle {
+  text-align: center;
+}
+
+.product-details {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.card-actions-btn{
+  min-width: 100px;
+  border-radius: 5px;
+}
+
+.card-actions-icon{
+  margin-right: 5px;
+}
+@media (max-width: 1280px) {
+  .card-actions-btn{
+    display: none;
+    min-width: 50px;
+  }
+  .card-actions-icon{
+  margin-right: 0px;
+  }
+  .card-actions-text{
+    display: none;
   }
 }
 </style>
