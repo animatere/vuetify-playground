@@ -17,7 +17,7 @@
         <p class="foot-links">{{ link }}</p>
       </v-btn>
       <v-col class="text-center mt-4" cols="12" style="color: black">
-        {{ new Date().getFullYear() }} — <strong> by Vuetify</strong>
+        {{ new Date().getFullYear() }} — <strong> by Wowa Solutions GmbH</strong>
       </v-col>
     </v-row>
   </v-footer>

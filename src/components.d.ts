@@ -13,6 +13,7 @@ declare module 'vue' {
     Counter: typeof import('./components/training/Counter.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
     ItemOverview: typeof import('./components/shop/ItemOverview.vue')['default']
+    ItemSingleView: typeof import('./components/shop/ItemSingleView.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     Layout: typeof import('./components/training/Layout.vue')['default']
     Login: typeof import('./components/user/Login.vue')['default']

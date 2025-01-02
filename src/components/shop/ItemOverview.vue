@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Header -->
-    <v-app-bar app>
+    <v-app-bar app style="z-index: 0 !important ;">
       <v-container class="d-flex justify-space-between">
         <div class="d-flex align-center">
           <v-btn text class="text-h5">GamingGear</v-btn>

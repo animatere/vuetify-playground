@@ -19,6 +19,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import HomeView from "../views/HomeView.vue";
 import ItemOverview from "@/components/shop/ItemOverview.vue";
+import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -138,6 +139,12 @@ const router = createRouter({
       path: "/shop-item-overview",
       name: "item-overview",
       component: ItemOverview,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/shop-single-item",
+      name: "item-single-view",
+      component: ItemSingleView,
       beforeEnter: requireAuth,
     },
   ],
