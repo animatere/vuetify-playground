@@ -130,6 +130,20 @@
           >
             Settings
           </router-link>
+          <router-link
+            to="/purchase-history"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Bestellhistorie
+          </router-link>
+          <router-link
+            to="/admin-dashboard"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Admin Dashboard
+          </router-link>
           <p @click="logoutClicked" class="dropdown-item logout-button">
             <v-icon
               class="mdi-account"

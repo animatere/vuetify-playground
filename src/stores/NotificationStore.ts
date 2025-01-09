@@ -9,7 +9,7 @@ export const useNotificationsStore = defineStore("notifications", {
     addNotification(message: string, type: string = "info") {
       const id = Date.now();
       this.notifications.push({ id, message, type });
-      // Entfernt die Benachrichtigung automatisch nach 5 Sekunden
+      // Entfernt die Benachrichtigung automatisch nach x millisekunden
       setTimeout(() => this.removeNotification(id), 2200);
     },
     removeNotification(id: number) {

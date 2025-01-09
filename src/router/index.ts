@@ -20,6 +20,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import HomeView from "../views/HomeView.vue";
 import ItemOverview from "@/components/shop/ItemOverview.vue";
 import ItemSingleView from "@/components/shop/ItemSingleView.vue";
+import AdminDashboard from "@/components/admin/AdminDashboard.vue";
+import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -136,6 +138,12 @@ const router = createRouter({
       beforeEnter: requireAuth,
     },
     {
+      path: "/admin-dashboard",
+      name: "admin-dashboard",
+      component: AdminDashboard,
+      beforeEnter: requireAuth,
+    },
+    {
       path: "/shop-item-overview",
       name: "item-overview",
       component: ItemOverview,
@@ -145,6 +153,12 @@ const router = createRouter({
       path: "/shop-single-item",
       name: "item-single-view",
       component: ItemSingleView,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/purchase-history",
+      name: "purchase-history",
+      component: UserPurchaseHistory,
       beforeEnter: requireAuth,
     },
   ],

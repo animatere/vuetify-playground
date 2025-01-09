@@ -146,82 +146,85 @@
   </v-app>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      search: "",
-      categories: ["Gaming Mice", "Keyboards", "Headsets", "Monitors", "Chairs"],
-      selectedCategories: [],
-      priceRange: [0, 500],
-      cartVisible: false,
-      productDialogVisible: false,
-      selectedProduct: null,
-      selectedQuantity: 1,
-      quantityOptions: Array.from({ length: 20 }, (_, i) => i + 1),
-      cartItems: [
-        { id: 1, name: "Gaming Mouse - Pro X", price: 79.99, quantity: 1 },
-        { id: 2, name: "Mechanical Keyboard - RGB", price: 129.99, quantity: 1 },
-      ],
-      products: [
-        { id: 1, name: "Gaming Mouse - Pro X", price: 79.99, category: "Gaming Mice", image: "https://via.placeholder.com/150", description: "High-performance gaming mouse with customizable buttons and RGB lighting." },
-        { id: 2, name: "Mechanical Keyboard - RGB", price: 129.99, category: "Keyboards", image: "https://via.placeholder.com/150", description: "Durable mechanical keyboard with customizable RGB backlighting and ergonomic design." },
-        { id: 3, name: "Surround Sound Headset", price: 99.99, category: "Headsets", image: "https://via.placeholder.com/150", description: "Comfortable headset with immersive surround sound and noise-cancelling microphone." },
-        { id: 4, name: "4K Gaming Monitor", price: 499.99, category: "Monitors", image: "https://via.placeholder.com/150", description: "Ultra HD gaming monitor with high refresh rate and vibrant colors." },
-        { id: 5, name: "Ergonomic Gaming Chair", price: 199.99, category: "Chairs", image: "https://via.placeholder.com/150", description: "Comfortable gaming chair with adjustable lumbar support and premium materials." },
-      ],
-      cartAnimation: false,
-    };
-  },
-  computed: {
-    calculatedMaxPrice() {
-      const highestPrice = Math.max(...this.products.map(product => product.price));
-      return Math.ceil(highestPrice / 500) * 500;
-    },
-    filteredProducts() {
-      let filtered = this.products;
+<script setup lang="ts">
+  import { ref, computed } from 'vue';
 
-      if (this.selectedCategories.length > 0) {
-        filtered = filtered.filter(product => this.selectedCategories.includes(product.category));
-      }
+  // Reactive Variablen
+  const search = ref('');
+  const categories = ref(['Gaming Mice', 'Keyboards', 'Headsets', 'Monitors', 'Chairs']);
+  const selectedCategories = ref<string[]>([]);
+  const priceRange = ref([0, 500]);
+  const cartVisible = ref(false);
+  const productDialogVisible = ref(false);
+  const selectedProduct = ref<any>(null);
+  const selectedQuantity = ref(1);
+  const quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
+  const cartItems = ref([
+    { id: 1, name: 'Gaming Mouse - Pro X', price: 79.99, quantity: 1 },
+    { id: 2, name: 'Mechanical Keyboard - RGB', price: 129.99, quantity: 1 },
+  ]);
+  const products = ref([
+    { id: 1, name: 'Gaming Mouse - Pro X', price: 79.99, category: 'Gaming Mice', image: 'https://via.placeholder.com/150', description: 'High-performance gaming mouse with customizable buttons and RGB lighting.' },
+    { id: 2, name: 'Mechanical Keyboard - RGB', price: 129.99, category: 'Keyboards', image: 'https://via.placeholder.com/150', description: 'Durable mechanical keyboard with customizable RGB backlighting and ergonomic design.' },
+    { id: 3, name: 'Surround Sound Headset', price: 99.99, category: 'Headsets', image: 'https://via.placeholder.com/150', description: 'Comfortable headset with immersive surround sound and noise-cancelling microphone.' },
+    { id: 4, name: '4K Gaming Monitor', price: 599.99, category: 'Monitors', image: 'https://via.placeholder.com/150', description: 'Ultra HD gaming monitor with high refresh rate and vibrant colors.' },
+    { id: 5, name: 'Ergonomic Gaming Chair', price: 199.99, category: 'Chairs', image: 'https://via.placeholder.com/150', description: 'Comfortable gaming chair with adjustable lumbar support and premium materials.' },
+  ]);
+  const cartAnimation = ref(false);
 
-      if (this.search.trim() !== "") {
-        filtered = filtered.filter(product =>
-          product.name.toLowerCase().includes(this.search.toLowerCase())
-        );
-      }
+  // Berechnete Eigenschaften
+  const calculatedMaxPrice = computed(() => {
+    const highestPrice = Math.max(...products.value.map(product => product.price));
+    return Math.ceil(highestPrice / 500) * 500;
+  });
 
-      filtered = filtered.filter(product => product.price >= this.priceRange[0] && product.price <= this.priceRange[1]);
+  const filteredProducts = computed(() => {
+    let filtered = products.value;
 
-      return filtered;
-    },
-  },
-  methods: {
-    openProductDialog(product) {
-      this.selectedProduct = product;
-      this.productDialogVisible = true;
-    },
-    addToCart(product, quantity) {
-      const cartItem = this.cartItems.find(item => item.id === product.id);
-      if (cartItem) {
-        cartItem.quantity += quantity;
-      } else {
-        this.cartItems.push({ ...product, quantity });
-      }
-      this.triggerCartAnimation();
-    },
-    toggleCart() {
-      this.cartVisible = !this.cartVisible;
-    },
-    removeFromCart(id) {
-      this.cartItems = this.cartItems.filter(item => item.id !== id);
-    },
-    triggerCartAnimation() {
-      this.cartAnimation = true;
-    },
-  },
-};
+    if (selectedCategories.value.length > 0) {
+      filtered = filtered.filter(product => selectedCategories.value.includes(product.category));
+    }
+
+    if (search.value.trim() !== '') {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(search.value.toLowerCase())
+      );
+    }
+
+    filtered = filtered.filter(product => product.price >= priceRange.value[0] && product.price <= priceRange.value[1]);
+
+    return filtered;
+  });
+
+  // Methoden
+  function openProductDialog(product: any) {
+    selectedProduct.value = product;
+    productDialogVisible.value = true;
+  }
+
+  function addToCart(product: any, quantity: number) {
+    const cartItem = cartItems.value.find(item => item.id === product.id);
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      cartItems.value.push({ ...product, quantity });
+    }
+    triggerCartAnimation();
+  }
+
+  function toggleCart() {
+    cartVisible.value = !cartVisible.value;
+  }
+
+  function removeFromCart(id: number) {
+    cartItems.value = cartItems.value.filter(item => item.id !== id);
+  }
+
+  function triggerCartAnimation() {
+    cartAnimation.value = true;
+  }
 </script>
+
 
 <style>
 .search-bar {

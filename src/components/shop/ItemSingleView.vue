@@ -106,56 +106,57 @@
     </v-container>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        product: {
-          title: "Produktname",
-          description: "Dies ist eine detaillierte Beschreibung des Produkts.",
-          price: 99.99,
-          shipping: "Kostenloser Versand",
-          rating: 4.5,
-          stock: 15,
-          details: [
-            "Material: Hochwertiger Kunststoff",
-            "Abmessungen: 25 x 15 x 10 cm",
-            "Gewicht: 500g",
-            "Farbe: Schwarz",
-          ],
-        },
-        currentImage:
-          "https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg",
-        images: [
-          "https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg",
-          "https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg",
-          "https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg",
-          "https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg",
-        ],
-        reviews: [
-          { user: "Max M.", rating: 5, text: "Tolles Produkt, sehr zufrieden!" },
-          { user: "Anna S.", rating: 4, text: "Gutes Preis-Leistungs-Verhältnis." },
-          { user: "Felix K.", rating: 3, text: "Qualität könnte besser sein." },
-        ],
-      };
-    },
-    computed: {
-      averageRating() {
-        if (this.reviews.length === 0) return 0;
-        const total = this.reviews.reduce((sum, review) => sum + review.rating, 0);
-        return total / this.reviews.length;
-      },
-      starPercentages() {
-        const total = this.reviews.length;
-        const percentages = [5, 4, 3, 2, 1].map(
-          (star) =>
-            (this.reviews.filter((review) => review.rating === star).length / total) * 100
-        );
-        return percentages;
-      },
-    },
-  };
-  </script>
+  <script setup lang="ts">
+  import { ref, computed } from 'vue';
+
+  // Reactive Variablen
+  const product = ref({
+    title: 'Produktname',
+    description: 'Dies ist eine detaillierte Beschreibung des Produkts.',
+    price: 99.99,
+    shipping: 'Kostenloser Versand',
+    rating: 4.5,
+    stock: 15,
+    details: [
+      'Material: Hochwertiger Kunststoff',
+      'Abmessungen: 25 x 15 x 10 cm',
+      'Gewicht: 500g',
+      'Farbe: Schwarz',
+    ],
+  });
+
+  const currentImage = ref(
+    'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg'
+  );
+  const images = ref([
+    'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
+    'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
+    'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
+    'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
+  ]);
+  const reviews = ref([
+    { user: 'Max M.', rating: 5, text: 'Tolles Produkt, sehr zufrieden!' },
+    { user: 'Anna S.', rating: 4, text: 'Gutes Preis-Leistungs-Verhältnis.' },
+    { user: 'Felix K.', rating: 3, text: 'Qualität könnte besser sein.' },
+  ]);
+
+  // Berechnete Eigenschaften
+  const averageRating = computed(() => {
+    if (reviews.value.length === 0) return 0;
+    const total = reviews.value.reduce((sum, review) => sum + review.rating, 0);
+    return total / reviews.value.length;
+  });
+
+  const starPercentages = computed(() => {
+    const total = reviews.value.length;
+    const percentages = [5, 4, 3, 2, 1].map(
+      (star) =>
+        (reviews.value.filter((review) => review.rating === star).length / total) * 100
+    );
+    return percentages;
+  });
+</script>
+
   
   <style scoped>
   body{

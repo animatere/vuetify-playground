@@ -8,10 +8,9 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "LandingPage",
-};
+<script setup lang="ts">
+  // Name der Komponente ist in der Composition API nicht direkt erforderlich,
+  // da es automatisch vom Framework abgeleitet wird.
 </script>
 
 <style scoped>
