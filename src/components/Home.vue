@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <p style="font-weight: bold; font-size: 40px">
-          {{ userName }}!
+          Willkommen: {{ defaultUser.username }}
         </p>
         <p>Es freut uns, dass du wieder da bist. Was möchtest du heute tun?</p>
       </v-col>
@@ -54,36 +54,28 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
-import { onMounted, reactive } from "vue";
-import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
+import { UserData } from "@/interfaces/interfaces";
+import { checkUserLoggedin } from "./composable/checkUserLoggedin";
 
-const store = useUserStore();
-const { currentUser } = storeToRefs(store);
-const userName = ref("");
-
-const editData = reactive({
-  username: currentUser.value?.displayName,
-  email: currentUser.value?.email as string,
-  // ToDo: add real database: get access to all user data to load them
-  // password: currentUser.value?.password,
-  // password: "Test12345",
-  loggedIn: !!currentUser,
-  registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now
+const userStore = useUserStore();
+let defaultUser = ref<UserData>({
+  id: "",
+  username: "",
+  email: "",
+  password: "Test12345",
+  loggedIn: false,
+  registered: false,
 });
 
 onMounted(async () => {
   try {
-    await store.checkAuth();
-    if (currentUser.value?.displayName) {
-      userName.value = currentUser.value.displayName;
-      console.log("User wurde erfolgreich geladen!")
-    }
-  } catch (error) {
-    console.error("Fehler beim Laden des Users:", error);
+    await userStore.checkAuth();
+    defaultUser.value = await checkUserLoggedin();
+  } catch (error: any) {
+    console.error("Fehler bei userStore.checkAuth():", error);
   }
 });
-
-
 </script>
 
 <style>

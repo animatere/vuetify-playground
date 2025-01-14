@@ -3,10 +3,11 @@
     <!-- Profilüberschrift -->
     <v-row class="mb-6">
       <v-col cols="12" class="text-center">
-        <p v-if="editData.username" style="font-weight: bold; font-size: 40px">
-          {{ editData.username }}!
+        <p v-if="defaultUser.username" style="font-weight: bold; font-size: 40px">
+          {{ defaultUser.username }}!
         </p>
-        <p v-else>Benutzer wird geladen...</p>        <p class="profile-subtitle">Hier sind deine Profildetails.</p>
+        <p v-else>Benutzer wird geladen...</p>
+        <p class="profile-subtitle">Hier sind deine Profildetails.</p>
       </v-col>
     </v-row>
 
@@ -18,20 +19,20 @@
           <v-card-text>
             <div class="info-item">
               <span class="info-label">Benutzername:</span>
-              <span class="info-value">{{ editData.username }}</span>
+              <span class="info-value">{{ defaultUser.username }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">E-Mail:</span>
-              <span class="info-value">{{ editData.email }}</span>
+              <span class="info-value">{{ defaultUser.email }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Status:</span>
               <span class="info-value">
                 <v-chip
-                  :color="editData.loggedIn ? 'green' : 'red'"
+                  :color="defaultUser.loggedIn ? 'green' : 'red'"
                   text-color="white"
                 >
-                  {{ editData.loggedIn ? "Online" : "Offline" }}
+                  {{ defaultUser.loggedIn ? "Online" : "Offline" }}
                 </v-chip>
               </span>
             </div>
@@ -39,10 +40,10 @@
               <span class="info-label">Registriert:</span>
               <span class="info-value">
                 <v-chip
-                  :color="editData.registered ? 'blue' : 'grey'"
+                  :color="defaultUser.registered ? 'blue' : 'grey'"
                   text-color="white"
                 >
-                  {{editData.registered ? "Ja" : "Nein"}}
+                  {{ defaultUser.registered ? "Ja" : "Nein" }}
                 </v-chip>
               </span>
             </div>
@@ -58,17 +59,18 @@
             <v-form ref="profileForm" v-model="formValid">
               <v-text-field
                 label="Benutzername"
-                v-model="editData.username"
+                v-model="defaultUser.username"
                 required
               ></v-text-field>
               <v-text-field
                 label="E-Mail"
-                v-model="editData.email"
+                v-model="defaultUser.email"
                 type="email"
                 required
               ></v-text-field>
               <v-text-field
                 label="Passwort"
+                v-model="defaultUser.password"
                 type="password"
                 required
               ></v-text-field>
@@ -115,15 +117,56 @@
 import { useUserStore } from "@/stores/UserStore";
 import { useEventStore } from "@/stores/EventStore";
 import { storeToRefs } from "pinia";
-import { onMounted, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
+import { UserData } from "@/interfaces/interfaces";
+import { checkUserLoggedin } from "../composable/checkUserLoggedin";
 
 const userStore = useUserStore();
 const eventStore = useEventStore();
 const { currentUser } = storeToRefs(userStore);
 
-onMounted(() => {
-  console.log("Mounted UserProfile: ", editData);
+let defaultUser = ref<UserData>({
+  id: "",
+  username: "",
+  email: "",
+  password: "",
+  loggedIn: false,
+  registered: false,
 });
+
+
+onMounted(async () => {
+  try {
+    defaultUser.value = await checkUserLoggedin();
+  } catch (error: any) {
+    console.error("Fehler bei userStore.checkAuth():", error);
+  }
+});
+
+watch(
+  () => currentUser.value,
+  (newCurrentUser) => {
+    if (newCurrentUser.uid) {
+      defaultUser.value = {
+        id: newCurrentUser.uid.toString(),
+        username: newCurrentUser.email?.split("@")[0],
+        email: newCurrentUser.email as string,
+        password: "Test12345",
+        loggedIn: !!newCurrentUser, // placeholder
+        registered: !newCurrentUser.emailVerified, // placeholder
+      } as UserData;
+    } else {
+      defaultUser.value = {
+        id: "",
+        username: "",
+        email: "",
+        password: "",
+        loggedIn: false,
+        registered: false,
+      };
+    }
+  },
+);
 
 const editData = reactive({
   username: currentUser.value?.displayName,
@@ -132,7 +175,7 @@ const editData = reactive({
   // password: currentUser.value?.password,
   // password: "Test12345",
   loggedIn: !!currentUser,
-  registered: !currentUser.value?.emailVerified // ToDo: add real database: just mockup data right now
+  registered: !currentUser.value?.emailVerified, // ToDo: add real database: just mockup data right now
 });
 
 const formValid = ref(false);
@@ -151,8 +194,7 @@ function resetEditData() {
   editData.username = currentUser.value?.displayName;
   editData.email = currentUser.value?.email as string;
   // editData.password = currentUser.value.password;
-  editData.loggedIn = !!currentUser,
-  editData.registered = !!currentUser
+  (editData.loggedIn = !!currentUser), (editData.registered = !!currentUser);
 }
 
 function clearEventLog() {

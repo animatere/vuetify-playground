@@ -22,10 +22,7 @@ async function submitForm(submitEvent: Event) {
   submitEvent.preventDefault();
 
   if (username.value !== "" && email.value !== "" && password.value !== "") {
-    const success = await signup(
-      email.value,
-      password.value
-    );
+    const success = await signup(email.value, password.value);
 
     if (success) {
       await reload();

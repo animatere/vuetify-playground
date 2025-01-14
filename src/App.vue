@@ -1,19 +1,40 @@
 <template>
   <v-app :class="currentTheme === 'dark' ? 'theme--dark' : 'theme--light'">
-    <navbar></navbar>
-    <div class="toggle-theme">
-      <v-btn @click="toggleTheme" class="theme-toggle-btn">
-        <p>Current Theme: {{ currentTheme }}</p>
-      </v-btn>
-    </div>
-    <router-view></router-view>
-    <notification></notification>
-    <app-footer></app-footer>
+      <v-row>
+        <v-col cols="12">
+        <navbar ></navbar>
+        </v-col>
+        <v-col cols="12" style="margin:0 !important">
+          <div class="toggle-theme">
+            <v-btn width="100%" @click="toggleTheme" class="theme-toggle-btn">
+              <p>Current Theme: {{ currentTheme }}</p>
+            </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <router-view></router-view>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12">
+          <notification></notification>
+        </v-col>
+    </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <app-footer></app-footer>
+      </v-col>
+    </v-row>
+
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { UserSettings } from '@/interfaces/interfaces'
+import { UserSettings } from "@/interfaces/interfaces";
 import { ref, watch, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
@@ -49,20 +70,17 @@ async function toggleTheme() {
   try {
     await store.loadSettings();
 
-    if(userSettings.value){
+    if (userSettings.value) {
       const newSettings = {
         id: userSettings.value.id,
         userId: userSettings.value.userId,
         theme: newTheme,
         notifications: userSettings.value.notifications,
         emailNotifications: userSettings.value.emailNotifications,
-      } as UserSettings
+      } as UserSettings;
 
       await store.saveSettings(newSettings);
-      console.log("speiche user settings nach toggle");
     }
-
-
   } catch (error) {
     console.error("Fehler beim Speichern der Einstellungen:", error);
   }
@@ -78,6 +96,10 @@ async function toggleTheme() {
   color: #2c3e50;
 }
 
+.navbar {
+  height: 100px;
+}
+
 nav {
   padding: 30px;
 
@@ -91,8 +113,4 @@ nav {
   }
 }
 
-.theme-toggle-btn {
-  width: 100%;
-  margin: 0;
-}
 </style>

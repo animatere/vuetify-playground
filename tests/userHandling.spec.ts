@@ -42,7 +42,6 @@ test.describe("User Login/Signup/Logout", () => {
     await page.fill('input[type="email"]', "new.User@trizelos.com");
     await page.fill('input[type="password"]', "Test12345");
     await page.click('button:has-text("Sign Up")');
-
   });
 
   test("successful logout redirects to login", async ({ page }) => {

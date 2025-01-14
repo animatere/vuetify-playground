@@ -185,58 +185,64 @@ watchEffect(() => {
 </script>
 
 <template>
-  <v-container>
-    <div class="table-content">
-      <v-card class="search-field">
-        <template v-slot:text>
-          <v-text-field
-            theme="light"
-            v-model="search"
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            hide-details
-            single-line
-          ></v-text-field>
-        </template>
-
-        <v-data-table
-          theme="light"
-          v-model="selected"
-          :headers="headers"
-          :items="items"
-          item-value="id"
-          items-per-page="10"
-          return-object
-          show-select
-          :search="search"
-        >
-        </v-data-table>
-      </v-card>
-      <!--    <label>Current Item</label>-->
-      <!--    <p>{{ currentItem }}</p><br>-->
-      <!--    <label>Selected List</label>-->
-      <!--    <p>{{ selected }}</p>-->
-
-      <div class="text-center ma-2">
-        <v-snackbar v-model="snackbar">
-          You have selected
-          {{ currentItem }}
-          from
-          {{ currentWorkArea }}
-
-          <template v-slot:actions>
-            <v-btn color="pink" variant="text" @click="snackbar = false">
-              Close
-            </v-btn>
+  <div class="table-view">
+    <v-container>
+      <div class="table-content">
+        <v-card class="search-field">
+          <template v-slot:text>
+            <v-text-field
+              theme="light"
+              v-model="search"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              single-line
+            ></v-text-field>
           </template>
-        </v-snackbar>
+
+          <v-data-table
+            theme="light"
+            v-model="selected"
+            :headers="headers"
+            :items="items"
+            item-value="id"
+            items-per-page="10"
+            return-object
+            show-select
+            :search="search"
+          >
+          </v-data-table>
+        </v-card>
+        <!--    <label>Current Item</label>-->
+        <!--    <p>{{ currentItem }}</p><br>-->
+        <!--    <label>Selected List</label>-->
+        <!--    <p>{{ selected }}</p>-->
+
+        <div class="text-center ma-2">
+          <v-snackbar v-model="snackbar">
+            You have selected
+            {{ currentItem }}
+            from
+            {{ currentWorkArea }}
+
+            <template v-slot:actions>
+              <v-btn color="pink" variant="text" @click="snackbar = false">
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </div>
       </div>
-    </div>
-  </v-container>
+    </v-container>
+  </div>
 </template>
 
 <style scoped>
+.table-view {
+  height: 110vh;
+}
+
 .search-field {
   background-color: white;
   color: black;

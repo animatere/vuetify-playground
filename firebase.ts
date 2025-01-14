@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "vue3-training-2f8fd",
   storageBucket: "vue3-training-2f8fd.firebasestorage.app",
   messagingSenderId: "613426925077",
-  appId: "1:613426925077:web:f20ddc79b0797b96e8881c"
+  appId: "1:613426925077:web:f20ddc79b0797b96e8881c",
 };
 
 const app = initializeApp(firebaseConfig);

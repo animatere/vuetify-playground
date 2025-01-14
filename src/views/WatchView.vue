@@ -5,15 +5,8 @@
   </div>
 </template>
 
-<script>
-import Watch from "@/components/training/Chat.vue";
-
-export default {
-  name: "WatchView",
-  components: {
-    Watch, //
-  },
-};
+<script setup lang="ts">
+  import Watch from "@/components/training/Chat.vue";
 </script>
 
 <style scoped></style>

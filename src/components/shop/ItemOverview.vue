@@ -1,0 +1,299 @@
+<template>
+  <v-app>
+    <!-- Header -->
+    <v-app-bar app style="z-index: 0 !important ;">
+      <v-container class="d-flex justify-space-between">
+        <div class="d-flex align-center">
+          <v-btn class="text-h5">GamingGear</v-btn>
+        </div>
+        <v-text-field
+          v-model="search"
+          placeholder="Search for gaming accessories..."
+          outlined
+          hide-details
+          dense
+          clearable
+          class="search-bar"
+        ></v-text-field>
+        <div class="d-flex align-center">
+          <v-btn icon :class="{'cart-animate': cartAnimation}" @animationend="cartAnimation = false" @click="toggleCart">
+            <v-icon>mdi-cart</v-icon>
+          </v-btn>
+          <v-btn>Login</v-btn>
+        </div>
+      </v-container>
+    </v-app-bar>
+
+    <!-- Main Content -->
+    <v-main>
+      <v-container>
+        <v-row>
+          <!-- Sidebar Filters -->
+          <v-col cols="12" md="3">
+            <v-card class="pa-3">
+              <v-list>
+                <v-list-item v-for="category in categories" :key="category">
+                  <v-list-item-content>
+                    <v-checkbox v-model="selectedCategories" :value="category" :label="category"></v-checkbox>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+              <v-divider class="my-4"></v-divider>
+              <v-card-title class="text-h6">Price Range</v-card-title>
+              <v-range-slider
+                v-model="priceRange"
+                :max="calculatedMaxPrice"
+                :min="0"
+                :step="10"
+                class="mt-3"
+              ></v-range-slider>
+              <div class="d-flex justify-space-between">
+                <span>
+                  ${{ priceRange[0] }}
+                </span>
+                <span>
+                  ${{ priceRange[1] }}
+                </span>
+              </div>
+            </v-card>
+          </v-col>
+
+          <!-- Products Overview -->
+          <v-col cols="12" md="9">
+            <v-row>
+              <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4">
+                <v-card class="mb-4">
+                  <v-img :src="product.link" height="200px" contain></v-img>
+                  <v-card-title>{{ product.title }}</v-card-title>
+                  <v-card-subtitle>Brand: {{ product.brand }} - ${{ product.price }}</v-card-subtitle>
+                  <v-card-text>
+                    <ul>
+                      <li v-for="detail in product.details" :key="detail">{{ detail }}</li>
+                    </ul>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn @click="openProductDialog(product)">View</v-btn>
+                    <v-btn @click="addToCart(product, selectedQuantity)">Add to Cart</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+
+    <!-- Cart Drawer -->
+    <v-navigation-drawer app right temporary v-model="cartVisible">
+      <v-card class="pa-4">
+        <v-card-title>Your Cart</v-card-title>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item v-for="item in cartItems" :key="item.id">
+            <v-list-item-content>
+              <v-list-item-title>{{ item.link }}</v-list-item-title>
+              <v-list-item-subtitle>Brand: {{ item.brand }}</v-list-item-subtitle>
+              <v-list-item-subtitle>Quantity: {{ item.quantity }}</v-list-item-subtitle>
+              <v-list-item-subtitle>Total: ${{ (item.price * item.quantity).toFixed(2) }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-btn icon color="red" @click="removeFromCart(item.id)">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="primary" block>Checkout</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-navigation-drawer>
+
+    <!-- Product Dialog -->
+    <v-dialog v-model="productDialogVisible" max-width="800px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">{{ selectedProduct?.title }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-img :src="selectedProduct?.link" contain max-height="300px"></v-img>
+              </v-col>
+              <v-col cols="12" md="6">
+                <p><strong>Description:</strong> {{ selectedProduct?.description }}</p>
+                <p><strong>Ingredients:</strong></p>
+                <ul>
+                  <li v-for="ing in selectedProduct?.incredience" :key="ing">{{ ing }}</li>
+                </ul>
+                <v-select
+                  v-model="selectedProduct.selectedVariant"
+                  :items="selectedProduct?.variants"
+                  item-text="name"
+                  item-value="id"
+                  label="Select Variant"
+                  outlined
+                ></v-select>
+                <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+                <v-btn color="primary" @click="addToCart(selectedProduct, selectedQuantity)">
+                  <v-icon class="card-actions-icon">mdi-cart</v-icon>
+                  <p class="card-actions-text">Add to Cart</p>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="productDialogVisible = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-app>
+</template>
+
+<script setup lang="ts">
+  import { ref, computed } from 'vue';
+
+  // Reactive Variablen
+  const search = ref('');
+  const categories = ref(['Gaming Mice', 'Keyboards', 'Headsets', 'Monitors', 'Chairs']);
+  const selectedCategories = ref<string[]>([]);
+  const priceRange = ref([0, 500]);
+  const cartVisible = ref(false);
+  const productDialogVisible = ref(false);
+  const selectedProduct = ref<any>(null);
+  const selectedQuantity = ref(1);
+  const quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
+  const cartItems = ref([
+    { id: 1, name: 'Gaming Mouse - Pro X', price: 79.99, quantity: 1 },
+    { id: 2, name: 'Mechanical Keyboard - RGB', price: 129.99, quantity: 1 },
+  ]);
+  const products = ref([
+    { id: 1, name: 'Gaming Mouse - Pro X', price: 79.99, category: 'Gaming Mice', image: 'https://via.placeholder.com/150', description: 'High-performance gaming mouse with customizable buttons and RGB lighting.' },
+    { id: 2, name: 'Mechanical Keyboard - RGB', price: 129.99, category: 'Keyboards', image: 'https://via.placeholder.com/150', description: 'Durable mechanical keyboard with customizable RGB backlighting and ergonomic design.' },
+    { id: 3, name: 'Surround Sound Headset', price: 99.99, category: 'Headsets', image: 'https://via.placeholder.com/150', description: 'Comfortable headset with immersive surround sound and noise-cancelling microphone.' },
+    { id: 4, name: '4K Gaming Monitor', price: 599.99, category: 'Monitors', image: 'https://via.placeholder.com/150', description: 'Ultra HD gaming monitor with high refresh rate and vibrant colors.' },
+    { id: 5, name: 'Ergonomic Gaming Chair', price: 199.99, category: 'Chairs', image: 'https://via.placeholder.com/150', description: 'Comfortable gaming chair with adjustable lumbar support and premium materials.' },
+  ]);
+  const cartAnimation = ref(false);
+
+  // Berechnete Eigenschaften
+  const calculatedMaxPrice = computed(() => {
+    const highestPrice = Math.max(...products.value.map(product => product.price));
+    return Math.ceil(highestPrice / 500) * 500;
+  });
+
+  const filteredProducts = computed(() => {
+    let filtered = products.value;
+
+    if (selectedCategories.value.length > 0) {
+      filtered = filtered.filter(product => selectedCategories.value.includes(product.category));
+    }
+
+    if (search.value.trim() !== '') {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(search.value.toLowerCase())
+      );
+    }
+
+    filtered = filtered.filter(product => product.price >= priceRange.value[0] && product.price <= priceRange.value[1]);
+
+    return filtered;
+  });
+
+  // Methoden
+  function openProductDialog(product: any) {
+    selectedProduct.value = product;
+    productDialogVisible.value = true;
+  }
+
+  function addToCart(product: any, quantity: number) {
+    const cartItem = cartItems.value.find(item => item.id === product.id);
+    if (cartItem) {
+      cartItem.quantity += quantity;
+    } else {
+      cartItems.value.push({ ...product, quantity });
+    }
+    triggerCartAnimation();
+    toggleCart();
+  }
+
+  function toggleCart() {
+    cartVisible.value = !cartVisible.value;
+  }
+
+  function removeFromCart(id: number) {
+    cartItems.value = cartItems.value.filter(item => item.id !== id);
+  }
+
+  function triggerCartAnimation() {
+    cartAnimation.value = true;
+  }
+</script>
+
+
+<style>
+.search-bar {
+  width: 50%;
+}
+.cart-animate {
+  animation: cart-pulse 0.5s ease-in-out;
+}
+@keyframes cart-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%!important;
+}
+
+.product-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.product-title,
+.product-subtitle {
+  text-align: center;
+}
+
+.product-details {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.card-actions-btn{
+  min-width: 100px;
+  border-radius: 5px;
+}
+
+.card-actions-icon{
+  margin-right: 5px;
+}
+@media (max-width: 1280px) {
+  .card-actions-btn{
+    display: none;
+    min-width: 50px;
+  }
+  .card-actions-icon{
+  margin-right: 0px;
+  }
+  .card-actions-text{
+    display: none;
+  }
+}
+</style>

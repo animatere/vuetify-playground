@@ -1,21 +1,21 @@
-import { UserSettings } from '@/interfaces/interfaces';
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { UserSettings } from "@/interfaces/interfaces";
+import { defineStore } from "pinia";
+import axios from "axios";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   User,
-} from 'firebase/auth';
-import { auth } from '../../firebase';
+} from "firebase/auth";
+import { auth } from "../../firebase";
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
-    currentUser : ref<User | null>(null), // Reaktiver Benutzerzustand
-    userSettings : ref<UserSettings | null>(null),
-    loading : ref(false),
-    error : ref<string | null>(null),
+    currentUser: {} as User,
+    userSettings: {} as UserSettings,
+    loading: false,
+    error: "",
   }),
 
   actions: {
@@ -24,26 +24,30 @@ export const useUserStore = defineStore('user', {
      */
     async signup(email: string, password: string): Promise<boolean> {
       this.loading = true;
-      this.error = null;
+      this.error = "";
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
         this.currentUser = userCredential.user;
-        console.log('Benutzer erfolgreich registriert:', this.currentUser);
+        console.log("Benutzer erfolgreich registriert");
 
         // Initiale Benutzereinstellungen speichern
         const initialSettings: UserSettings = {
           id: this.currentUser.uid,
           userId: this.currentUser.uid,
-          theme: 'light',
-          notifications: true,
+          theme: "light",
+          notifications: false,
           emailNotifications: false,
         };
         await this.saveSettings(initialSettings);
         return true;
       } catch (error: any) {
-        this.error = error.message || 'Registrierung fehlgeschlagen';
-        console.error('Fehler bei der Registrierung:', error);
+        this.error = error.message || "Registrierung fehlgeschlagen";
+        console.error("Fehler bei der Registrierung:", error);
         return false;
       } finally {
         this.loading = false;
@@ -55,19 +59,23 @@ export const useUserStore = defineStore('user', {
      */
     async login(email: string, password: string): Promise<boolean> {
       this.loading = true;
-      this.error = null;
+      this.error = "";
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
         this.currentUser = userCredential.user;
-        console.log('Benutzer erfolgreich angemeldet:', this.currentUser);
+        console.log("Benutzer erfolgreich angemeldet");
 
         // Benutzereinstellungen laden
         await this.loadSettings();
         return true;
       } catch (error: any) {
-        this.error = error.message || 'Anmeldung fehlgeschlagen';
-        console.error('Fehler bei der Anmeldung:', error);
+        this.error = error.message || "Anmeldung fehlgeschlagen";
+        console.error("Fehler bei der Anmeldung:", error);
         return false;
       } finally {
         this.loading = false;
@@ -79,16 +87,17 @@ export const useUserStore = defineStore('user', {
      */
     async logout(): Promise<void> {
       this.loading = true;
-      this.error = null;
+      this.error = "";
 
       try {
         await signOut(auth);
         this.currentUser = {} as User;
         this.userSettings = {} as UserSettings;
-        console.log('Benutzer erfolgreich abgemeldet.');
+        console.log("Benutzer erfolgreich abgemeldet.");
+        await window.location.reload();
       } catch (error: any) {
-        this.error = error.message || 'Abmeldung fehlgeschlagen';
-        console.error('Fehler bei der Abmeldung:', error);
+        this.error = error.message || "Abmeldung fehlgeschlagen";
+        console.error("Fehler bei der Abmeldung:", error);
       } finally {
         this.loading = false;
       }
@@ -99,9 +108,7 @@ export const useUserStore = defineStore('user', {
         onAuthStateChanged(auth, async (user) => {
           if (user) {
             this.currentUser = user;
-            console.log("Benutzerstatus wiederhergestellt:", user);
 
-            // Lade Einstellungen
             await this.loadSettings();
             return true;
           } else {
@@ -119,15 +126,15 @@ export const useUserStore = defineStore('user', {
     async saveSettings(settings: UserSettings): Promise<boolean> {
       try {
         if (!this.currentUser || !settings.userId) {
-          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.');
+          console.error(
+            "Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.",
+          );
           return false;
         }
 
-        if(!settings.emailNotifications)
-          settings.emailNotifications = false;
+        if (!settings.emailNotifications) settings.emailNotifications = false;
 
-        if(!settings.notifications)
-          settings.notifications = false;
+        if (!settings.notifications) settings.notifications = false;
 
         settings.userId = this.currentUser.uid;
 
@@ -135,12 +142,11 @@ export const useUserStore = defineStore('user', {
 
         // Speichere die Einstellungen spezifisch für den Benutzer
         await axios.put(userSettingsRef, settings);
-        console.log('Benutzereinstellungen gespeichert:', settings);
 
         this.userSettings = settings;
         return true;
       } catch (err) {
-        console.error('Fehler beim Speichern der Benutzereinstellungen:', err);
+        console.error("Fehler beim Speichern der Benutzereinstellungen:", err);
         return false;
       }
     },
@@ -151,14 +157,16 @@ export const useUserStore = defineStore('user', {
     async loadSettings(): Promise<UserSettings> {
       try {
         if (!this.currentUser) {
-          console.error('Kein Benutzer angemeldet. Kann Einstellungen nicht laden.');
-          return { 
+          console.error(
+            "Kein Benutzer angemeldet. Kann Einstellungen nicht laden.",
+          );
+          return {
             id: "",
             userId: "",
             theme: "light",
             notifications: false,
-            emailNotifications: false
-          } as UserSettings
+            emailNotifications: false,
+          } as UserSettings;
         }
 
         const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
@@ -167,24 +175,25 @@ export const useUserStore = defineStore('user', {
 
         if (response.data) {
           this.userSettings = response.data;
-          console.log('Benutzereinstellungen geladen:', this.userSettings);
+          // console.log('Benutzereinstellungen geladen:', this.userSettings);
           return this.userSettings as UserSettings;
         } else {
-          console.warn('Keine Benutzereinstellungen für den aktuellen Benutzer gefunden');
+          console.warn(
+            "Keine Benutzereinstellungen für den aktuellen Benutzer gefunden",
+          );
           this.currentUser = {} as User;
-          this.userSettings = {} as UserSettings; }
-
+          this.userSettings = {} as UserSettings;
+        }
       } catch (err) {
-        console.error('Fehler beim Laden der Benutzereinstellungen:', err);
+        console.error("Fehler beim Laden der Benutzereinstellungen:", err);
       }
-      return { 
+      return {
         id: "",
         userId: "",
         theme: "light",
         notifications: false,
-        emailNotifications: false
+        emailNotifications: false,
       } as UserSettings;
-
     },
   },
 });

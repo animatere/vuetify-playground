@@ -1,4 +1,4 @@
-import { TaskCategory } from '@/Enums/TaskCategory'
+import { TaskCategory } from "@/Enums/TaskCategory";
 
 export interface Variant {
   id: number;
@@ -25,6 +25,7 @@ export type Employees = Employee[];
 
 export interface Tasks {
   id: number;
+  userId: string;
   category: TaskCategory;
   title: string;
   priority: string;
@@ -67,4 +68,47 @@ export interface UserSettings {
   theme: string;
   notifications: boolean;
   emailNotifications: boolean;
+}
+
+export interface Cart {
+  /**
+   * Die eindeutige ID des Warenkorbs.
+   * Beispiel: 'cart12345'
+   */
+  cartId: string;
+
+  /**
+   * Die Benutzer-ID, die mit diesem Warenkorb verknüpft ist.
+   * Beispiel: '603d2149f1e5c7b9b0e2f7d2'
+   */
+  userId: string;
+
+  /**
+   * Die Artikel, die im Warenkorb enthalten sind.
+   */
+  items: Item[];
+
+  /**
+   * Der Status des Warenkorbs.
+   * Mögliche Werte: 'open', 'completed', 'cancelled'
+   */
+  status: 'open' | 'completed' | 'cancelled';
+
+  /**
+   * Der Gesamtpreis des Warenkorbs.
+   * Beispiel: 199.99
+   */
+  totalPrice: number;
+
+  /**
+   * Das Erstellungsdatum des Warenkorbs.
+   * Beispiel: '2024-12-27T12:00:00Z'
+   */
+  createdAt: Date;
+
+  /**
+   * Das Datum der letzten Aktualisierung des Warenkorbs.
+   * Beispiel: '2024-12-27T12:00:00Z'
+   */
+  updatedAt: Date;
 }
