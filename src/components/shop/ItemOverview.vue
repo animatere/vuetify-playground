@@ -27,8 +27,8 @@
     <!-- Main Content -->
     <v-main>
       <v-container>
-        <!-- Categories -->
         <v-row>
+          <!-- Sidebar Filters -->
           <v-col cols="12" md="3">
             <v-card class="pa-3">
               <v-list>
@@ -58,14 +58,19 @@
             </v-card>
           </v-col>
 
-          <!-- Products -->
+          <!-- Products Overview -->
           <v-col cols="12" md="9">
             <v-row>
               <v-col v-for="product in filteredProducts" :key="product.id" cols="12" sm="6" md="4">
                 <v-card class="mb-4">
-                  <v-img :src="product.image" height="200px"></v-img>
-                  <v-card-title>{{ product.name }}</v-card-title>
-                  <v-card-subtitle>${{ product.price }}</v-card-subtitle>
+                  <v-img :src="product.link" height="200px" contain></v-img>
+                  <v-card-title>{{ product.title }}</v-card-title>
+                  <v-card-subtitle>Brand: {{ product.brand }} - ${{ product.price }}</v-card-subtitle>
+                  <v-card-text>
+                    <ul>
+                      <li v-for="detail in product.details" :key="detail">{{ detail }}</li>
+                    </ul>
+                  </v-card-text>
                   <v-card-actions>
                     <v-btn @click="openProductDialog(product)">View</v-btn>
                     <v-btn @click="addToCart(product, selectedQuantity)">Add to Cart</v-btn>
@@ -86,7 +91,8 @@
         <v-list>
           <v-list-item v-for="item in cartItems" :key="item.id">
             <v-list-item-content>
-              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-title>{{ item.link }}</v-list-item-title>
+              <v-list-item-subtitle>Brand: {{ item.brand }}</v-list-item-subtitle>
               <v-list-item-subtitle>Quantity: {{ item.quantity }}</v-list-item-subtitle>
               <v-list-item-subtitle>Total: ${{ (item.price * item.quantity).toFixed(2) }}</v-list-item-subtitle>
             </v-list-item-content>
@@ -108,24 +114,33 @@
     <v-dialog v-model="productDialogVisible" max-width="800px">
       <v-card>
         <v-card-title>
-          <span class="text-h5">{{ selectedProduct?.name }}</span>
+          <span class="text-h5">{{ selectedProduct?.title }}</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
-                <v-img :src="selectedProduct?.image" contain max-height="300px"></v-img>
+                <v-img :src="selectedProduct?.link" contain max-height="300px"></v-img>
               </v-col>
               <v-col cols="12" md="6">
-                <p>{{ selectedProduct?.description }}</p>
-                <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+                <p><strong>Description:</strong> {{ selectedProduct?.description }}</p>
+                <p><strong>Ingredients:</strong></p>
+                <ul>
+                  <li v-for="ing in selectedProduct?.incredience" :key="ing">{{ ing }}</li>
+                </ul>
                 <v-select
-                  v-model="selectedQuantity"
-                  :items="quantityOptions"
-                  label="Select Quantity"
+                  v-model="selectedProduct.selectedVariant"
+                  :items="selectedProduct?.variants"
+                  item-text="name"
+                  item-value="id"
+                  label="Select Variant"
                   outlined
                 ></v-select>
-                <v-btn color="primary" @click="addToCart(selectedProduct, selectedQuantity)">Add to Cart</v-btn>
+                <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
+                <v-btn color="primary" @click="addToCart(selectedProduct, selectedQuantity)">
+                  <v-icon class="card-actions-icon">mdi-cart</v-icon>
+                  <p class="card-actions-text">Add to Cart</p>
+                </v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -235,6 +250,50 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%!important;
+}
+
+.product-image {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  max-height: 200px;
+}
+
+.product-title,
+.product-subtitle {
+  text-align: center;
+}
+
+.product-details {
+  flex-grow: 1;
+  padding: 10px;
+}
+
+.card-actions-btn{
+  min-width: 100px;
+  border-radius: 5px;
+}
+
+.card-actions-icon{
+  margin-right: 5px;
+}
+@media (max-width: 1280px) {
+  .card-actions-btn{
+    display: none;
+    min-width: 50px;
+  }
+  .card-actions-icon{
+  margin-right: 0px;
+  }
+  .card-actions-text{
+    display: none;
   }
 }
 </style>
