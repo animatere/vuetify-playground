@@ -22,6 +22,7 @@ import ItemOverview from "@/components/shop/ItemOverview.vue";
 import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 import AdminDashboard from "@/components/admin/AdminDashboard.vue";
 import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
+import WorkSchedule from "@/components/user/WorkSchedule.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -159,6 +160,12 @@ const router = createRouter({
       path: "/purchase-history",
       name: "purchase-history",
       component: UserPurchaseHistory,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/work-schedule",
+      name: "work-schedule",
+      component: WorkSchedule,
       beforeEnter: requireAuth,
     },
   ],

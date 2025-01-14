@@ -28,6 +28,7 @@ declare module 'vue' {
     ProductManagement: typeof import('./components/admin/admin-pages/ProductManagement.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShopCart: typeof import('./components/shop/ShopCart.vue')['default']
     SignUp: typeof import('./components/user/SignUp.vue')['default']
     TableViews: typeof import('./components/training/TableViews.vue')['default']
     TaskCard: typeof import('./components/task-management/TaskCard.vue')['default']
@@ -42,5 +43,7 @@ declare module 'vue' {
     UserPurchaseHistory: typeof import('./components/user/UserPurchaseHistory.vue')['default']
     UserSettings: typeof import('./components/user/UserSettings.vue')['default']
     ValidateForm: typeof import('./components/training/ValidateForm.vue')['default']
+    WorkingPlan: typeof import('./components/user/WorkingPlan.vue')['default']
+    WorkSchedule: typeof import('./components/user/WorkSchedule.vue')['default']
   }
 }

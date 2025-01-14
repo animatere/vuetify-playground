@@ -144,6 +144,13 @@
           >
             Admin Dashboard
           </router-link>
+          <router-link
+            to="/work-schedule"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Schichtplan
+          </router-link>
           <p @click="logoutClicked" class="dropdown-item logout-button">
             <v-icon
               class="mdi-account"

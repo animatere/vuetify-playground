@@ -4,7 +4,7 @@
     <v-app-bar app style="z-index: 0 !important ;">
       <v-container class="d-flex justify-space-between">
         <div class="d-flex align-center">
-          <v-btn text class="text-h5">GamingGear</v-btn>
+          <v-btn class="text-h5">GamingGear</v-btn>
         </div>
         <v-text-field
           v-model="search"
@@ -19,7 +19,7 @@
           <v-btn icon :class="{'cart-animate': cartAnimation}" @animationend="cartAnimation = false" @click="toggleCart">
             <v-icon>mdi-cart</v-icon>
           </v-btn>
-          <v-btn text>Login</v-btn>
+          <v-btn>Login</v-btn>
         </div>
       </v-container>
     </v-app-bar>
@@ -45,7 +45,6 @@
                 :max="calculatedMaxPrice"
                 :min="0"
                 :step="10"
-                ticks
                 class="mt-3"
               ></v-range-slider>
               <div class="d-flex justify-space-between">
@@ -68,8 +67,8 @@
                   <v-card-title>{{ product.name }}</v-card-title>
                   <v-card-subtitle>${{ product.price }}</v-card-subtitle>
                   <v-card-actions>
-                    <v-btn text @click="openProductDialog(product)">View</v-btn>
-                    <v-btn text @click="addToCart(product, selectedQuantity)">Add to Cart</v-btn>
+                    <v-btn @click="openProductDialog(product)">View</v-btn>
+                    <v-btn @click="addToCart(product, selectedQuantity)">Add to Cart</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -132,17 +131,10 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-btn text @click="productDialogVisible = false">Close</v-btn>
+          <v-btn @click="productDialogVisible = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <!-- Footer -->
-    <v-footer app>
-      <v-container>
-        <p>&copy; {{ new Date().getFullYear() }} GamingGear. All rights reserved.</p>
-      </v-container>
-    </v-footer>
   </v-app>
 </template>
 
@@ -210,6 +202,7 @@
       cartItems.value.push({ ...product, quantity });
     }
     triggerCartAnimation();
+    toggleCart();
   }
 
   function toggleCart() {

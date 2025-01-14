@@ -24,7 +24,7 @@
         <!-- Produktbeschreibung -->
         <v-col cols="12" md="5">
           <h1>{{ product.title }}</h1>
-          <v-rating v-model="product.rating" readonly></v-rating>
+          <v-rating v-model="product.rating" readonly></v-rating> <p>{{ product.rating }}</p>
           <p>{{ product.description }}</p>
           <h3>Preis: {{ product.price }} €</h3>
           <p><strong>Lieferung:</strong> {{ product.shipping }}</p>
@@ -52,7 +52,7 @@
       <v-divider class="my-5"></v-divider>
   
       <!-- Ähnliche Produkte -->
-      <v-row>
+      <!-- <v-row>
         <h2 class="mb-4">Ähnliche Produkte</h2>
         <v-col cols="12" sm="6" md="3" v-for="(similar, index) in similarProducts" :key="index">
           <v-card>
@@ -62,47 +62,9 @@
             <v-btn block color="primary">Ansehen</v-btn>
           </v-card>
         </v-col>
-      </v-row>
+      </v-row> -->
   
-      <v-divider class="my-5"></v-divider>
-  
-      <!-- Kundenrezensionen -->
-      <v-row>
-        <h2 class="mb-4">Kundenrezensionen</h2>
-  
-        <!-- Durchschnittliche Bewertung -->
-        <v-col cols="12" md="3">
-          <v-card class="pa-4">
-            <h3>Durchschnittliche Bewertung</h3>
-            <v-rating v-model="averageRating" readonly></v-rating>
-            <p>{{ reviews.length }} Bewertungen</p>
-            <v-progress-linear
-              v-for="(percentage, index) in starPercentages"
-              :key="index"
-              :value="percentage"
-              color="primary"
-              class="mb-2"
-            >
-              <template #default>
-                {{ 5 - index }} Sterne: {{ percentage }}%
-              </template>
-            </v-progress-linear>
-          </v-card>
-        </v-col>
-  
-        <!-- Einzelne Rezensionen -->
-        <v-col cols="12" md="9">
-          <v-card class="pa-4" v-for="(review, index) in reviews" :key="index">
-            <v-row>
-              <v-col cols="12">
-                <v-rating :value="review.rating" readonly></v-rating>
-                <p><strong>{{ review.user }}</strong></p>
-                <p>{{ review.text }}</p>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-      </v-row>
+      <!-- <v-divider class="my-5"></v-divider> -->
     </v-container>
   </template>
   
@@ -111,7 +73,7 @@
 
   // Reactive Variablen
   const product = ref({
-    title: 'Produktname',
+    title: 'Wolf Produkt',
     description: 'Dies ist eine detaillierte Beschreibung des Produkts.',
     price: 99.99,
     shipping: 'Kostenloser Versand',
@@ -131,8 +93,8 @@
   const images = ref([
     'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
     'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
-    'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
-    'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
+    // 'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
+    // 'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
   ]);
   const reviews = ref([
     { user: 'Max M.', rating: 5, text: 'Tolles Produkt, sehr zufrieden!' },
