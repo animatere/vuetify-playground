@@ -1,31 +1,61 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row style="margin-top: 25px;">
       <v-col v-for="order in orders" :key="order.id" cols="12" md="6" lg="4">
-        <v-card class="order-card" @mouseover="onHover = true" @mouseleave="onHover = false">
+        <v-card
+          class="order-card"
+          @mouseover="onHover = true"
+          @mouseleave="onHover = false"
+        >
           <v-card-title>
             <div class="d-flex justify-space-between align-center">
               <span class="headline">Bestellung #{{ order.id }}</span>
-              <v-chip v-if="order.status === 'Abgeschlossen'" color="green" text-color="white">{{ order.status }}</v-chip>
-              <v-chip v-if="order.status === 'Versendet'" color="blue" text-color="white">{{ order.status }}</v-chip>
-              <v-chip v-if="order.status === 'Storniert'" color="red" text-color="white">{{ order.status }}</v-chip>
+              <v-chip
+                v-if="order.status === 'Abgeschlossen'"
+                color="green"
+                text-color="white"
+                >{{ order.status }}</v-chip
+              >
+              <v-chip
+                v-if="order.status === 'Versendet'"
+                color="blue"
+                text-color="white"
+                >{{ order.status }}</v-chip
+              >
+              <v-chip
+                v-if="order.status === 'Storniert'"
+                color="red"
+                text-color="white"
+                >{{ order.status }}</v-chip
+              >
             </div>
           </v-card-title>
-          
-          <v-card-subtitle  style="margin-top: 10px;">
+
+          <v-card-subtitle style="margin-top: 10px">
             <span class="subheading">{{ formatDate(order.date) }}</span>
           </v-card-subtitle>
 
           <v-card-text class="card-content">
             <v-row>
-              <v-col v-for="product in order.products" :key="product.id" cols="12">
-                <v-chip class="mb-2" color="primary" text-color="white" pill>{{ product.name }} ({{ product.quantity }})</v-chip>
+              <v-col
+                v-for="product in order.products"
+                :key="product.id"
+                cols="12"
+              >
+                <v-chip class="mb-2" color="primary" text-color="white" pill
+                  >{{ product.name }} ({{ product.quantity }})</v-chip
+                >
               </v-col>
             </v-row>
           </v-card-text>
 
           <v-card-actions class="card-actions">
-            <v-btn class="d-block w-100" :class="onHover ? 'elevation-12' : 'elevation-2'" color="indigo" @click="openOrderDetails(order)">
+            <v-btn
+              class="d-block w-100"
+              :class="onHover ? 'elevation-12' : 'elevation-2'"
+              color="indigo"
+              @click="openOrderDetails(order)"
+            >
               <v-icon left>mdi-eye</v-icon> Details anzeigen
             </v-btn>
           </v-card-actions>
@@ -37,11 +67,15 @@
     <v-dialog v-model="dialog" max-width="900px">
       <v-card>
         <v-card-title>
-          <span class="headline">Bestell-Details für Bestellung #{{ selectedOrder.id }}</span>
+          <span class="headline"
+            >Bestell-Details für Bestellung #{{ selectedOrder.id }}</span
+          >
         </v-card-title>
         <v-card-subtitle>
           <div><strong>Status:</strong> {{ selectedOrder.status }}</div>
-          <div><strong>Bestelldatum:</strong> {{ formatDate(selectedOrder.date) }}</div>
+          <div>
+            <strong>Bestelldatum:</strong> {{ formatDate(selectedOrder.date) }}
+          </div>
         </v-card-subtitle>
 
         <v-card-text>
@@ -59,9 +93,9 @@
             <tbody>
               <tr v-for="product in selectedOrder.products" :key="product.id">
                 <td>{{ product.name }}</td>
-                <td>{{ product.description || 'Keine Beschreibung' }}</td>
+                <td>{{ product.description || "Keine Beschreibung" }}</td>
                 <td>{{ product.quantity }}</td>
-                <td>{{ (product.price).toFixed(2) }}</td>
+                <td>{{ product.price.toFixed(2) }}</td>
                 <td>{{ (product.price * product.quantity).toFixed(2) }}</td>
               </tr>
             </tbody>
@@ -72,11 +106,15 @@
 
           <!-- Gesamtpreis inkl. MwSt. -->
           <div class="d-flex justify-between">
-            <span style="margin-right: 5px;" ><strong>Gesamtpreis (exkl. MwSt.): </strong></span>
+            <span style="margin-right: 5px"
+              ><strong>Gesamtpreis (exkl. MwSt.): </strong></span
+            >
             <span>{{ totalExclVat.toFixed(2) }} €</span>
           </div>
           <div class="d-flex justify-between">
-            <span style="margin-right: 5px;" ><strong>Gesamtpreis (inkl. 19% MwSt.): </strong></span>
+            <span style="margin-right: 5px"
+              ><strong>Gesamtpreis (inkl. 19% MwSt.): </strong></span
+            >
             <span>{{ totalInclVat.toFixed(2) }} €</span>
           </div>
         </v-card-text>
@@ -90,78 +128,111 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
-  // Reactive Variablen
-  const dialog = ref(false); // Zustand für das Modal
-  const onHover = ref(false); // Hover-Zustand
-  const selectedOrder = ref<any>(null); // Bestellobjekt für das Modal
+// Reactive Variablen
+const dialog = ref(false); // Zustand für das Modal
+const onHover = ref(false); // Hover-Zustand
+const selectedOrder = ref<any>(null); // Bestellobjekt für das Modal
 
-  // Bestellungen
-  const orders = ref([
-    {
-      id: 1,
-      date: '2024-01-01',
-      status: 'Abgeschlossen',
-      products: [
-        { id: 101, name: 'T-Shirt', description: 'Ein cooles T-Shirt', quantity: 2, price: 19.99 },
-        { id: 102, name: 'Hose', description: 'Bequeme Jeans', quantity: 1, price: 49.99 },
-      ],
-    },
-    {
-      id: 2,
-      date: '2024-01-05',
-      status: 'Versendet',
-      products: [
-        { id: 103, name: 'Laptop', description: 'High-End Laptop', quantity: 1, price: 999.99 },
-        { id: 104, name: 'Maus', description: 'Gaming-Maus', quantity: 1, price: 29.99 },
-      ],
-    },
-    {
-      id: 3,
-      date: '2024-01-10',
-      status: 'Storniert',
-      products: [
-        { id: 105, name: 'Smartphone', description: 'Neustes Modell', quantity: 1, price: 799.99 },
-      ],
-    },
-  ]);
+// Bestellungen
+const orders = ref([
+  {
+    id: 1,
+    date: "2024-01-01",
+    status: "Abgeschlossen",
+    products: [
+      {
+        id: 101,
+        name: "T-Shirt",
+        description: "Ein cooles T-Shirt",
+        quantity: 2,
+        price: 19.99,
+      },
+      {
+        id: 102,
+        name: "Hose",
+        description: "Bequeme Jeans",
+        quantity: 1,
+        price: 49.99,
+      },
+    ],
+  },
+  {
+    id: 2,
+    date: "2024-01-05",
+    status: "Versendet",
+    products: [
+      {
+        id: 103,
+        name: "Laptop",
+        description: "High-End Laptop",
+        quantity: 1,
+        price: 999.99,
+      },
+      {
+        id: 104,
+        name: "Maus",
+        description: "Gaming-Maus",
+        quantity: 1,
+        price: 29.99,
+      },
+    ],
+  },
+  {
+    id: 3,
+    date: "2024-01-10",
+    status: "Storniert",
+    products: [
+      {
+        id: 105,
+        name: "Smartphone",
+        description: "Neustes Modell",
+        quantity: 1,
+        price: 799.99,
+      },
+    ],
+  },
+]);
 
-  // Berechnete Eigenschaften
-  const totalExclVat = computed(() => {
-    // Gesamtpreis ohne MwSt.
-    return selectedOrder.value?.products.reduce((sum, product) => {
-      return sum + (product.price * product.quantity);
-    }, 0) || 0;
-  });
+// Berechnete Eigenschaften
+const totalExclVat = computed(() => {
+  // Gesamtpreis ohne MwSt.
+  return (
+    selectedOrder.value?.products.reduce((sum, product) => {
+      return sum + product.price * product.quantity;
+    }, 0) || 0
+  );
+});
 
-  const totalInclVat = computed(() => {
-    // Gesamtpreis mit 19% MwSt.
-    return totalExclVat.value * 1.19;
-  });
+const totalInclVat = computed(() => {
+  // Gesamtpreis mit 19% MwSt.
+  return totalExclVat.value * 1.19;
+});
 
-  // Methoden
-  function formatDate(date: string): string {
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    return new Date(date).toLocaleDateString('de-DE', options);
-  }
+// Methoden
+function formatDate(date: string): string {
+  const options = { year: "numeric", month: "short", day: "numeric" };
+  return new Date(date).toLocaleDateString("de-DE", options);
+}
 
-  function openOrderDetails(order: any) {
-    selectedOrder.value = order;
-    dialog.value = true;
-  }
+function openOrderDetails(order: any) {
+  selectedOrder.value = order;
+  dialog.value = true;
+}
 
-  function closeDialog() {
-    dialog.value = false;
-  }
+function closeDialog() {
+  dialog.value = false;
+}
 </script>
-
 
 <style scoped>
 .order-card {
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   border-radius: 12px;
   overflow: hidden;
   height: 350px; /* Feste Höhe */
@@ -226,7 +297,7 @@
 }
 
 /* Abstand zwischen den Tabellenspalten */
-th{
+th {
   padding-right: 45px;
 }
 </style>

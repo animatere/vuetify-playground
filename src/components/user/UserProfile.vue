@@ -3,7 +3,10 @@
     <!-- Profilüberschrift -->
     <v-row class="mb-6">
       <v-col cols="12" class="text-center">
-        <p v-if="defaultUser.username" style="font-weight: bold; font-size: 40px">
+        <p
+          v-if="defaultUser.username"
+          style="font-weight: bold; font-size: 40px"
+        >
           {{ defaultUser.username }}!
         </p>
         <p v-else>Benutzer wird geladen...</p>
@@ -93,17 +96,19 @@
           <v-card-title>Aktivitätsprotokoll</v-card-title>
           <v-card-text>
             <v-list>
-              <v-list-item v-for="event in eventStore.events" :key="event.id">
-                <v-list-item-title>{{ event.description }}</v-list-item-title>
+              <v-list-item v-for="event in userEvents" :key="event.id">
+                <v-list-item-title>{{
+                  event.eventDescription
+                }}</v-list-item-title>
                 <!--                <v-list-item-subtitle>{{ "EventID: " + event.id}}</v-list-item-subtitle>-->
                 <v-list-item-subtitle>{{
-                  "Zeitstempel: " + event.timestamp
+                  "Zeitstempel: " + event.createdAt
                 }}</v-list-item-subtitle>
               </v-list-item>
             </v-list>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="error" @click="clearEventLog"
+            <v-btn color="error" @click="clearEventLog" class="full-width"
               >Protokoll löschen</v-btn
             >
           </v-card-actions>
@@ -118,8 +123,8 @@ import { useUserStore } from "@/stores/UserStore";
 import { useEventStore } from "@/stores/EventStore";
 import { storeToRefs } from "pinia";
 import { reactive, ref } from "vue";
-import { UserData } from "@/interfaces/interfaces";
-import { checkUserLoggedin } from "../composable/checkUserLoggedin";
+import { UserData, UserEvent } from "@/interfaces/interfaces";
+import { getCurrentUserData } from "../composable/getCurrentUserData";
 
 const userStore = useUserStore();
 const eventStore = useEventStore();
@@ -134,12 +139,19 @@ let defaultUser = ref<UserData>({
   registered: false,
 });
 
+let userEvents = ref<UserEvent>({
+  id: "",
+  userId: "",
+  eventDescription: "",
+  createdAt: new Date(),
+});
 
 onMounted(async () => {
   try {
-    defaultUser.value = await checkUserLoggedin();
+    defaultUser.value = await getCurrentUserData();
+    userEvents.value = (await eventStore.getEvents()) as UserEvent[];
   } catch (error: any) {
-    console.error("Fehler bei userStore.checkAuth():", error);
+    console.error("Fehler bei User authentifizierung:", error);
   }
 });
 

@@ -1,49 +1,6 @@
-<script setup lang="ts">
-import { useEventStore } from "@/stores/EventStore";
-import { useNotificationsStore } from "@/stores/NotificationStore";
-import { ref } from "vue";
-import { useUserStore } from "@/stores/UserStore";
-import { useRouter } from "vue-router";
-
-const email = ref("");
-const username = ref("");
-const password = ref("");
-const store = useUserStore();
-const { login } = store;
-const router = useRouter();
-
-const notificationsStore = useNotificationsStore();
-const eventStore = useEventStore();
-
-async function submitForm(submitEvent: Event) {
-  submitEvent.preventDefault();
-
-  const success = await login(email.value, password.value);
-
-  if (success) {
-    notificationsStore.setPosition("top-center");
-    notifyMessage("Login erfolgreich!", "success");
-    await reload();
-    eventStore.addEvent("Benutzer hat sich eingeloggt");
-  } else {
-    notificationsStore.setPosition("top-center");
-    notifyMessage("Login fehlgeschlagen!", "error");
-  }
-
-  function reload() {
-    router.push("/home");
-  }
-}
-
-function notifyMessage(message: string, type: string) {
-  notificationsStore.setPosition("top-center");
-  notificationsStore.addNotification(message, type);
-}
-</script>
-
 <template>
   <v-container class="d-flex justify-center">
-    <v-card elevation="2">
+    <v-card elevation="2" width="400" height="600px" style="margin-top:10vh">
       <v-card-title class="justify-center">Login</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitForm">
@@ -65,7 +22,7 @@ function notifyMessage(message: string, type: string) {
             type="password"
             required
           ></v-text-field>
-          <v-btn class="mt-4" color="primary" type="submit" block>
+          <v-btn :loading="isLoading" :disabled="isLoading" class="mt-4" color="primary" type="submit" block>
             Login
           </v-btn>
         </v-form>
@@ -79,5 +36,57 @@ function notifyMessage(message: string, type: string) {
     </v-card>
   </v-container>
 </template>
+
+<script setup lang="ts">
+import { useEventStore } from "@/stores/EventStore";
+import { useNotificationsStore } from "@/stores/NotificationStore";
+import { ref } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+import { useRouter } from "vue-router";
+
+const email = ref("");
+const username = ref("");
+const password = ref("");
+const store = useUserStore();
+const { login } = store;
+const router = useRouter();
+
+const notificationsStore = useNotificationsStore();
+const eventStore = useEventStore();
+
+const isLoading = ref(false); // Neue Variable für den Ladezustand
+
+async function submitForm(submitEvent: Event) {
+  submitEvent.preventDefault();
+  isLoading.value = true; // Ladezustand starten
+
+  try {
+    const success = await login(email.value, password.value);
+
+    if (success) {
+      notificationsStore.setPosition("top-center");
+      notifyMessage("Login erfolgreich!", "success");
+      await reload();
+      eventStore.addEvent("Benutzer hat sich eingeloggt");
+    } else {
+      notifyMessage("Login fehlgeschlagen!", "error");
+    }
+  } catch (error) {
+    notifyMessage("Ein Fehler ist aufgetreten!", "error");
+  } finally {
+    isLoading.value = false; // Ladezustand zurücksetzen
+  }
+}
+
+function reload() {
+    router.push("/home");
+}
+
+
+function notifyMessage(message: string, type: string) {
+  notificationsStore.setPosition("top-center");
+  notificationsStore.addNotification(message, type);
+}
+</script>
 
 <style scoped></style>

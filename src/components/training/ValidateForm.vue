@@ -43,7 +43,11 @@ export default {
   <v-container>
     <v-row>
       <v-col>
-        <v-form ref="signUpform" v-model="formValidity">
+        <v-form
+          ref="signUpform"
+          v-model="formValidity"
+          style="width: 90vw; margin-left: 5vw; margin-right: 5vw"
+        >
           <v-text-field
             label="Email"
             type="email"

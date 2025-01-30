@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-  import Playground from "@/components/training/Playground.vue";
+import Playground from "@/components/training/Playground.vue";
 </script>
 
 <style scoped></style>

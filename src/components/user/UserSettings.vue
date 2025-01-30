@@ -1,6 +1,11 @@
 <template>
   <v-container>
-    <v-row class="mb-6">
+    <!-- Ladespinner, der angezeigt wird, solange die Einstellungen geladen werden -->
+    <v-overlay v-if="loading" absolute z-index="1000">
+      <v-spinner size="100" color="primary"></v-spinner>
+    </v-overlay>
+
+    <v-row class="mb-6" v-if="!loading">
       <v-col cols="12" class="text-center">
         <h1 class="settings-title">Einstellungen</h1>
         <p class="settings-subtitle">
@@ -10,7 +15,7 @@
     </v-row>
 
     <!-- Theme-Einstellungen -->
-    <v-row>
+    <v-row v-if="!loading">
       <v-col cols="12" md="6">
         <v-card class="settings-card">
           <v-card-title>Design</v-card-title>
@@ -42,7 +47,7 @@
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="!loading">
       <v-col cols="12" class="text-center mt-6">
         <v-btn color="primary" large @click="saveSettings">
           Änderungen speichern
@@ -52,8 +57,9 @@
   </v-container>
 </template>
 
+
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { UserSettings } from "@/interfaces/interfaces";
 import { storeToRefs } from "pinia";
@@ -62,6 +68,10 @@ const store = useUserStore();
 const { userSettings } = storeToRefs(store);
 const settings = ref({}) as Ref<UserSettings>;
 
+// Ladezustand für den Spinner
+const loading = ref(true);
+
+// Überwache Änderungen an den Benutzereinstellungen
 watch(
   () => userSettings.value?.theme,
   (newTheme) => {
@@ -79,6 +89,8 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error("Fehler beim Laden der Einstellungen:", error);
+  } finally {
+    loading.value = false; // Spinner ausblenden, wenn die Einstellungen geladen sind
   }
 });
 
@@ -90,6 +102,7 @@ function saveSettings() {
   store.saveSettings(settings.value);
 }
 </script>
+
 
 <style>
 .settings-title {

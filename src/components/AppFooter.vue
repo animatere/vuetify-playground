@@ -17,7 +17,8 @@
         <p class="foot-links">{{ link }}</p>
       </v-btn>
       <v-col class="text-center mt-4" cols="12" style="color: black">
-        {{ new Date().getFullYear() }} — <strong> by Wowa Solutions GmbH</strong>
+        {{ new Date().getFullYear() }} —
+        <strong> by Wowa Solutions GmbH</strong>
       </v-col>
     </v-row>
   </v-footer>
@@ -27,7 +28,7 @@
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { checkUserLoggedin } from "./composable/checkUserLoggedin";
+import { getCurrentUserData } from "./composable/getCurrentUserData";
 import { UserData } from "@/interfaces/interfaces";
 
 const userStore = useUserStore();
@@ -68,7 +69,7 @@ watch(
 
 onMounted(async () => {
   try {
-    defaultUser.value = await checkUserLoggedin();
+    defaultUser.value = await getCurrentUserData();
   } catch (error: any) {
     console.error("Fehler bei userStore.checkAuth():", error);
   }

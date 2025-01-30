@@ -2,7 +2,7 @@ import { UserData } from "@/interfaces/interfaces";
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
 
-export async function checkUserLoggedin(): Promise<UserData> {
+export async function getCurrentUserData(): Promise<UserData> {
   const userStore = useUserStore();
   const { currentUser } = storeToRefs(userStore);
 

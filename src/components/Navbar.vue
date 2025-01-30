@@ -17,7 +17,7 @@
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
 
-      <div class="dropdown">
+      <!-- <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">
           Training
         </router-link>
@@ -67,7 +67,7 @@
             TableViews
           </router-link>
         </div>
-      </div>
+      </div> -->
 
       <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">
@@ -101,6 +101,37 @@
             @click="closeDropdown"
           >
             Payment Page
+          </router-link>
+
+          <router-link
+            to="/chat-bot"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Chatbot
+          </router-link>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <router-link to="/qh-landing" class="nav-item" @click="closeDropdown">
+          QuestHub
+        </router-link>
+        <div class="dropdown-content" style="background-color: #4ea8de">
+          <router-link
+            to="/qh-landing"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Landing Page
+          </router-link>
+
+          <router-link
+            to="/qh-quests"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Quests
           </router-link>
         </div>
       </div>
@@ -232,7 +263,7 @@ import { useRouter } from "vue-router";
 import { UserData } from "@/interfaces/interfaces";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/UserStore";
-import { checkUserLoggedin } from "./composable/checkUserLoggedin";
+import { getCurrentUserData } from "./composable/getCurrentUserData";
 
 const menuOpen = ref(false);
 const userMenuOpen = ref(false);
@@ -252,7 +283,7 @@ let defaultUser = ref<UserData>({
 onMounted(async () => {
   try {
     await userStore.checkAuth();
-    defaultUser.value = await checkUserLoggedin();
+    defaultUser.value = await getCurrentUserData();
   } catch (error: any) {
     console.error("Fehler bei userStore.checkAuth():", error);
   }
@@ -313,8 +344,9 @@ function closeDropdown() {
   color: #333;
   position: relative;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  width: 100vw;
   z-index: 5;
+  height: 10vh;
 }
 
 .navbar-logo {

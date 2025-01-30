@@ -70,6 +70,13 @@ export interface UserSettings {
   emailNotifications: boolean;
 }
 
+export interface UserEvent {
+  id: string;
+  userId: string;
+  eventDescription: string;
+  createdAt: Date;
+}
+
 export interface Cart {
   /**
    * Die eindeutige ID des Warenkorbs.
@@ -92,7 +99,7 @@ export interface Cart {
    * Der Status des Warenkorbs.
    * Mögliche Werte: 'open', 'completed', 'cancelled'
    */
-  status: 'open' | 'completed' | 'cancelled';
+  status: "open" | "completed" | "cancelled";
 
   /**
    * Der Gesamtpreis des Warenkorbs.
@@ -111,4 +118,13 @@ export interface Cart {
    * Beispiel: '2024-12-27T12:00:00Z'
    */
   updatedAt: Date;
+}
+
+// Interface für eine Spielkarte
+export interface QuestCard {
+  title: string;
+  description: string;
+  category: 'Fun' | 'Action' | 'Brain';
+  addOn: string;
+  path: string;
 }

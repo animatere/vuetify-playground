@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-  import Watch from "@/components/training/Chat.vue";
+import Watch from "@/components/training/Chat.vue";
 </script>
 
 <style scoped></style>

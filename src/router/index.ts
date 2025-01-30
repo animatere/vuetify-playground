@@ -23,6 +23,8 @@ import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 import AdminDashboard from "@/components/admin/AdminDashboard.vue";
 import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
 import WorkSchedule from "@/components/user/WorkSchedule.vue";
+import QhLanding from "@/components/questhub/qh-landing.vue";
+import Chatbot from "@/components/shop/Chatbot.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -168,6 +170,19 @@ const router = createRouter({
       component: WorkSchedule,
       beforeEnter: requireAuth,
     },
+    {
+      path: "/qh-landing",
+      name: "qh-landing",
+      component: QhLanding,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/chat-bot",
+      name: "chat-bot",
+      component: Chatbot,
+      beforeEnter: requireAuth,
+    },
+
   ],
 });
 

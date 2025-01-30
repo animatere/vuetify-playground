@@ -1,15 +1,88 @@
+<template>
+  <v-container style="margin-top: 50px;">
+    <div>
+      <!-- Wochen-Navigation -->
+      <v-row justify="center">
+        <v-btn @click="previousWeek" color="primary" icon>
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+        <span class="week-display">{{ weekDisplay }}</span>
+        <v-btn @click="nextWeek" color="primary" icon>
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </v-row>
+
+      <!-- Kopfzeile mit Wochentagen -->
+      <v-row>
+        <v-col cols="4" class="text-center">
+          <strong>Schicht</strong>
+        </v-col>
+        <v-col
+          v-for="(day, index) in daysOfWeek"
+          :key="index"
+          cols="1"
+          class="text-center"
+        >
+          <strong>{{ day }}</strong>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <!-- Schicht-Auswahl -->
+        <v-row v-for="(shift, index) in shiftTypes" :key="index">
+          <v-col cols="5" class="text-center">
+            <v-btn color="primary" block>{{ shift }}</v-btn>
+          </v-col>
+          <v-col
+            v-for="(day, dayIndex) in daysOfWeek"
+            :key="dayIndex"
+            cols="1"
+            class="text-center"
+          >
+            <v-autocomplete
+              :items="employeeNames"
+              v-model="currentSchedule[shift][dayIndex]"
+              label="Mitarbeiter"
+              dense
+              outlined
+              hide-details
+              multiple
+              return-object
+            ></v-autocomplete>
+          </v-col>
+        </v-row>
+
+        <!-- Buttons: Speichern und CSV Export mittig -->
+        <v-row justify="center" class="full-width">
+          <v-btn
+            justify="center"
+            color="success"
+            @click="saveSchedule"
+            class="mr-4"
+          >
+            Plan speichern
+          </v-btn>
+          <v-btn @click="exportToCSV" color="primary" icon>
+            <v-icon>mdi-download</v-icon>
+          </v-btn>
+        </v-row>
+      </v-row>
+    </div>
+  </v-container>
+</template>
+
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed } from "vue";
 
 const today = new Date();
 const currentDate = ref(new Date(today));
 
-const daysOfWeek = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-const shiftTypes = ['Früh', 'Spät', 'Nacht'];
-const employeeNames = ['Müller', 'Wolf', 'Aykut', 'Schmidt', 'Meier'];
+const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+const shiftTypes = ["Früh", "Spät", "Nacht"];
+const employeeNames = ["Müller", "Wolf", "Aykut", "Schmidt", "Meier"];
 
 // Reactive Schedule Data (Woche mit Schichtplan)
-const scheduleData = reactive<Record<string, Record<string, string[]>>>( {});
+const scheduleData = reactive<Record<string, Record<string, string[]>>>({});
 
 const getStartOfWeek = (date: Date): Date => {
   const day = date.getDay() || 7;
@@ -19,8 +92,8 @@ const getStartOfWeek = (date: Date): Date => {
 };
 
 const formatDate = (date: Date): string => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
   return `${day}.${month}.${year}`;
 };
@@ -57,92 +130,35 @@ const nextWeek = () => {
 };
 
 const saveSchedule = () => {
-  console.log('Gespeicherte Schichtdaten:', scheduleData);
+  console.log("Gespeicherte Schichtdaten:", scheduleData);
 };
 
-// Funktion zum Exportieren der Schichtdaten als CSV
 const exportToCSV = () => {
-  const header = ['Schicht', ...daysOfWeek];
+  const header = ["Schicht", ...daysOfWeek];
   const rows: string[][] = [];
 
-  // Für jede Schicht (Früh, Spät, Nacht)
-  shiftTypes.forEach(shift => {
+  shiftTypes.forEach((shift) => {
     const row = [shift];
     daysOfWeek.forEach((_, index) => {
-      // Mitarbeiter für den jeweiligen Tag und Schicht
       const employees = currentSchedule.value[shift][index];
-      row.push(employees ? employees.join(', ') : '');
+      row.push(employees ? employees.join(", ") : "");
     });
     rows.push(row);
   });
 
-  // CSV-Daten vorbereiten
   const csvContent = [
-    header.join(','), // Header
-    ...rows.map(row => row.join(',')), // Daten
-  ].join('\n');
+    header.join(","),
+    ...rows.map((row) => row.join(",")),
+  ].join("\n");
 
-  // Blob und URL für den CSV-Download
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', `${weekDisplay.value}.csv`);
+  link.setAttribute("href", url);
+  link.setAttribute("download", `${weekDisplay.value}.csv`);
   link.click();
 };
 </script>
-
-<template>
-  <v-container>
-    <!-- Wochen-Navigation -->
-    <v-row justify="center" align="center" class="mb-4">
-      <v-btn @click="previousWeek" color="primary" icon>
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-      <span class="week-display">{{ weekDisplay }}</span>
-      <v-btn @click="nextWeek" color="primary" icon>
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </v-row>
-
-    <!-- Kopfzeile mit Wochentagen -->
-    <v-row>
-      <v-col cols="3">
-        <strong>Schicht</strong>
-      </v-col>
-      <v-col v-for="(day, index) in daysOfWeek" :key="index" cols="1">
-        <strong>{{ day }}</strong>
-      </v-col>
-    </v-row>
-
-    <!-- Schicht-Auswahl -->
-    <v-row v-for="(shift, index) in shiftTypes" :key="index">
-      <v-col cols="3">
-        <v-btn color="primary" block>{{ shift }}</v-btn>
-      </v-col>
-      <v-col v-for="(day, dayIndex) in daysOfWeek" :key="dayIndex" cols="1">
-        <v-autocomplete
-          :items="employeeNames"
-          v-model="currentSchedule[shift][dayIndex]"
-          label="Mitarbeiter"
-          dense
-          outlined
-          hide-details
-          multiple
-          return-object
-        ></v-autocomplete>
-      </v-col>
-    </v-row>
-
-    <!-- Buttons: Speichern und CSV Export mittig -->
-    <v-row justify="center" align="center" class="mt-4">
-      <v-btn color="success" @click="saveSchedule" class="mr-4">Plan speichern</v-btn>
-      <v-btn @click="exportToCSV" color="primary" icon>
-        <v-icon>mdi-download</v-icon>
-      </v-btn>
-    </v-row>
-  </v-container>
-</template>
 
 <style scoped>
 .week-display {

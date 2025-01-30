@@ -1,0 +1,59 @@
+{
+  "login": {
+    "title": "Anmelden",
+    "button": "Einloggen"
+  },
+  "welcome": "Willkommen",
+  "goodbye": "Auf Wiedersehen",
+  "general": {
+    "home": "Startseite",
+    "shop": "Shop",
+    "cart": "Warenkorb",
+    "checkout": "Kasse",
+    "search": "Suche",
+    "account": "Konto",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "register": "Registrieren",
+    "language": "Sprache",
+    "contact": "Kontakt",
+    "terms_and_conditions": "Geschäftsbedingungen",
+    "privacy_policy": "Datenschutzerklärung"
+  },
+  "product": {
+    "add_to_cart": "In den Warenkorb",
+    "out_of_stock": "Nicht vorrätig",
+    "price": "Preis",
+    "quantity": "Menge",
+    "description": "Beschreibung",
+    "reviews": "Bewertungen",
+    "related_products": "Ähnliche Produkte",
+    "sku": "Artikelnummer",
+    "availability": "Verfügbarkeit",
+    "categories": "Kategorien"
+  },
+  "cart": {
+    "your_cart": "Dein Warenkorb",
+    "empty_cart": "Dein Warenkorb ist leer",
+    "total": "Gesamt",
+    "proceed_to_checkout": "Zur Kasse gehen",
+    "remove": "Entfernen",
+    "update_quantity": "Menge aktualisieren"
+  },
+  "checkout": {
+    "billing_details": "Rechnungsdetails",
+    "shipping_details": "Versanddetails",
+    "payment_method": "Zahlungsmethode",
+    "place_order": "Bestellung abschicken",
+    "order_summary": "Bestellübersicht",
+    "shipping_method": "Versandmethode",
+    "order_notes": "Bestellhinweise"
+  },
+  "messages": {
+    "item_added": "Artikel wurde zum Warenkorb hinzugefügt!",
+    "item_removed": "Artikel wurde aus dem Warenkorb entfernt!",
+    "order_placed": "Deine Bestellung wurde erfolgreich aufgegeben!",
+    "error_occurred": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "stock_insufficient": "Nicht genügend Lagerbestand verfügbar."
+  }
+}

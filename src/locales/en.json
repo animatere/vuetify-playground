@@ -1,0 +1,59 @@
+
+{
+  "login": {
+    "title": "Login",
+    "button": "Sign In"
+  },
+  "welcome": "Welcome",
+  "general": {
+  "home": "Home",
+  "shop": "Shop",
+  "cart": "Cart",
+  "checkout": "Checkout",
+  "search": "Search",
+  "account": "Account",
+  "login": "Login",
+  "logout": "Logout",
+  "register": "Register",
+  "language": "Language",
+  "contact": "Contact",
+  "terms_and_conditions": "Terms and Conditions",
+  "privacy_policy": "Privacy Policy"
+},
+"product": {
+  "add_to_cart": "Add to Cart",
+  "out_of_stock": "Out of Stock",
+  "price": "Price",
+  "quantity": "Quantity",
+  "description": "Description",
+  "reviews": "Reviews",
+  "related_products": "Related Products",
+  "sku": "SKU",
+  "availability": "Availability",
+  "categories": "Categories"
+  },
+  "cart": {
+    "your_cart": "Your Cart",
+    "empty_cart": "Your cart is empty",
+    "total": "Total",
+    "proceed_to_checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "update_quantity": "Update Quantity"
+  },
+  "checkout": {
+    "billing_details": "Billing Details",
+    "shipping_details": "Shipping Details",
+    "payment_method": "Payment Method",
+    "place_order": "Place Order",
+    "order_summary": "Order Summary",
+    "shipping_method": "Shipping Method",
+    "order_notes": "Order Notes"
+  },
+  "messages": {
+    "item_added": "Item has been added to your cart!",
+    "item_removed": "Item has been removed from your cart!",
+    "order_placed": "Your order has been successfully placed!",
+    "error_occurred": "An error occurred. Please try again.",
+    "stock_insufficient": "Not enough stock available."
+  }
+}

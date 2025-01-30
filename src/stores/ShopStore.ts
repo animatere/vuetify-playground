@@ -1,13 +1,13 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useShopStore = defineStore('shop', {
+export const useShopStore = defineStore("shop", {
   state: () => ({
-    cart: []
+    cart: [],
   }),
-  
+
   actions: {
     removeNotification(id: number) {
-        console.log(this.cart) 
-      },
-  }
+      console.log(this.cart);
+    },
+  },
 });

@@ -1,16 +1,22 @@
 body,
 .v-application {
   /* Hintergrundfarbe für die gesamte App */
-  height: 100%;
-  margin: 0;
-  padding: 0;
+  height: 100% !important;
+  width: 100% !important;
+  font-family: "Bahnschrift", Arial, sans-serif;
+}
+
+.v-app {
+  /* Hintergrundfarbe für die gesamte App */
+  height: 100% !important;
+  width: 100% !important;
   font-family: "Bahnschrift", Arial, sans-serif;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .main-content {
@@ -33,7 +39,14 @@ th span {
 }
 
 .v-container {
-  padding: 25px;
+  /* padding: 25px;
   margin-top: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 20px; */
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.full-width {
+  width: 95vw;
 }
