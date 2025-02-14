@@ -110,6 +110,13 @@
           >
             Chatbot
           </router-link>
+          <router-link
+            to="/image-generator"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Bild erstellung
+          </router-link>
         </div>
       </div>
 
