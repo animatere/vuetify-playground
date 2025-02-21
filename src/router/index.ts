@@ -22,7 +22,6 @@ import ItemOverview from "@/components/shop/ItemOverview.vue";
 import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 import AdminDashboard from "@/components/admin/AdminDashboard.vue";
 import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
-import WorkSchedule from "@/components/user/WorkSchedule.vue";
 import QhLanding from "@/components/questhub/qh-landing.vue";
 import Chatbot from "@/components/shop/Chatbot.vue";
 import ImageGenerator from "@/components/shop/ImageGenerator.vue";
@@ -163,12 +162,6 @@ const router = createRouter({
       path: "/purchase-history",
       name: "purchase-history",
       component: UserPurchaseHistory,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/work-schedule",
-      name: "work-schedule",
-      component: WorkSchedule,
       beforeEnter: requireAuth,
     },
     {

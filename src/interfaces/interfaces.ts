@@ -15,6 +15,18 @@ export interface Item {
   details: string[];
   variants: Variant[];
 }
+
+export interface Product {
+  id: string;
+  title: string;
+  price: number;
+  category: string // hier später bitte boolean
+  brand: string;
+  details: string[];
+  link: string;
+  description: string;
+}
+
 export interface Employee {
   username: number;
   status: string;
@@ -93,7 +105,7 @@ export interface Cart {
   /**
    * Die Artikel, die im Warenkorb enthalten sind.
    */
-  items: Item[];
+  items: Product[];
 
   /**
    * Der Status des Warenkorbs.

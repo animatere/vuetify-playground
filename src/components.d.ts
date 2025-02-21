@@ -24,7 +24,6 @@ declare module 'vue' {
     Login: typeof import('./components/user/Login.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     Notification: typeof import('./components/user/Notification.vue')['default']
-    PicGenerator: typeof import('./components/shop/PicGenerator.vue')['default']
     Playground: typeof import('./components/training/Playground.vue')['default']
     ProductManagement: typeof import('./components/admin/admin-pages/ProductManagement.vue')['default']
     QhLanding: typeof import('./components/questhub/qh-landing.vue')['default']
@@ -45,6 +44,5 @@ declare module 'vue' {
     UserPurchaseHistory: typeof import('./components/user/UserPurchaseHistory.vue')['default']
     UserSettings: typeof import('./components/user/UserSettings.vue')['default']
     ValidateForm: typeof import('./components/training/ValidateForm.vue')['default']
-    WorkSchedule: typeof import('./components/user/WorkSchedule.vue')['default']
   }
 }
