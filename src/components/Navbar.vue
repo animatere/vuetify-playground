@@ -89,13 +89,6 @@
             Single-Item
           </router-link>
           <router-link
-            to="/shop-shopping-cart"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Shopping-Cart
-          </router-link>
-          <router-link
             to="/shop-payment-page"
             class="dropdown-item"
             @click="closeDropdown"

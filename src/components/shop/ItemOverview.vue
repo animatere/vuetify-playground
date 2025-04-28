@@ -278,6 +278,10 @@ export default {
   }
 }
 
+li{
+  list-style: none;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
