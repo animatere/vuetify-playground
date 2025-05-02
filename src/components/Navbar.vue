@@ -16,6 +16,8 @@
     </div>
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
+      <router-link to="/collector" class="nav-item">Collector</router-link>
+
 
       <!-- <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">

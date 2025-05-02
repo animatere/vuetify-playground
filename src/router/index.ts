@@ -25,6 +25,7 @@ import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
 import WorkSchedule from "@/components/user/WorkSchedule.vue";
 import QhLanding from "@/components/questhub/qh-landing.vue";
 import Chatbot from "@/components/shop/Chatbot.vue";
+import Collector from "@/components/collector/Collector.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -180,6 +181,12 @@ const router = createRouter({
       path: "/chat-bot",
       name: "chat-bot",
       component: Chatbot,
+      beforeEnter: requireAuth,
+    },
+    {
+      path: "/collector",
+      name: "collector",
+      component: Collector,
       beforeEnter: requireAuth,
     },
 
