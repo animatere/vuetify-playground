@@ -21,8 +21,8 @@
             <v-row>
             <v-col>
                 <div class="d-flex justify-space-between">
-                <div class="text-white">Progress</div>
-                <div class="font-weight-bold text-white">{{ completionPercentage }}%</div>
+                <div class="text">Progress</div>
+                <div class="font-weight-bold text">{{ completionPercentage }}%</div>
                 </div>
                 <v-progress-linear
                 :value="completionPercentage"
