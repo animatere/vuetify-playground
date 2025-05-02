@@ -1,163 +1,146 @@
 <template>
-    <v-app>
-      <v-main>
-        <v-container fluid class="pa-0">
-          <v-layout class="d-flex flex-column min-h-screen gradient-bg">
-            <!-- Header -->
-            <Header />
-  
-            <!-- Back to Top Button -->
-            <v-btn
-              v-if="showBackToTop"
-              @click="scrollToTop"
-              class="back-to-top"
-              color="red"
-              icon
-              size="large"
+    <Header />  
+    <v-btn
+        v-if="showBackToTop"
+        @click="scrollToTop"
+        class="back-to-top"
+        color="red"
+        icon
+        size="large"
+    >
+        <v-icon>mdi-arrow-up</v-icon>
+    </v-btn>
+
+    <v-container class="py-6">
+        <v-card class="mb-6" elevation="10">
+        <v-card-title>
+            <v-icon start class="mr-2">mdi-trophy</v-icon>
+            Collection Progress: {{ currentSetName }}
+        </v-card-title>
+        <v-card-text>
+            <v-row>
+            <v-col>
+                <div class="d-flex justify-space-between">
+                <div class="text-white">Progress</div>
+                <div class="font-weight-bold text-white">{{ completionPercentage }}%</div>
+                </div>
+                <v-progress-linear
+                :value="completionPercentage"
+                height="8"
+                color="green"
+                />
+            </v-col>
+            </v-row>
+
+            <v-row class="pt-4" dense>
+            <v-col cols="6">
+                <v-sheet class="text-center py-3" color="purple lighten-5">
+                <div class="text-h5 red--text">{{ collectedInCurrentSet }}</div>
+                <div class="text-caption">Cards Collected</div>
+                </v-sheet>
+            </v-col>
+            <v-col cols="6">
+                <v-sheet class="text-center py-3" color="blue lighten-5">
+                <div class="text-h5 red--text">{{ totalCardsInSet - collectedInCurrentSet }}</div>
+                <div class="text-caption">Cards Missing</div>
+                </v-sheet>
+            </v-col>
+            </v-row>
+        </v-card-text>
+        </v-card>
+
+        <v-card class="mb-6" elevation="10">
+        <v-card-text>
+            <v-row dense>
+            <v-col cols="12" md="6">
+                <v-select
+                :items="sets"
+                item-title="name"
+                item-value="id"
+                v-model="selectedSet"
+                :loading="loadingSets"
+                label="Select Pokémon TCG Set"
+                />
+            </v-col>
+
+            <v-col cols="12" md="6">
+                <v-text-field
+                v-model="searchQuery"
+                label="Search cards"
+                prepend-inner-icon="mdi-magnify"
+                ></v-text-field>
+            </v-col>
+            </v-row>
+
+            <v-row dense>
+            <v-col cols="12" md="6">
+                <v-tabs v-model="collectionFilter">
+                <v-tab value="all">All Cards</v-tab>
+                <v-tab value="collected">Collected</v-tab>
+                <v-tab value="missing">Missing</v-tab>
+                </v-tabs>
+            </v-col>
+            <v-col cols="12" md="6">
+                <v-autocomplete
+                v-model="selectedRarities"
+                :items="availableRarities"
+                multiple
+                chips
+                label="Filter by Rarity"
+                ></v-autocomplete>
+            </v-col>
+            </v-row>
+        </v-card-text>
+        </v-card>
+
+        <v-row v-if="loading" justify="center">
+        <v-progress-circular indeterminate color="red" size="40"></v-progress-circular>
+        </v-row>
+
+        <v-row v-else-if="filteredCards.length === 0" justify="center" class="text-center py-10">
+        <v-col cols="12">
+            <v-icon size="64">mdi-magnify</v-icon>
+            <div class="text-h6">No cards found</div>
+            <p class="text-subtitle-1">Try adjusting your filters or selecting a different set</p>
+        </v-col>
+        </v-row>
+
+        <v-row v-else dense style="padding-left:5px; padding-right:5px; padding-top:5px">
+        <v-col
+            v-for="card in filteredCards"
+            :key="card.id"
+            cols="12" sm="6" md="4" lg="3" xl="2"
+        >
+            <v-card
+            @click="toggleCardCollection(card.id)"
+            :elevation="4"
+            class="card-hover"
             >
-              <v-icon>mdi-arrow-up</v-icon>
-            </v-btn>
-  
-            <!-- Content -->
-            <v-container class="py-6">
-              <!-- Collection Progress Card -->
-              <v-card class="mb-6" elevation="10">
-                <v-card-title>
-                  <v-icon start class="mr-2">mdi-trophy</v-icon>
-                  Collection Progress: {{ currentSetName }}
-                </v-card-title>
-                <v-card-text>
-                  <v-row>
-                    <v-col>
-                      <div class="d-flex justify-space-between">
-                        <div class="text-white">Progress</div>
-                        <div class="font-weight-bold text-white">{{ completionPercentage }}%</div>
-                      </div>
-                      <v-progress-linear
-                        :value="completionPercentage"
-                        height="8"
-                        color="green"
-                      />
-                    </v-col>
-                  </v-row>
-  
-                  <v-row class="pt-4" dense>
-                    <v-col cols="6">
-                      <v-sheet class="text-center py-3" color="purple lighten-5">
-                        <div class="text-h5 red--text">{{ collectedInCurrentSet }}</div>
-                        <div class="text-caption">Cards Collected</div>
-                      </v-sheet>
-                    </v-col>
-                    <v-col cols="6">
-                      <v-sheet class="text-center py-3" color="blue lighten-5">
-                        <div class="text-h5 red--text">{{ totalCardsInSet - collectedInCurrentSet }}</div>
-                        <div class="text-caption">Cards Missing</div>
-                      </v-sheet>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-  
-              <!-- Filter Card -->
-              <v-card class="mb-6" elevation="10">
-                <v-card-text>
-                  <v-row dense>
-                    <v-col cols="12" md="6">
-                      <v-select
-                        :items="sets"
-                        item-title="name"
-                        item-value="id"
-                        v-model="selectedSet"
-                        :loading="loadingSets"
-                        label="Select Pokémon TCG Set"
-                      />
-                    </v-col>
-  
-                    <v-col cols="12" md="6">
-                      <v-text-field
-                        v-model="searchQuery"
-                        label="Search cards"
-                        prepend-inner-icon="mdi-magnify"
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-  
-                  <v-row dense>
-                    <v-col cols="12" md="6">
-                      <v-tabs v-model="collectionFilter">
-                        <v-tab value="all">All Cards</v-tab>
-                        <v-tab value="collected">Collected</v-tab>
-                        <v-tab value="missing">Missing</v-tab>
-                      </v-tabs>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                      <v-autocomplete
-                        v-model="selectedRarities"
-                        :items="availableRarities"
-                        multiple
-                        chips
-                        label="Filter by Rarity"
-                      ></v-autocomplete>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-  
-              <!-- Loading Spinner -->
-              <v-row v-if="loading" justify="center">
-                <v-progress-circular indeterminate color="red" size="40"></v-progress-circular>
-              </v-row>
-  
-              <!-- No Results -->
-              <v-row v-else-if="filteredCards.length === 0" justify="center" class="text-center py-10">
-                <v-col cols="12">
-                  <v-icon size="64">mdi-magnify</v-icon>
-                  <div class="text-h6">No cards found</div>
-                  <p class="text-subtitle-1">Try adjusting your filters or selecting a different set</p>
-                </v-col>
-              </v-row>
-  
-              <!-- Card Grid -->
-              <v-row v-else dense style="padding-left:5px; padding-right:5px; padding-top:5px">
-                <v-col
-                  v-for="card in filteredCards"
-                  :key="card.id"
-                  cols="12" sm="6" md="4" lg="3" xl="2"
+            <v-img :src="card.images.small" :alt="card.name" height="200px" style="margin-top:20px"></v-img>
+            <v-card-text>
+                <div class="d-flex justify-space-between align-center">
+                <div>
+                    <div class="text-subtitle-2">{{ card.name }}</div>
+                    <div class="text-caption">{{ card.number }}/{{ card.set.printedTotal }}</div>
+                </div>
+                <div class="text-caption text-right">
+                    <div>Low {{ card.cardmarket?.prices.lowPrice ?? 'N/A' }}€</div>
+                    <div>Avg {{ card.cardmarket?.prices.trendPrice ?? 'N/A' }}€</div>
+                </div>
+                </div>
+                <v-chip
+                v-if="card.rarity"
+                class="ma-2"
+                :color="getRarityColor(card.rarity)"
+                text-color="white"
                 >
-                  <v-card
-                    @click="toggleCardCollection(card.id)"
-                    :elevation="4"
-                    class="card-hover"
-                  >
-                    <v-img :src="card.images.small" :alt="card.name" height="200px" style="margin-top:20px"></v-img>
-                    <v-card-text>
-                      <div class="d-flex justify-space-between align-center">
-                        <div>
-                          <div class="text-subtitle-2">{{ card.name }}</div>
-                          <div class="text-caption">{{ card.number }}/{{ card.set.printedTotal }}</div>
-                        </div>
-                        <div class="text-caption text-right">
-                          <div>Low {{ card.cardmarket?.prices.lowPrice ?? 'N/A' }}€</div>
-                          <div>Avg {{ card.cardmarket?.prices.trendPrice ?? 'N/A' }}€</div>
-                        </div>
-                      </div>
-                      <v-chip
-                        v-if="card.rarity"
-                        class="ma-2"
-                        :color="getRarityColor(card.rarity)"
-                        text-color="white"
-                      >
-                        {{ card.rarity }}
-                      </v-chip>
-                    </v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-layout>
-        </v-container>
-      </v-main>
-    </v-app>
+                {{ card.rarity }}
+                </v-chip>
+            </v-card-text>
+            </v-card>
+        </v-col>
+        </v-row>
+    </v-container>
   </template>
   
   <!-- Die bisherige <script setup> Logik wurde ersetzt durch die vollständige Portierung -->
@@ -428,7 +411,12 @@
   </script>
   
   
-  <style>
+<style>
+
+.v-card {
+  padding: 25px;
+}
+
   .gradient-bg {
     background: linear-gradient(to bottom, #374151, #0f172a);
   }
