@@ -213,9 +213,7 @@
   const collectedInCurrentSet = computed(() => cards.value.filter((card) => collectedCards.value.includes(card.id)).length);
   const totalCardsInSet = computed(() => cards.value.length);
   const completionPercentage = computed(() => totalCardsInSet.value > 0 ? Math.round((collectedInCurrentSet.value / totalCardsInSet.value) * 100) : 0);
-  const currentSetId = computed(() => sets.value.find((set) => set.id === selectedSet.value)?.id || 'All Sets');
   const currentSetName = computed(() => sets.value.find((set) => set.id === selectedSet.value)?.name || 'All Sets');
-
   
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
