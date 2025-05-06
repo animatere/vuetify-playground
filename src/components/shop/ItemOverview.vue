@@ -128,11 +128,11 @@
 
               <!-- Select für die Anzahl -->
               <v-select
-                v-model="item.quantity"
-                :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+                v-model="selectedQuantity"
+                :items="quantityOptions"
                 label="Quantity"
-                dense
                 @change="updateQuantity(item.id, item.quantity)"
+
               ></v-select>
 
               <v-list-item-subtitle
@@ -212,6 +212,7 @@
 </template>
 
 <script setup lang="ts">
+import { Product } from "@/interfaces/interfaces";
 import { ref, computed } from "vue";
 
 // Reactive Variablen
@@ -225,7 +226,6 @@ const categories = ref([
 ]);
 const selectedCategories = ref<string[]>([]);
 const priceRange = ref([0, 500]);
-const cartVisible = ref(false);
 const cartModalVisible = ref(false); // Modal-Visibility für Warenkorb
 const productDialogVisible = ref(false);
 const selectedProduct = ref<any>(null);
@@ -237,64 +237,76 @@ const cartItems = ref([
     title: "Gaming Mouse - Pro X",
     price: 79.99,
     quantity: 2,
+    brand: "Logitech",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     category: "Gaming Mice",
-    link: "https://resource.logitech.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/g502x-lightspeed-gallery-1-black.png",
-    description:
-      "High-performance gaming mouse with customizable buttons and RGB lighting.",
+    link: "...",
+    description: "High-performance gaming mouse...",
   },
   {
     id: 2,
     title: "Mechanical Keyboard - RGB",
     price: 129.99,
     quantity: 3,
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     category: "Keyboards",
-    link: "https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-s/product-gallery/graphite/mx-keys-s-keyboard-top-view-graphite-tur.png",
-    description:
-      "Durable mechanical keyboard with customizable RGB backlighting and ergonomic design.",
+    link: "...",
+    description: "Durable mechanical keyboard...",
   },
 ]);
-const products = ref([
+const products = ref<Product[]>([
   {
-    id: 1,
+    id: "1",
     title: "Gaming Mouse - Pro X",
     price: 79.99,
     category: "Gaming Mice",
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     link: "https://resource.logitech.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/g502x-lightspeed-gallery-1-black.png",
     description:
       "High-performance gaming mouse with customizable buttons and RGB lighting.",
   },
   {
-    id: 2,
+    id: "2",
     title: "Mechanical Keyboard - RGB",
     price: 129.99,
     category: "Keyboards",
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     link: "https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-s/product-gallery/graphite/mx-keys-s-keyboard-top-view-graphite-tur.png",
     description:
       "Durable mechanical keyboard with customizable RGB backlighting and ergonomic design.",
   },
   {
-    id: 3,
+    id: "3",
     title: "Surround Sound Headset",
     price: 99.99,
     category: "Headsets",
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     link: "https://gmedia.playstation.com/is/image/SIEPDC/3d-pulse-headset-product-thumbnail-01-en-14sep21?$facebook$",
     description:
       "Comfortable headset with immersive surround sound and noise-cancelling microphone.",
   },
   {
-    id: 4,
+    id: "4",
     title: "4K Gaming Monitor",
     price: 599.99,
     category: "Monitors",
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     link: "https://media.jacob.services/images/9a/f6/52/90/9af65290bde4138ef83a8b2f8c905c75.png",
     description:
       "Ultra HD gaming monitor with high refresh rate and vibrant colors.",
   },
   {
-    id: 5,
+    id: "5",
     title: "Ergonomic Gaming Chair",
     price: 199.99,
     category: "Chairs",
+    brand: "Corsair",
+    details: ["Cherry MX Switches", "RGB Backlight", "Wired"],
     link: "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_78825329?x=536&y=402&format=jpg&quality=80&sp=yes&strip=yes&trim&ex=536&ey=402&align=center&resizesource&unsharp=1.5x1+0.7+0.02&cox=0&coy=0&cdx=536&cdy=402",
     description:
       "Comfortable gaming chair with adjustable lumbar support and premium materials.",

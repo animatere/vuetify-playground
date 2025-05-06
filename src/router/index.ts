@@ -22,10 +22,9 @@ import ItemOverview from "@/components/shop/ItemOverview.vue";
 import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 import AdminDashboard from "@/components/admin/AdminDashboard.vue";
 import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
-import WorkSchedule from "@/components/user/WorkSchedule.vue";
 import QhLanding from "@/components/questhub/qh-landing.vue";
 import Chatbot from "@/components/shop/Chatbot.vue";
-import Collector from "@/components/collector/Collector.vue";
+import ImageGenerator from "@/components/shop/ImageGenerator.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -166,12 +165,6 @@ const router = createRouter({
       beforeEnter: requireAuth,
     },
     {
-      path: "/work-schedule",
-      name: "work-schedule",
-      component: WorkSchedule,
-      beforeEnter: requireAuth,
-    },
-    {
       path: "/qh-landing",
       name: "qh-landing",
       component: QhLanding,
@@ -184,9 +177,9 @@ const router = createRouter({
       beforeEnter: requireAuth,
     },
     {
-      path: "/collector",
-      name: "collector",
-      component: Collector,
+      path: "/image-generator",
+      name: "image-generator",
+      component: ImageGenerator,
       beforeEnter: requireAuth,
     },
 

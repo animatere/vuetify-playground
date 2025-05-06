@@ -139,19 +139,14 @@ let defaultUser = ref<UserData>({
   registered: false,
 });
 
-let userEvents = ref<UserEvent>({
-  id: "",
-  userId: "",
-  eventDescription: "",
-  createdAt: new Date(),
-});
+let userEvents = ref<UserEvent[]>([]);
 
 onMounted(async () => {
   try {
     defaultUser.value = await getCurrentUserData();
-    userEvents.value = (await eventStore.getEvents()) as UserEvent[];
+    userEvents.value = await eventStore.getEvents();
   } catch (error: any) {
-    console.error("Fehler bei User authentifizierung:", error);
+    console.error("Fehler bei der User-Authentifizierung:", error);
   }
 });
 

@@ -52,7 +52,7 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-btn text @click="closeDialog">Cancel</v-btn>
+        <v-btn @click="closeDialog">Cancel</v-btn>
         <v-btn color="primary" @click="saveUser" :disabled="!formValid">{{
           dialogMode === "add" ? "Add" : "Save"
         }}</v-btn>
@@ -66,8 +66,9 @@ import { ref } from "vue";
 
 // Dialog- und Form-Daten
 const dialog = ref(false);
-const dialogMode = ref<"add" | "edit">("add"); // 'add' oder 'edit'
-const form = ref({
+const dialogMode = ref<"add" | "edit">("add");
+const form = ref<{ id?: number; name: string; email: string; role: string }>({
+  id: undefined,
   name: "",
   email: "",
   role: "",
@@ -164,7 +165,7 @@ const users = ref([
   },
 ]);
 
-const headers = ref([
+const headers = ref<{ title: string; align?: "start" | "center" | "end"; key: string; sortable: boolean }[]>([
   { title: "Name", align: "start", key: "name", sortable: true },
   { title: "Email", align: "start", key: "email", sortable: true },
   { title: "Role", align: "start", key: "role", sortable: true },
@@ -172,13 +173,9 @@ const headers = ref([
 ]);
 
 // Methoden
-function openDialog(mode: "add" | "edit", user = null) {
+function openDialog(mode: "add" | "edit", user: { id: number; name: string; email: string; role: string; } | null = null) {
   dialogMode.value = mode;
-  if (mode === "edit" && user) {
-    form.value = { ...user }; // Pre-fülle das Formular für Bearbeitung
-  } else {
-    form.value = { name: "", email: "", role: "" }; // Formular für Hinzufügen eines neuen Benutzers zurücksetzen
-  }
+  form.value = user ? { ...user } : { id: undefined, name: "", email: "", role: "" };
   dialog.value = true;
 }
 
@@ -188,14 +185,12 @@ function closeDialog() {
 
 function saveUser() {
   if (dialogMode.value === "add") {
-    // Benutzer hinzufügen
-    const newUser = { ...form.value, id: Date.now() }; // Einfache einzigartige ID mit Zeitstempel
+    const newUser = { ...form.value, id: Date.now() };
     users.value.push(newUser);
   } else {
-    // Benutzer bearbeiten
     const index = users.value.findIndex((user) => user.id === form.value.id);
-    if (index !== -1) {
-      users.value.splice(index, 1, form.value); // Ersetze die alten Benutzerdaten mit den aktualisierten
+    if (index !== -1 && form.value.id !== undefined) {
+      users.value.splice(index, 1, { ...form.value, id: form.value.id });
     }
   }
   closeDialog();
@@ -204,7 +199,7 @@ function saveUser() {
 function deleteUser(id: number) {
   const index = users.value.findIndex((user) => user.id === id);
   if (index !== -1) {
-    users.value.splice(index, 1); // Benutzer aus dem Array entfernen
+    users.value.splice(index, 1);
   }
 }
 </script>
@@ -215,5 +210,5 @@ body {
   margin: 0;
   padding: 0;
 }
-/* Füge hier spezifische Stile für das User Management hinzu */
+
 </style>

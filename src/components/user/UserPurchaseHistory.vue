@@ -197,13 +197,13 @@ const orders = ref([
 
 // Berechnete Eigenschaften
 const totalExclVat = computed(() => {
-  // Gesamtpreis ohne MwSt.
   return (
-    selectedOrder.value?.products.reduce((sum, product) => {
+    selectedOrder.value?.products.reduce((sum: number, product: { price: number; quantity: number }) => {
       return sum + product.price * product.quantity;
     }, 0) || 0
   );
 });
+
 
 const totalInclVat = computed(() => {
   // Gesamtpreis mit 19% MwSt.
@@ -212,7 +212,7 @@ const totalInclVat = computed(() => {
 
 // Methoden
 function formatDate(date: string): string {
-  const options = { year: "numeric", month: "short", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
   return new Date(date).toLocaleDateString("de-DE", options);
 }
 

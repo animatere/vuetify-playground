@@ -17,6 +17,7 @@ declare module 'vue' {
     Collector: typeof import('./components/collector/Collector.vue')['default']
     Counter: typeof import('./components/training/Counter.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
+    ImageGenerator: typeof import('./components/shop/ImageGenerator.vue')['default']
     ItemOverview: typeof import('./components/shop/ItemOverview.vue')['default']
     ItemSingleView: typeof import('./components/shop/ItemSingleView.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']

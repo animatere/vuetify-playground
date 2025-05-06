@@ -56,28 +56,12 @@
         </v-card>
       </v-col>
     </v-row>
-
     <v-divider class="my-5"></v-divider>
-
-    <!-- Ähnliche Produkte -->
-    <!-- <v-row>
-        <h2 class="mb-4">Ähnliche Produkte</h2>
-        <v-col cols="12" sm="6" md="3" v-for="(similar, index) in similarProducts" :key="index">
-          <v-card>
-            <v-img :src="similar.image" alt="Ähnliches Produkt" height="150"></v-img>
-            <v-card-title>{{ similar.title }}</v-card-title>
-            <v-card-subtitle>Preis: {{ similar.price }} €</v-card-subtitle>
-            <v-btn block color="primary">Ansehen</v-btn>
-          </v-card>
-        </v-col>
-      </v-row> -->
-
-    <!-- <v-divider class="my-5"></v-divider> -->
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 
 // Reactive Variablen
 const product = ref({
@@ -101,32 +85,8 @@ const currentImage = ref(
 const images = ref([
   "https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg",
   "https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg",
-  // 'https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg',
-  // 'https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg',
-]);
-const reviews = ref([
-  { user: "Max M.", rating: 5, text: "Tolles Produkt, sehr zufrieden!" },
-  { user: "Anna S.", rating: 4, text: "Gutes Preis-Leistungs-Verhältnis." },
-  { user: "Felix K.", rating: 3, text: "Qualität könnte besser sein." },
 ]);
 
-// Berechnete Eigenschaften
-const averageRating = computed(() => {
-  if (reviews.value.length === 0) return 0;
-  const total = reviews.value.reduce((sum, review) => sum + review.rating, 0);
-  return total / reviews.value.length;
-});
-
-const starPercentages = computed(() => {
-  const total = reviews.value.length;
-  const percentages = [5, 4, 3, 2, 1].map(
-    (star) =>
-      (reviews.value.filter((review) => review.rating === star).length /
-        total) *
-      100,
-  );
-  return percentages;
-});
 </script>
 
 <style scoped>

@@ -70,7 +70,6 @@
           </router-link>
         </div>
       </div> -->
-
       <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">
           Shop
@@ -104,6 +103,13 @@
             @click="closeDropdown"
           >
             Chatbot
+          </router-link>
+          <router-link
+            to="/image-generator"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Bild erstellung
           </router-link>
         </div>
       </div>
@@ -169,13 +175,6 @@
             @click="closeDropdown"
           >
             Admin Dashboard
-          </router-link>
-          <router-link
-            to="/work-schedule"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Schichtplan
           </router-link>
           <p @click="logoutClicked" class="dropdown-item logout-button">
             <v-icon
