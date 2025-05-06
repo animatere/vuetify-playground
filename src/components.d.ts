@@ -14,6 +14,7 @@ declare module 'vue' {
     Catplay: typeof import('./components/training/Catplay.vue')['default']
     Chat: typeof import('./components/training/Chat.vue')['default']
     Chatbot: typeof import('./components/shop/Chatbot.vue')['default']
+    Collector: typeof import('./components/collector/Collector.vue')['default']
     Counter: typeof import('./components/training/Counter.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
     ImageGenerator: typeof import('./components/shop/ImageGenerator.vue')['default']
@@ -44,5 +45,6 @@ declare module 'vue' {
     UserPurchaseHistory: typeof import('./components/user/UserPurchaseHistory.vue')['default']
     UserSettings: typeof import('./components/user/UserSettings.vue')['default']
     ValidateForm: typeof import('./components/training/ValidateForm.vue')['default']
+    WorkSchedule: typeof import('./components/user/WorkSchedule.vue')['default']
   }
 }
