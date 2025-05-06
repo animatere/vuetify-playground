@@ -45,6 +45,5 @@ declare module 'vue' {
     UserPurchaseHistory: typeof import('./components/user/UserPurchaseHistory.vue')['default']
     UserSettings: typeof import('./components/user/UserSettings.vue')['default']
     ValidateForm: typeof import('./components/training/ValidateForm.vue')['default']
-    WorkSchedule: typeof import('./components/user/WorkSchedule.vue')['default']
   }
 }
