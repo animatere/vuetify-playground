@@ -1,73 +1,69 @@
 <template>
-  <v-container style="margin-top: 50px;">
-    <div>
-      <!-- Wochen-Navigation -->
-      <v-row justify="center">
-        <v-btn @click="previousWeek" color="primary" icon>
-          <v-icon>mdi-chevron-left</v-icon>
-        </v-btn>
-        <span class="week-display">{{ weekDisplay }}</span>
-        <v-btn @click="nextWeek" color="primary" icon>
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </v-row>
+  <v-container class="shift-container">
+    <!-- Wochen-Navigation -->
+    <v-row justify="center" class="mb-4">
+      <v-btn @click="previousWeek" color="primary" icon>
+        <v-icon>mdi-chevron-left</v-icon>
+      </v-btn>
+      <span class="week-display">{{ weekDisplay }}</span>
+      <v-btn @click="nextWeek" color="primary" icon>
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
+    </v-row>
 
-      <!-- Kopfzeile mit Wochentagen -->
-      <v-row>
-        <v-col cols="4" class="text-center">
-          <strong>Schicht</strong>
-        </v-col>
-        <v-col
+    <!-- Kopfzeile -->
+    <div class="schedule-table">
+      <div class="schedule-row header-row">
+        <div class="schedule-cell shift-cell">Schicht</div>
+        <div
           v-for="(day, index) in daysOfWeek"
           :key="index"
-          cols="1"
-          class="text-center"
+          class="schedule-cell header-cell"
         >
-          <strong>{{ day }}</strong>
-        </v-col>
-      </v-row>
+          {{ day }}
+        </div>
+      </div>
 
-      <v-row>
-        <!-- Schicht-Auswahl -->
-        <v-row v-for="(shift, index) in shiftTypes" :key="index">
-          <v-col cols="5" class="text-center">
-            <v-btn color="primary" block>{{ shift }}</v-btn>
-          </v-col>
-          <v-col
-            v-for="(day, dayIndex) in daysOfWeek"
-            :key="dayIndex"
-            cols="1"
-            class="text-center"
-          >
-            <v-autocomplete
-              :items="employeeNames"
-              v-model="currentSchedule[shift][dayIndex]"
-              label="Mitarbeiter"
-              dense
-              outlined
-              hide-details
-              multiple
-              return-object
-            ></v-autocomplete>
-          </v-col>
-        </v-row>
-
-        <!-- Buttons: Speichern und CSV Export mittig -->
-        <v-row justify="center" class="full-width">
-          <v-btn
-            justify="center"
-            color="success"
-            @click="saveSchedule"
-            class="mr-4"
-          >
-            Plan speichern
-          </v-btn>
-          <v-btn @click="exportToCSV" color="primary" icon>
-            <v-icon>mdi-download</v-icon>
-          </v-btn>
-        </v-row>
-      </v-row>
+      <!-- Zeilen für jede Schicht -->
+      <div
+        v-for="(shift, index) in shiftTypes"
+        :key="index"
+        class="schedule-row"
+      >
+        <div class="schedule-cell shift-cell">
+          <v-btn color="primary" block>{{ shift }}</v-btn>
+        </div>
+        <div
+          v-for="(day, dayIndex) in daysOfWeek"
+          :key="dayIndex"
+          class="schedule-cell"
+        >
+          <v-autocomplete
+            :items="employeeNames"
+            v-model="currentSchedule[shift][dayIndex]"
+            label="Mitarbeiter"
+            dense
+            outlined
+            hide-details
+            multiple
+            return-object
+            chips
+            closable-chips
+            class="autocomplete-cell"
+          ></v-autocomplete>
+        </div>
+      </div>
     </div>
+
+    <!-- Aktionen -->
+    <v-row justify="center" class="mt-6">
+      <v-btn color="success" @click="saveSchedule" class="mr-4">
+        Plan speichern
+      </v-btn>
+      <v-btn @click="exportToCSV" color="primary" icon>
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+    </v-row>
   </v-container>
 </template>
 
@@ -79,9 +75,8 @@ const currentDate = ref(new Date(today));
 
 const daysOfWeek = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 const shiftTypes = ["Früh", "Spät", "Nacht"];
-const employeeNames = ["Müller", "Wolf", "Aykut", "Schmidt", "Meier"];
+const employeeNames = ["Müller", "Wolf", "Aykut", "Schmidt", "Meier", "Maximilian", "Bernhard-Lukas"];
 
-// Reactive Schedule Data (Woche mit Schichtplan)
 const scheduleData = reactive<Record<string, Record<string, string[]>>>({});
 
 const getStartOfWeek = (date: Date): Date => {
@@ -98,11 +93,10 @@ const formatDate = (date: Date): string => {
   return `${day}.${month}.${year}`;
 };
 
-const weekKey = computed(() => formatDate(getStartOfWeek(currentDate.value))); // Startdatum als Schlüssel
+const weekKey = computed(() => formatDate(getStartOfWeek(currentDate.value)));
 
 const currentSchedule = computed(() => {
   if (!scheduleData[weekKey.value]) {
-    // Initiale leere Datenstruktur, wenn noch keine Daten vorhanden
     scheduleData[weekKey.value] = {
       Früh: Array(7).fill([]),
       Spät: Array(7).fill([]),
@@ -161,12 +155,54 @@ const exportToCSV = () => {
 </script>
 
 <style scoped>
+.shift-container {
+  max-width: 100%;
+  margin: 50px auto 0 auto;
+  overflow-x: auto;
+}
+
 .week-display {
   font-size: 1.2em;
   font-weight: bold;
   margin: 0 16px;
 }
+
 .v-btn {
   text-transform: none;
+}
+
+.schedule-table {
+  display: table;
+  width: auto;
+  margin: 0 auto;
+  border-spacing: 16px 8px;
+}
+
+.schedule-row {
+  display: table-row;
+}
+
+.schedule-cell {
+  display: table-cell;
+  vertical-align: top;
+  white-space: nowrap;
+  padding: 4px;
+}
+
+.header-cell {
+  font-weight: bold;
+  text-align: center;
+}
+
+.shift-cell {
+  min-width: 100px;
+  vertical-align: middle;
+}
+
+.autocomplete-cell .v-chip {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

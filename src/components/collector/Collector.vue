@@ -124,8 +124,8 @@
                     <div class="text-caption">{{ card.number }}/{{ card.set.printedTotal }}</div>
                 </div>
                 <div class="text-caption text-right">
-                    <div>Low {{ card.cardmarket?.prices.lowPrice ?? 'N/A' }}€</div>
-                    <div>Avg {{ card.cardmarket?.prices.trendPrice ?? 'N/A' }}€</div>
+                    <div>Low {{ card.cardmarket?.prices?.lowPrice ?? 'N/A' }}€</div>
+                    <div>Avg {{ card.cardmarket?.prices?.trendPrice ?? 'N/A' }}€</div>
                 </div>
                 </div>
                 <v-chip
@@ -143,7 +143,6 @@
     </v-container>
   </template>
   
-  <!-- Die bisherige <script setup> Logik wurde ersetzt durch die vollständige Portierung -->
   <script setup lang="ts">
   import { ref, computed, onMounted, watch } from 'vue';
   
@@ -192,8 +191,9 @@
   export type CollectionFilterType = 'all' | 'collected' | 'missing';
   
   
-  const API_BASE_URL = 'https://api.pokemontcg.io/v2';
+  const API_BASE_URL = 'http://localhost:4000';
   
+  // const fetchedCards = ref<PokemonCard[]>([]);
   const cards = ref<PokemonCard[]>([]);
   const filteredCards = ref<PokemonCard[]>([]);
   const sets = ref<CardSet[]>([]);
@@ -213,7 +213,9 @@
   const collectedInCurrentSet = computed(() => cards.value.filter((card) => collectedCards.value.includes(card.id)).length);
   const totalCardsInSet = computed(() => cards.value.length);
   const completionPercentage = computed(() => totalCardsInSet.value > 0 ? Math.round((collectedInCurrentSet.value / totalCardsInSet.value) * 100) : 0);
+  const currentSetId = computed(() => sets.value.find((set) => set.id === selectedSet.value)?.id || 'All Sets');
   const currentSetName = computed(() => sets.value.find((set) => set.id === selectedSet.value)?.name || 'All Sets');
+
   
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -260,10 +262,6 @@
     calculateSetProgress();
   }
   
-  function isCardCollected(cardId: string): boolean {
-    return collectedCards.value.includes(cardId);
-  }
-  
   function applyFilters() {
     let result = cards.value;
     if (searchQuery.value) {
@@ -279,38 +277,6 @@
       result = result.filter(card => selectedRarities.value.includes(card.rarity));
     }
     filteredCards.value = result;
-  }
-  
-  function toggleRarity(rarity: string) {
-    if (selectedRarities.value.includes(rarity)) {
-      selectedRarities.value = selectedRarities.value.filter(r => r !== rarity);
-    } else {
-      selectedRarities.value.push(rarity);
-    }
-  }
-  
-  function selectAllRarities() {
-    selectedRarities.value = [...availableRarities.value];
-  }
-  
-  function clearAllRarities() {
-    selectedRarities.value = [];
-  }
-  
-  function getProgressColor(p: number): string {
-    if (p === 100) return 'green';
-    if (p >= 75) return 'blue';
-    if (p >= 50) return 'amber';
-    if (p >= 25) return 'orange';
-    return 'grey';
-  }
-  
-  function getCompletionStatus(p: number) {
-    if (p === 100) return { text: 'Complete!', color: 'green--text' };
-    if (p >= 75) return { text: 'Almost there!', color: 'blue--text' };
-    if (p >= 50) return { text: 'Halfway there!', color: 'amber--text' };
-    if (p >= 25) return { text: 'Good progress!', color: 'orange--text' };
-    return { text: 'Just starting', color: 'grey--text' };
   }
   
   function calculateSetProgress() {
@@ -330,12 +296,16 @@
   
   async function fetchSets() {
     try {
+
+      console.log("fetch sets...")
       loading.value = true;
       loadingSets.value = true;
-      const res = await fetch(`${API_BASE_URL}/sets`);
+      const res = await fetch(`${API_BASE_URL}/pokemon-sets`);
       const data = await res.json();
-      const sorted = data.data.sort((a: CardSet, b: CardSet) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
+      const sorted = data.sort((a: CardSet, b: CardSet) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
+
       sets.value = sorted;
+
       if (sorted.length > 0) selectedSet.value = sorted[0].id;
       fetchAllCards(sorted);
     } catch (e) {
@@ -345,55 +315,109 @@
     }
   }
   
+
   async function fetchAllCards(setsList: CardSet[]) {
     try {
-      // In der echten App ggf. mehrere Sets parallel laden
-      // oder aus lokaler Quelle cachen
-      // Aktuell deaktiviert
+      
       calculateSetProgress();
     } catch (error) {
       console.error('Error fetching all cards:', error);
     }
   }
   
-  async function fetchCards() {
-    try {
-      loading.value = true;
-      let url = `${API_BASE_URL}/cards?`;
-      if (selectedSet.value) {
-        url += `&q=set.id:${selectedSet.value}`;
-      }
-      const res = await fetch(url);
-      const data = await res.json();
-      const sortedCards = data.data.sort((a: PokemonCard, b: PokemonCard) => {
-        const aNum = parseInt(a.number.replace(/[^0-9]/g, '')) || 9999;
-        const bNum = parseInt(b.number.replace(/[^0-9]/g, '')) || 9999;
-        return aNum - bNum;
-      });
-      const rarities = [...new Set(sortedCards.map((card: PokemonCard) => card.rarity).filter(Boolean))].sort();
-      availableRarities.value = rarities as string[];
-      selectedRarities.value = rarities as string[];
-      cards.value = sortedCards;
-      applyFilters();
-    } catch (e) {
-      console.error('Error fetching cards:', e);
-    } finally {
-      loading.value = false;
-    }
-  }
-  
-  onMounted(() => {
-    window.addEventListener('scroll', () => {
-      showBackToTop.value = window.scrollY > 200;
+  async function fetchCards(setId: string) {
+  try {
+    loading.value = true;
+
+    const url = `${API_BASE_URL}/pokemon-cards/set/${setId}`;
+    const res = await fetch(url);
+    const data: PokemonCard[] = await res.json();
+
+    const sortedCards = data.sort((a, b) => {
+      const aNum = parseInt(a.number.replace(/[^0-9]/g, '')) || 9999;
+      const bNum = parseInt(b.number.replace(/[^0-9]/g, '')) || 9999;
+      return aNum - bNum;
     });
-    const saved = localStorage.getItem('collectedCards');
-    if (saved) collectedCards.value = JSON.parse(saved);
-    fetchSets();
+
+    console.log("sortedCards: ", sortedCards);
+
+    const rarities = [...new Set(sortedCards.map(c => c.rarity).filter(Boolean))].sort();
+    availableRarities.value = rarities;
+    selectedRarities.value = [...rarities];
+
+    cards.value = sortedCards;
+    applyFilters();
+  } catch (e) {
+    console.error('Error fetching cards:', e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+
+  // async function fetchCardsForSet(setList: CardSet[]) {
+  //   try {
+
+  //     if(setList.length > 0){
+  //       setList.forEach( set => {
+  //         console.log(set.name)
+  //         fetchCards(set.name)
+  //       })
+  //     }
+  //   } catch (e) {
+  //     console.error('Error fetching cards:', e);
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // }
+
+//   async function uploadCards(cards: PokemonCard[]) {
+//   try {
+
+//     console.log("Kartenanzahl zum hochladen: ", cards.length)
+
+//     const response = await fetch('http://localhost:4000/pokemon', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(cards),
+//     });
+
+//     if (!response.ok) {
+//       const error = await response.json();
+//       console.error('Fehler beim Hochladen:', error);
+//       return;
+//     }
+
+//     const result = await response.json();
+//     console.log(cards.length + ' Karten erfolgreich hochgeladen:', result);
+//   } catch (error) {
+//     console.error('Verbindungsfehler:', error);
+//   }
+// }
+  
+  onMounted(async () => {
+    try {
+        const saved = localStorage.getItem('collectedCards');
+        if (saved) collectedCards.value = JSON.parse(saved);
+
+        await fetchSets(); // async-Funktion aufrufen
+    } catch (error) {
+        console.error('Error in onMounted:', error);
+    }
   });
   
   watch(selectedSet, () => {
-    if (selectedSet.value) fetchCards();
+    if (selectedSet.value) fetchCards(selectedSet.value);
   });
+
+  // watch(sets, () => {
+  //   if (sets.value.length > 0) {
+  //     console.log("fetchCardsForSets###");
+  //     fetchCardsForSet(sets.value);
+  //   }
+  // });
   
   watch([cards, searchQuery, collectionFilter, selectedRarities], applyFilters);
   
