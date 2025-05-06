@@ -37,11 +37,12 @@ export const useEventStore = defineStore("eventStore", {
       const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserEvents/${currentUser.id}.json`;
 
       let response = await axios.get(userSettingsRef);
-      const userEventsData = response.data;
+      let userEventsData = response.data as UserEvent[];
+
 
       const userEvents: UserEvent[] = Object.entries(userEventsData).map(
         ([eventId, event]) => {
-          const typedEvent = event as UserEvent;
+          const typedEvent = event as UserEvent
           return {
             id: eventId,
             userId: typedEvent.userId,
@@ -50,6 +51,8 @@ export const useEventStore = defineStore("eventStore", {
           };
         },
       );
+
+      userEvents.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
       return userEvents;
     },

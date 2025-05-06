@@ -16,6 +16,60 @@
     </div>
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
+      <router-link to="/collector" class="nav-item">Collector</router-link>
+
+
+      <!-- <div class="dropdown">
+        <router-link to="/playground" class="nav-item" @click="closeDropdown">
+          Training
+        </router-link>
+        <div class="dropdown-content" style="background-color: #4ea8de">
+          <router-link
+            to="/counter"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Counter
+          </router-link>
+          <router-link
+            to="/catplay"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Catplay
+          </router-link>
+          <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">
+            Tasks
+          </router-link>
+          <router-link
+            to="/validate-form"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Validate Forms
+          </router-link>
+          <router-link to="/todo" class="dropdown-item" @click="closeDropdown">
+            ToDo
+          </router-link>
+          <router-link
+            to="/layout"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            Layout
+          </router-link>
+          <router-link to="/chat" class="dropdown-item" @click="closeDropdown">
+            Chat
+          </router-link>
+          <router-link
+            to="/table-views"
+            class="dropdown-item"
+            @click="closeDropdown"
+          >
+            TableViews
+          </router-link>
+        </div>
+      </div> -->
       <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">
           Shop
@@ -34,13 +88,6 @@
             @click="closeDropdown"
           >
             Single-Item
-          </router-link>
-          <router-link
-            to="/shop-shopping-cart"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Shopping-Cart
           </router-link>
           <router-link
             to="/shop-payment-page"
