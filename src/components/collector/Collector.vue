@@ -191,7 +191,7 @@
   export type CollectionFilterType = 'all' | 'collected' | 'missing';
   
   
-  const API_BASE_URL = 'http://localhost:4000';
+  const API_BASE_URL = 'https://dry-mesa-18399-ee9f99c88bfc.herokuapp.com';
   
   // const fetchedCards = ref<PokemonCard[]>([]);
   const cards = ref<PokemonCard[]>([]);
