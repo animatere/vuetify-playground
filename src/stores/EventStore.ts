@@ -28,31 +28,41 @@ export const useEventStore = defineStore("eventStore", {
         console.log("Unknown Current User in EventStore");
       }
     },
-    // ToDo: implementieren
-    clearEvents() {
+    async clearEvents() {
+      let currentUser = (await getCurrentUserData()) as UserData;
+      const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserEvents/${currentUser.id}.json`;
+
+      let response = await axios.delete(userSettingsRef);
       this.events = [];
+
+      console.log(response);
+
+      return null;
     },
     async getEvents(): Promise<UserEvent[]> {
       let currentUser = (await getCurrentUserData()) as UserData;
       const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserEvents/${currentUser.id}.json`;
-
+      let userEvents: UserEvent[] = [];
       let response = await axios.get(userSettingsRef);
-      let userEventsData = response.data as UserEvent[];
 
+      if (response.data) {
+        let userEventsData = response.data as UserEvent[];
 
-      const userEvents: UserEvent[] = Object.entries(userEventsData).map(
-        ([eventId, event]) => {
-          const typedEvent = event as UserEvent
+        userEvents = Object.entries(userEventsData).map(([eventId, event]) => {
+          const typedEvent = event as UserEvent;
           return {
             id: eventId,
             userId: typedEvent.userId,
             eventDescription: typedEvent.eventDescription,
             createdAt: new Date(typedEvent.createdAt),
           };
-        },
-      );
+        });
 
-      userEvents.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        userEvents.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+      }
 
       return userEvents;
     },

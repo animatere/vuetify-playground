@@ -1,5 +1,5 @@
 // Styles
-import "@mdi/font/css/materialdesignicons.css"; // Icons
+import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
 
 // Vuetify-Framework-Komponenten
@@ -32,7 +32,7 @@ export default createVuetify({
       dark: {
         dark: true,
         colors: {
-          background: "#001f3d", // Dunkelblau im Dark Mode
+          background: "#001f3d",
           surface: "#001f3d",
           primary: "#1E88E5",
           secondary: "#FFCDD2",

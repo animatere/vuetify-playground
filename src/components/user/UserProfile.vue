@@ -94,27 +94,27 @@
       <v-col cols="12">
         <v-card class="profile-card">
           <v-card-title>Aktivitätsprotokoll</v-card-title>
-          <v-card-text>
+          <v-card-text style="max-height: 300px; overflow-y: auto;">
             <v-list>
               <v-list-item v-for="event in userEvents" :key="event.id">
-                <v-list-item-title>{{
-                  event.eventDescription
-                }}</v-list-item-title>
-                <!--                <v-list-item-subtitle>{{ "EventID: " + event.id}}</v-list-item-subtitle>-->
-                <v-list-item-subtitle>{{
-                  "Zeitstempel: " + event.createdAt
-                }}</v-list-item-subtitle>
+                <v-list-item-title>
+                  {{ event.eventDescription }}
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ "Zeitstempel: " + event.createdAt }}
+                </v-list-item-subtitle>
               </v-list-item>
             </v-list>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="error" @click="clearEventLog" class="full-width"
-              >Protokoll löschen</v-btn
-            >
+            <v-btn color="error" @click="clearEventLog" class="full-width">
+              Protokoll löschen
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
+
   </v-container>
 </template>
 
@@ -123,11 +123,12 @@ import { useUserStore } from "@/stores/UserStore";
 import { useEventStore } from "@/stores/EventStore";
 import { storeToRefs } from "pinia";
 import { reactive, ref } from "vue";
-import { UserData, UserEvent } from "@/interfaces/interfaces";
+import { UserData } from "@/interfaces/interfaces";
 import { getCurrentUserData } from "../composable/getCurrentUserData";
 
 const userStore = useUserStore();
 const eventStore = useEventStore();
+const { events } = storeToRefs(eventStore);
 const { currentUser } = storeToRefs(userStore);
 
 let defaultUser = ref<UserData>({
@@ -139,12 +140,15 @@ let defaultUser = ref<UserData>({
   registered: false,
 });
 
-let userEvents = ref<UserEvent[]>([]);
+let userEvents = events;
 
 onMounted(async () => {
   try {
     defaultUser.value = await getCurrentUserData();
-    userEvents.value = await eventStore.getEvents();
+
+    // Events vom Server laden
+    const loadedEvents = await eventStore.getEvents();
+    userEvents.value = loadedEvents;
   } catch (error: any) {
     console.error("Fehler bei der User-Authentifizierung:", error);
   }
@@ -206,6 +210,7 @@ function resetEditData() {
 
 function clearEventLog() {
   eventStore.clearEvents();
+  eventStore.getEvents();
 }
 </script>
 
