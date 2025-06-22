@@ -5,3 +5,9 @@ export enum TaskCategory {
   Qualitätssicherung = "Qualitätssicherung",
   Kundenservice = "Kundenservice & Support",
 }
+
+export enum QuestCategory {
+  FUN = "FUN",
+  ACTION = "ACTION",
+  BRAIN = "BRAIN",
+}

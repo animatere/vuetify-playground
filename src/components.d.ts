@@ -29,6 +29,7 @@ declare module 'vue' {
     ProductManagement: typeof import('./components/admin/admin-pages/ProductManagement.vue')['default']
     QhLanding: typeof import('./components/questhub/qh-landing.vue')['default']
     QhQuestcard: typeof import('./components/questhub/qh-questcard.vue')['default']
+    QhUserquests: typeof import('./components/questhub/qh-userquests.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShopCart: typeof import('./components/shop/ShopCart.vue')['default']
