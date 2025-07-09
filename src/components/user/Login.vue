@@ -1,6 +1,6 @@
 <template>
   <v-container class="d-flex justify-center">
-    <v-card elevation="2" width="400" height="600px" style="margin-top:10vh">
+    <v-card elevation="2" width="400" height="600px" style="margin-top: 10vh">
       <v-card-title class="justify-center">Login</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="submitForm">

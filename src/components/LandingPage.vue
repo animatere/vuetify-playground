@@ -1,15 +1,25 @@
 <template>
-  <div class="container">
-    <h1>{{ $t('welcome') }}</h1>
-    <div class="buttons">
-      <router-link to="/login" class="button">Login</router-link>
-      <router-link to="/signup" class="button">Signup</router-link>
+  <v-container>
+    <div class="container">
+      <v-row>
+        <v-col>
+          <h1>{{ $t("welcome") }}</h1>
+          <div class="buttons">
+            <router-link to="/login" class="button">Login</router-link>
+            <router-link to="/signup" class="button">Signup</router-link>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <div class="language-switch">
+            <v-btn @click="changeLanguage('de')">Deutsch</v-btn>
+            <v-btn @click="changeLanguage('en')">English</v-btn>
+          </div>
+        </v-col>
+      </v-row>
     </div>
-    <div class="language-switch">
-      <v-btn @click="changeLanguage('de')">Deutsch</v-btn>
-      <v-btn @click="changeLanguage('en')">English</v-btn>
-    </div>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -31,8 +41,8 @@ function changeLanguage(lang: string) {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   text-align: center;
+  margin-top: 20%;
 }
 
 .buttons {

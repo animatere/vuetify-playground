@@ -94,7 +94,7 @@
             Single-Item
           </router-link>
           <router-link
-            to="/shop-payment-page"
+            to="/shop-payment"
             class="dropdown-item"
             @click="closeDropdown"
           >
