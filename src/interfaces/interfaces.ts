@@ -152,4 +152,5 @@ export interface QuestCard {
   addOn: string;
   path: string;
   activated: boolean;
+  userId: string;
 }

@@ -26,6 +26,8 @@ import QhLanding from "@/components/questhub/qh-landing.vue";
 import Chatbot from "@/components/shop/Chatbot.vue";
 import ImageGenerator from "@/components/shop/ImageGenerator.vue";
 import Collector from "@/components/collector/Collector.vue";
+import PaymentPage from "@/components/shop/PaymentPage.vue";
+import ShopPayment from "@/components/shop/ShopPayment.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
   const userStore = useUserStore(); // UserStore nach Pinia-Registrierung aufrufen
@@ -189,7 +191,12 @@ const router = createRouter({
       component: Collector,
       beforeEnter: requireAuth,
     },
-
+    {
+      path: "/shop-payment",
+      name: "shop-payment",
+      component: ShopPayment,
+      beforeEnter: requireAuth,
+    },
   ],
 });
 
