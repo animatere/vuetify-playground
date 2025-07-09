@@ -22,15 +22,22 @@
             type="password"
             required
           ></v-text-field>
-          <v-btn :loading="isLoading" :disabled="isLoading" class="mt-4" color="primary" type="submit" block>
+          <v-btn
+            :loading="isLoading"
+            :disabled="isLoading"
+            class="mt-4"
+            color="primary"
+            type="submit"
+            block
+          >
             Login
           </v-btn>
         </v-form>
         <p style="margin-top: 15px">
           Don't have an Account?
-          <a href="/signup" style="text-decoration: underline; color: blue"
-            >Signup</a
-          >
+          <a href="/signup" style="text-decoration: underline; color: blue">
+            Signup
+          </a>
         </p>
       </v-card-text>
     </v-card>
@@ -38,50 +45,48 @@
 </template>
 
 <script setup lang="ts">
-import { useEventStore } from "@/stores/EventStore";
-import { useNotificationsStore } from "@/stores/NotificationStore";
 import { ref } from "vue";
-import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/UserStore";
+import { useNotificationsStore } from "@/stores/NotificationStore";
+import { useEventStore } from "@/stores/EventStore";
 
+// Form state
 const email = ref("");
-const username = ref("");
+const username = ref(""); // Wird aktuell nicht verwendet, kann evtl. entfernt werden
 const password = ref("");
-const store = useUserStore();
-const { login } = store;
+const isLoading = ref(false);
+
+// Router
 const router = useRouter();
 
+// Stores
+const userStore = useUserStore();
 const notificationsStore = useNotificationsStore();
 const eventStore = useEventStore();
 
-const isLoading = ref(false); // Neue Variable für den Ladezustand
-
-async function submitForm(submitEvent: Event) {
-  submitEvent.preventDefault();
-  isLoading.value = true; // Ladezustand starten
+async function submitForm() {
+  isLoading.value = true;
 
   try {
-    const success = await login(email.value, password.value);
+    const success = await userStore.login(email.value, password.value);
 
     if (success) {
       notificationsStore.setPosition("top-center");
       notifyMessage("Login erfolgreich!", "success");
-      await reload();
+
       eventStore.addEvent("Benutzer hat sich eingeloggt");
+
+      router.push("/home");
     } else {
       notifyMessage("Login fehlgeschlagen!", "error");
     }
   } catch (error) {
     notifyMessage("Ein Fehler ist aufgetreten!", "error");
   } finally {
-    isLoading.value = false; // Ladezustand zurücksetzen
+    isLoading.value = false;
   }
 }
-
-function reload() {
-    router.push("/home");
-}
-
 
 function notifyMessage(message: string, type: string) {
   notificationsStore.setPosition("top-center");
@@ -89,4 +94,6 @@ function notifyMessage(message: string, type: string) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Optional: eigene Styles */
+</style>
