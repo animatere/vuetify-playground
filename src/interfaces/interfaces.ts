@@ -1,4 +1,4 @@
-import { TaskCategory } from "@/Enums/TaskCategory";
+import { QuestCategory, TaskCategory } from "@/Enums/enums";
 import { User } from "firebase/auth";
 
 export interface Item {
@@ -148,7 +148,8 @@ export interface Cart {
 export interface QuestCard {
   title: string;
   description: string;
-  category: "Fun" | "Action" | "Brain";
+  category: QuestCategory;
   addOn: string;
   path: string;
+  activated: boolean;
 }
