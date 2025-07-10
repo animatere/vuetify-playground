@@ -25,7 +25,6 @@ declare module 'vue' {
     Login: typeof import('./components/user/Login.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     Notification: typeof import('./components/user/Notification.vue')['default']
-    PaymentPage: typeof import('./components/shop/PaymentPage.vue')['default']
     Playground: typeof import('./components/training/Playground.vue')['default']
     ProductManagement: typeof import('./components/admin/admin-pages/ProductManagement.vue')['default']
     QhLanding: typeof import('./components/questhub/qh-landing.vue')['default']

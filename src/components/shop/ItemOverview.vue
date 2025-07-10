@@ -12,6 +12,7 @@
             dense
             clearable
             class="search-bar"
+            @click:clear="clearSearchBar"
           ></v-text-field>
           <div class="d-flex align-center">
             <v-btn
@@ -270,19 +271,25 @@ const calculatedMaxPrice = computed(() => {
 });
 
 const filteredProducts = computed(() => {
-  return products.value.filter((product) => {
-    const matchesCategory =
-      selectedCategories.value.length === 0 ||
-      selectedCategories.value.includes(product.category);
-    const matchesPrice =
-      product.price >= priceRange.value[0] &&
-      product.price <= priceRange.value[1];
-    const matchesSearch = product.title
-      .toLowerCase()
-      .includes(search.value.toLowerCase());
-    return matchesCategory && matchesPrice && matchesSearch;
-  });
+  if (search.value != null) {
+    return products.value.filter((product) => {
+      const matchesCategory =
+        selectedCategories.value.length === 0 ||
+        selectedCategories.value.includes(product.category);
+      const matchesPrice =
+        product.price >= priceRange.value[0] &&
+        product.price <= priceRange.value[1];
+      const matchesSearch = product.title
+        .toLowerCase()
+        .includes(search.value.toLowerCase());
+      return matchesCategory && matchesPrice && matchesSearch;
+    });
+  }
 });
+
+function clearSearchBar() {
+  search.value = "";
+}
 
 function updateProductImage(newVariant: Variant) {
   if (selectedProduct.value) {
@@ -357,6 +364,8 @@ async function addToCart(product: Item, quantity: number) {
   await cartStore.updateCart(currentUserCart.value);
   cartItems.value = currentUserCart.value.items;
   cartAnimation.value = true;
+
+  cartModalVisible.value = true;
 }
 
 async function removeFromCart(productId: string) {
