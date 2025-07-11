@@ -51,9 +51,7 @@ export const useCartStore = defineStore("cartStore", {
       return userCart;
     },
     async getCartByUserId(): Promise<Cart> {
-      console.log("getCartByUserId reached");
       const currentUser = (await getCurrentUserData()) as UserData;
-      console.log("currentUserId: ", currentUser.id);
       const userSettingsRef = `http://localhost:4000/carts/single/?userId=${currentUser.id}&userId=${currentUser.id}`;
       let response = await axios.get(userSettingsRef);
       let userCart: Cart = {
