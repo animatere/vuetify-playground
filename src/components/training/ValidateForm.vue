@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 import { VForm } from "vuetify/components";
 
 export default {
@@ -103,4 +103,4 @@ export default {
     margin-top: 15px;
   }
 }
-</style>
+</style> -->

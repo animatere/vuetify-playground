@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <v-container>
     <v-row>
       <v-col class="custom1" v-for="item in items">
@@ -191,4 +191,4 @@ img {
     display: none;
   }
 }
-</style>
+</style> -->

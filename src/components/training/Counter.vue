@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="counter">
     <h1>Counter</h1>
     <p>{{ count }}</p>
@@ -39,4 +39,4 @@ h1 {
   font-size: 2rem;
   text-align: center;
 }
-</style>
+</style> -->

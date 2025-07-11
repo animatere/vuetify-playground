@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="catplay">
     <h1>{{ title }}</h1>
 
@@ -227,4 +227,4 @@ h1 {
     height: 350px !important;
   }
 }
-</style>
+</style> -->
