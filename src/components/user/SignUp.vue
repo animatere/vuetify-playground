@@ -62,23 +62,23 @@ async function submitForm(submitEvent: Event) {
   console.log("Not possible yet");
 
   notifyMessage("Momentan nicht möglich!", "success");
-  // eventStore.addEvent("Benutzer hat sich eingeloggt");
-  // submitEvent.preventDefault();
-  // if (username.value !== "" && email.value !== "" && password.value !== "") {
-  //   const success = await signup(email.value, password.value);
-  //   if (success) {
-  //     await reload();
-  //     notifyMessage("Login erfolgreich!", "success");
-  //     eventStore.addEvent("Benutzer hat sich eingeloggt");
-  //   } else {
-  //     notifyMessage("Login fehlgeschlagen!", "error");
-  //   }
-  //   function reload() {
-  //     router.push("/home");
-  //   }
-  // } else {
-  //   console.log("Signup fehlgeschlagen.");
-  // }
+  eventStore.addEvent("Benutzer hat sich eingeloggt");
+  submitEvent.preventDefault();
+  if (username.value !== "" && email.value !== "" && password.value !== "") {
+    const success = await signup(email.value, password.value);
+    if (success) {
+      await reload();
+      notifyMessage("Login erfolgreich!", "success");
+      eventStore.addEvent("Benutzer hat sich eingeloggt");
+    } else {
+      notifyMessage("Login fehlgeschlagen!", "error");
+    }
+    function reload() {
+      router.push("/home");
+    }
+  } else {
+    console.log("Signup fehlgeschlagen.");
+  }
 }
 </script>
 
