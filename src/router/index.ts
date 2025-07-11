@@ -1,22 +1,15 @@
-import Chat from "@/components/training/Chat.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "../../firebase";
+import { useUserStore } from "@/stores/UserStore";
+import { onAuthStateChanged } from "firebase/auth";
 
 import LandingPage from "@/components/LandingPage.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import UserSettings from "@/components/user/UserSettings.vue";
-import Layout from "@/components/training/Layout.vue";
-import TableViews from "@/components/training/TableViews.vue";
 import Tasks from "@/components/task-management/Tasks.vue";
 import ToDoApp from "@/components/todo/ToDoApp.vue";
 import Login from "@/components/user/Login.vue";
 import SignUp from "@/components/user/SignUp.vue";
-import Catplay from "@/components/training/Catplay.vue";
-import Counter from "@/components/training/Counter.vue";
-import ValidateForm from "@/components/training/ValidateForm.vue";
-import { useUserStore } from "@/stores/UserStore";
-import { onAuthStateChanged } from "firebase/auth";
-
 import HomeView from "../views/HomeView.vue";
 import ItemOverview from "@/components/shop/ItemOverview.vue";
 import ItemSingleView from "@/components/shop/ItemSingleView.vue";
@@ -26,7 +19,6 @@ import QhLanding from "@/components/questhub/qh-landing.vue";
 import Chatbot from "@/components/shop/Chatbot.vue";
 import ImageGenerator from "@/components/shop/ImageGenerator.vue";
 import Collector from "@/components/collector/Collector.vue";
-import PaymentPage from "@/components/shop/PaymentPage.vue";
 import ShopPayment from "@/components/shop/ShopPayment.vue";
 
 const requireAuth = (to: any, from: any, next: any) => {
@@ -78,51 +70,9 @@ const router = createRouter({
       beforeEnter: requireAuth,
     },
     {
-      path: "/chat",
-      name: "chat",
-      component: Chat,
-      beforeEnter: requireAuth,
-    },
-    // {
-    //   path: "/training",
-    //   name: "playground",
-    //   component: PlayGroundView,
-    //   beforeEnter: requireAuth,
-    // },
-    {
-      path: "/catplay",
-      name: "catplay",
-      component: Catplay,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/counter",
-      name: "counter",
-      component: Counter,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/table-views",
-      name: "tableViews",
-      component: TableViews,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/layout",
-      name: "layout",
-      component: Layout,
-      beforeEnter: requireAuth,
-    },
-    {
       path: "/tasks",
       name: "tasks",
       component: Tasks,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/validate-form",
-      name: "validateForm",
-      component: ValidateForm,
       beforeEnter: requireAuth,
     },
     {

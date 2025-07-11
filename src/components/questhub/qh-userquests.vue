@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <v-container>
     <v-row cols="12" justify="center">
       <v-col cols="auto">
@@ -225,4 +225,4 @@ let questCards: QuestCard[] = [
 .refreshButton {
   margin-top: 25px;
 }
-</style>
+</style> -->

@@ -339,33 +339,35 @@ async function toggleCart() {
   }
 }
 
-async function addToCart(product: Item, quantity: number) {
-  currentUserCart.value = await cartStore.getCartByUserId();
-  if (!currentUserCart.value) {
-    await cartStore.createCart([]);
+async function addToCart(product: Item | null, quantity: number) {
+  if (product != null) {
     currentUserCart.value = await cartStore.getCartByUserId();
+    if (!currentUserCart.value) {
+      await cartStore.createCart([]);
+      currentUserCart.value = await cartStore.getCartByUserId();
+    }
+
+    const existingItem = currentUserCart.value.items.find(
+      (item) =>
+        item._id === product._id &&
+        item.selectedVariant === product.selectedVariant,
+    );
+
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      currentUserCart.value.items.push({
+        ...product,
+        quantity,
+      });
+    }
+
+    await cartStore.updateCart(currentUserCart.value);
+    cartItems.value = currentUserCart.value.items;
+    cartAnimation.value = true;
+
+    cartModalVisible.value = true;
   }
-
-  const existingItem = currentUserCart.value.items.find(
-    (item) =>
-      item._id === product._id &&
-      item.selectedVariant === product.selectedVariant,
-  );
-
-  if (existingItem) {
-    existingItem.quantity += quantity;
-  } else {
-    currentUserCart.value.items.push({
-      ...product,
-      quantity,
-    });
-  }
-
-  await cartStore.updateCart(currentUserCart.value);
-  cartItems.value = currentUserCart.value.items;
-  cartAnimation.value = true;
-
-  cartModalVisible.value = true;
 }
 
 async function removeFromCart(productId: string) {
