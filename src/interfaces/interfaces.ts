@@ -1,26 +1,72 @@
-import { TaskCategory } from "@/Enums/TaskCategory";
+import { QuestCategory, TaskCategory } from "@/Enums/enums";
+import { User } from "firebase/auth";
+
+export interface Item {
+  _id: string;
+  description: string;
+  title: string;
+  category: string;
+  price: number;
+  quantity: number;
+  inStock: boolean;
+  brand: string;
+  variants: Variant[];
+  selectedVariant: number;
+  hashTags: string[];
+}
+
+export interface PurchaseOrder {
+  _id: string;
+  items: Item[];
+  user: User;
+  invoice: Invoice;
+  status: "pending" | "paid" | "shipped" | "cancelled";
+  createdAt: string;
+  updatedAt?: string;
+  shippingAddress: UserAddress;
+  billingAddress?: UserAddress;
+  paymentMethod: "credit_card" | "paypal" | "bank_transfer" | "cash";
+  notes?: string;
+}
+
+export interface Invoice {
+  _id: string;
+  items: Item[];
+  user: User;
+  cart: User;
+  totalNet: number;
+  totalGross: number;
+  taxRate: number;
+  createdAt: string;
+  dueDate: string;
+  invoiceNumber: string;
+  status: "pending" | "paid" | "shipped" | "cancelled";
+  currency: "EUR" | "USD" | "GBP";
+  paid: boolean;
+  paidAt?: Date;
+  notes?: string;
+}
+
+export interface UserAddress {
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+}
 
 export interface Variant {
   id: number;
   color: string;
   image: string;
   quantity: number;
-}
-export interface Item {
-  cart: number;
-  product: string;
-  brand: string;
-  inStock: boolean;
-  selectedVariant: number;
-  details: string[];
-  variants: Variant[];
+  itemProperties: string[];
 }
 
 export interface Product {
   id: string;
   title: string;
   price: number;
-  category: string // hier später bitte boolean
+  category: string; // hier später bitte enum
   brand: string;
   details: string[];
   link: string;
@@ -90,53 +136,21 @@ export interface UserEvent {
 }
 
 export interface Cart {
-  /**
-   * Die eindeutige ID des Warenkorbs.
-   * Beispiel: 'cart12345'
-   */
-  cartId: string;
-
-  /**
-   * Die Benutzer-ID, die mit diesem Warenkorb verknüpft ist.
-   * Beispiel: '603d2149f1e5c7b9b0e2f7d2'
-   */
+  _id?: string;
   userId: string;
-
-  /**
-   * Die Artikel, die im Warenkorb enthalten sind.
-   */
-  items: Product[];
-
-  /**
-   * Der Status des Warenkorbs.
-   * Mögliche Werte: 'open', 'completed', 'cancelled'
-   */
-  status: "open" | "completed" | "cancelled";
-
-  /**
-   * Der Gesamtpreis des Warenkorbs.
-   * Beispiel: 199.99
-   */
+  items: Item[];
+  status: "open" | "completed";
   totalPrice: number;
-
-  /**
-   * Das Erstellungsdatum des Warenkorbs.
-   * Beispiel: '2024-12-27T12:00:00Z'
-   */
   createdAt: Date;
-
-  /**
-   * Das Datum der letzten Aktualisierung des Warenkorbs.
-   * Beispiel: '2024-12-27T12:00:00Z'
-   */
   updatedAt: Date;
 }
 
-// Interface für eine Spielkarte
 export interface QuestCard {
   title: string;
   description: string;
-  category: 'Fun' | 'Action' | 'Brain';
+  category: QuestCategory;
   addOn: string;
   path: string;
+  activated: boolean;
+  userId: string;
 }

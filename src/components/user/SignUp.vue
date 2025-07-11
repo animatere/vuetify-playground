@@ -1,6 +1,6 @@
 <template>
   <v-container class="d-flex justify-center" style="height: 50vh">
-    <v-card elevation="2" width="400" height="600px" style="margin-top:10vh">
+    <v-card elevation="2" width="400" height="600px" style="margin-top: 10vh">
       <v-card-title class="justify-center">Sign Up</v-card-title>
       <v-card-text>
         <v-form ref="loginForm" @submit.prevent="submitForm">
@@ -54,29 +54,31 @@ notificationsStore.setPosition("top-left");
 const eventStore = useEventStore();
 
 function notifyMessage(message: string, type: string) {
+  notificationsStore.setPosition("top-center");
   notificationsStore.addNotification(message, type);
 }
 
 async function submitForm(submitEvent: Event) {
-  submitEvent.preventDefault();
+  console.log("Not possible yet");
 
-  if (username.value !== "" && email.value !== "" && password.value !== "") {
-    const success = await signup(email.value, password.value);
-
-    if (success) {
-      await reload();
-      notifyMessage("Login erfolgreich!", "success");
-      eventStore.addEvent("Benutzer hat sich eingeloggt");
-    } else {
-      notifyMessage("Login fehlgeschlagen!", "error");
-    }
-
-    function reload() {
-      router.push("/home");
-    }
-  } else {
-    console.log("Signup fehlgeschlagen.");
-  }
+  notifyMessage("Momentan nicht möglich!", "success");
+  // eventStore.addEvent("Benutzer hat sich eingeloggt");
+  // submitEvent.preventDefault();
+  // if (username.value !== "" && email.value !== "" && password.value !== "") {
+  //   const success = await signup(email.value, password.value);
+  //   if (success) {
+  //     await reload();
+  //     notifyMessage("Login erfolgreich!", "success");
+  //     eventStore.addEvent("Benutzer hat sich eingeloggt");
+  //   } else {
+  //     notifyMessage("Login fehlgeschlagen!", "error");
+  //   }
+  //   function reload() {
+  //     router.push("/home");
+  //   }
+  // } else {
+  //   console.log("Signup fehlgeschlagen.");
+  // }
 }
 </script>
 

@@ -4,20 +4,24 @@
     <div class="navbar-logo">
       <router-link to="/home">
         <img
-          src="https://vuejs.org/images/logo.png"
+          src="../assets/wowa.webp"
           alt="Logo"
           class="logo"
-          style="width: 35px; height: 35px"
+          style="
+            width: 70px;
+            height: 70px;
+            border: solid orangered 1px;
+            border-radius: 8px;
+          "
         />
       </router-link>
       <router-link to="/home">
-        <h4 class="pageTitle" style="color: black">Vue3 Training</h4>
+        <h4 class="pageTitle" style="color: #ffffff">WOWA Solutions</h4>
       </router-link>
     </div>
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
       <router-link to="/collector" class="nav-item">Collector</router-link>
-
 
       <!-- <div class="dropdown">
         <router-link to="/playground" class="nav-item" @click="closeDropdown">
@@ -90,7 +94,7 @@
             Single-Item
           </router-link>
           <router-link
-            to="/shop-payment-page"
+            to="/shop-payment"
             class="dropdown-item"
             @click="closeDropdown"
           >

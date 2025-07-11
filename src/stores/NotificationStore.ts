@@ -7,6 +7,7 @@ export const useNotificationsStore = defineStore("notifications", {
   }),
   actions: {
     addNotification(message: string, type: string = "info") {
+      console.log("reached here");
       const id = Date.now();
       this.notifications.push({ id, message, type });
       // Entfernt die Benachrichtigung automatisch nach x millisekunden
