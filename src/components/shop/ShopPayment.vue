@@ -95,9 +95,7 @@
               <v-btn color="secondary" style="margin-bottom: 20px">
                 Entfernen</v-btn
               >
-              <p
-                style="border-bottom: solid black 1px; margin-bottom: 20px"
-              ></p>
+              <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
             </v-col>
           </v-row>
         </div>

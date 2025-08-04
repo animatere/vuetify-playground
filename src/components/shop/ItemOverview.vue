@@ -3,27 +3,29 @@
     <!-- Header -->
     <v-row>
       <v-app-bar app style="z-index: 0 !important">
-        <v-container class="d-flex justify-space-between">
-          <v-text-field
-            v-model="search"
-            placeholder="Search for items..."
-            outlined
-            hide-details
-            dense
-            clearable
-            class="search-bar"
-            @click:clear="clearSearchBar"
-          ></v-text-field>
-          <div class="d-flex align-center">
-            <v-btn
-              icon
-              :class="{ 'cart-animate': cartAnimation }"
-              @animationend="cartAnimation = false"
-              @click="toggleCart"
-            >
-              <v-icon>mdi-cart</v-icon>
-            </v-btn>
-          </div>
+        <v-container class="top-navigation">
+          <v-row>
+            <v-text-field
+              v-model="search"
+              placeholder="Search for items..."
+              outlined
+              hide-details
+              dense
+              clearable
+              class="search-bar"
+              @click:clear="clearSearchBar"
+            ></v-text-field>
+            <div class="d-flex align-center">
+              <v-btn
+                icon
+                :class="{ 'cart-animate': cartAnimation }"
+                @animationend="cartAnimation = false"
+                @click="openCartDialog"
+              >
+                <v-icon>mdi-cart</v-icon>
+              </v-btn>
+            </div>
+          </v-row>
         </v-container>
       </v-app-bar>
     </v-row>
@@ -47,7 +49,11 @@
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
-                <v-divider class="my-4"></v-divider>
+                <v-divider
+                  thickness="2"
+                  color="black"
+                  opacity="0.3"
+                ></v-divider>
                 <v-card-title class="text-h6">Price Range</v-card-title>
                 <v-range-slider
                   v-model="priceRange"
@@ -93,8 +99,14 @@
                       {{ product.description }}
                     </v-card-text>
                     <v-card-actions>
-                      <v-btn @click="openProductDialog(product)">View</v-btn>
-                      <v-btn @click="addToCart(product, 1)">Add to Cart</v-btn>
+                      <v-col>
+                        <v-btn @click="openProductDialog(product)">View</v-btn>
+                      </v-col>
+                      <v-col>
+                        <v-btn @click="addToCart(product, 1)"
+                          >Add to Cart</v-btn
+                        >
+                      </v-col>
                     </v-card-actions>
                   </v-card>
                 </v-col>
@@ -104,128 +116,19 @@
         </v-container>
       </v-main>
 
-      <!-- Warenkorb Modal -->
-      <v-dialog v-model="cartModalVisible" max-width="800px">
-        <v-card>
-          <v-card-title class="text-h5 font-weight-bold"
-            >Your Cart</v-card-title
-          >
-          <v-divider></v-divider>
-          <v-list>
-            <v-list-item
-              v-for="product in currentUserCart?.items"
-              :key="product._id"
-            >
-              <v-list-item-avatar>
-                <v-img
-                  :src="
-                    product.variants.find(
-                      (x) => x.id === product.selectedVariant,
-                    )?.image
-                  "
-                  alt="Item Image"
-                  class="rounded"
-                  contain
-                ></v-img>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ product.title }}</v-list-item-title>
-                <v-list-item-subtitle
-                  >Brand: {{ product.brand }}</v-list-item-subtitle
-                >
-                <v-select
-                  v-model="product.quantity"
-                  :items="quantityOptions"
-                  label="Quantity"
-                  @update:modelValue="
-                    (newValue) => updateQuantity(product._id, newValue)
-                  "
-                ></v-select>
+      <cart-dialog
+        v-if="cartDialogVisible && currentUserCart"
+        v-model:cartDialogVisible="cartDialogVisible"
+        :current-user-cart="currentUserCart"
+      >
+      </cart-dialog>
 
-                <v-list-item-subtitle
-                  >Total: ${{
-                    (product.price * product.quantity).toFixed(2)
-                  }}</v-list-item-subtitle
-                >
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn icon color="red" @click="removeFromCart(product._id)">
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn @click="proceedOrder()" color="primary" block
-              >Checkout</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <!-- Product Dialog -->
-      {{ selectedVariant }}
-      <v-dialog v-model="productDialogVisible" max-width="800px">
-        <v-card>
-          <v-card-title>
-            <span class="text-h5">{{ selectedProduct?.title }}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-img
-                    :src="
-                      selectedProduct?.variants.find(
-                        (x) => x.id === selectedProduct?.selectedVariant,
-                      )?.image
-                    "
-                    contain
-                    max-height="300px"
-                  ></v-img>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <p>
-                    <strong>Description:</strong>
-                    {{ selectedProduct?.description }}
-                  </p>
-                  <p><strong>Ingredients:</strong></p>
-                  <ul>
-                    <li
-                      v-for="hashtag in selectedProduct?.hashTags"
-                      :key="hashtag"
-                    >
-                      {{ hashtag }}
-                    </li>
-                  </ul>
-                  <v-select
-                    v-model="selectedVariant"
-                    :items="selectedProduct?.variants"
-                    item-title="color"
-                    item-value="id"
-                    label="Select Variant"
-                    outlined
-                    v-if="selectedProduct"
-                    @update:modelValue="updateProductImage"
-                  />
-                  <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
-                  <v-btn
-                    color="primary"
-                    @click="addToCart(selectedProduct, selectedQuantity)"
-                  >
-                    <v-icon class="card-actions-icon">mdi-cart</v-icon>
-                    <p class="card-actions-text">Add to Cart</p>
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="productDialogVisible = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <item-dialog
+        v-if="productDialogVisible"
+        v-model:productDialogVisible="productDialogVisible"
+        :selected-product="selectedProduct"
+        :selected-variant="selectedVariant"
+      ></item-dialog>
     </v-row>
   </v-app>
 </template>
@@ -233,13 +136,16 @@
 <script setup lang="ts">
 import { Cart, Item, Variant } from "@/interfaces/interfaces";
 import { useCartStore } from "@/stores/CartStore";
+// import { useInventoryStore } from "@/stores/InventoryStore";
 import { useItemStore } from "@/stores/ItemStore";
 import { ref, computed, onMounted } from "vue";
 
+// stores
 const cartStore = useCartStore();
 const itemStore = useItemStore();
+// const inventoryStore = useInventoryStore();
 
-// Reactive Variablen
+// filtering
 const search = ref("");
 const categories = ref([
   "Gaming Mice",
@@ -250,17 +156,23 @@ const categories = ref([
 ]);
 const selectedCategories = ref<string[]>([]);
 const priceRange = ref([0, 500]);
-const cartModalVisible = ref(false); // Modal-Visibility für Warenkorb
+
+// dialogs
+const cartDialogVisible = ref(false);
 const productDialogVisible = ref(false);
+
+// selection
 const selectedProduct = ref<Item | null>(null);
-const selectedQuantity = ref(1);
-const quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
-const products: Ref<Item[] | []> = ref([]);
 const selectedVariant = ref<Variant | null>(null);
 
+// delete??
+// const selectedQuantity = ref(1);
+// const quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
 const cartItems: Ref<Item[]> = ref([]);
-const currentUserCart: Ref<Cart | null> = ref(null);
 
+// general
+const products: Ref<Item[] | []> = ref([]);
+const currentUserCart: Ref<Cart | null> = ref(null);
 const cartAnimation = ref(false);
 
 const calculatedMaxPrice = computed(() => {
@@ -287,28 +199,6 @@ const filteredProducts = computed(() => {
   }
 });
 
-function clearSearchBar() {
-  search.value = "";
-}
-
-function updateProductImage(newVariant: Variant) {
-  if (selectedProduct.value) {
-    selectedProduct.value.selectedVariant = newVariant.id;
-    // Das Bild wird automatisch aktualisiert, da es über selectedVariant gebunden ist
-  }
-}
-
-function openProductDialog(product: Item) {
-  selectedProduct.value = product;
-  selectedVariant.value =
-    product.variants.find((v) => v.id === product.selectedVariant) || null;
-  productDialogVisible.value = true;
-}
-
-function proceedOrder() {
-  console.log("Cart: ", currentUserCart.value);
-}
-
 onMounted(async () => {
   try {
     currentUserCart.value = await cartStore.getCartByUserId();
@@ -318,8 +208,25 @@ onMounted(async () => {
   }
 });
 
-async function toggleCart() {
-  console.log("currentUserCart: ", currentUserCart.value);
+function clearSearchBar() {
+  search.value = "";
+}
+
+// function updateProductImage(newVariant: Variant) {
+//   if (selectedProduct.value) {
+//     selectedProduct.value.selectedVariant = newVariant.id;
+//     // Das Bild wird automatisch aktualisiert, da es über selectedVariant gebunden ist
+//   }
+// }
+
+function openProductDialog(product: Item) {
+  selectedProduct.value = product;
+  selectedVariant.value =
+    product.variants.find((v) => v.id === product.selectedVariant) || null;
+  productDialogVisible.value = true;
+}
+
+async function openCartDialog() {
   // Cart abrufen
   currentUserCart.value = await cartStore.getCartByUserId();
 
@@ -327,13 +234,12 @@ async function toggleCart() {
   if (currentUserCart.value._id === "") {
     await cartStore.createCart([]);
     currentUserCart.value = await cartStore.getCartByUserId();
-  } else {
-    console.log("cart in Datenbank gefunden... ", currentUserCart.value);
   }
 
   // Toggle Modal nur wenn Cart vorhanden ist
   if (currentUserCart.value._id !== "") {
-    cartModalVisible.value = !cartModalVisible.value;
+    console.log("Cart in Datenbank gefunden... ", currentUserCart.value);
+    cartDialogVisible.value = !cartDialogVisible.value;
   } else {
     console.error("Cart konnte nicht erstellt oder geladen werden.");
   }
@@ -364,38 +270,9 @@ async function addToCart(product: Item | null, quantity: number) {
 
     await cartStore.updateCart(currentUserCart.value);
     cartItems.value = currentUserCart.value.items;
-    cartAnimation.value = true;
+    // cartAnimation.value = true;
 
-    cartModalVisible.value = true;
-  }
-}
-
-async function removeFromCart(productId: string) {
-  currentUserCart.value = await cartStore.getCartByUserId();
-
-  currentUserCart.value.items = currentUserCart.value.items.filter(
-    (item) => item._id !== productId,
-  );
-
-  await cartStore.updateCart(currentUserCart.value);
-  cartItems.value = currentUserCart.value.items;
-}
-
-async function updateQuantity(productId: string, newQuantity: number) {
-  try {
-    currentUserCart.value = await cartStore.getCartByUserId();
-
-    const itemIndex = currentUserCart.value.items.findIndex(
-      (i) => i._id === productId,
-    );
-
-    if (itemIndex !== -1) {
-      currentUserCart.value.items[itemIndex].quantity = newQuantity;
-      await cartStore.updateCart(currentUserCart.value);
-      cartItems.value = currentUserCart.value.items;
-    }
-  } catch (error) {
-    console.error("Error updating quantity:", error);
+    // cartDialogVisible = true;
   }
 }
 </script>
@@ -405,9 +282,6 @@ async function updateQuantity(productId: string, newQuantity: number) {
   margin: 15px;
 }
 
-.search-bar {
-  width: 50%;
-}
 .cart-animate {
   animation: cart-pulse 0.5s ease-in-out;
 }
@@ -471,8 +345,12 @@ li {
   }
 }
 
+.top-navigation {
+  margin-left: 25px;
+}
+
 .search-bar {
-  max-width: 500px;
+  text-align: center;
 }
 
 .cart-animate {

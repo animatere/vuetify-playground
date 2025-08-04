@@ -34,7 +34,7 @@
         <p>{{ product.description }}</p>
         <h3>Preis: {{ product.price }} €</h3>
         <p><strong>Lieferung:</strong> {{ product.shipping }}</p>
-        <v-divider class="my-3"></v-divider>
+        <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
         <h4>Technische Details:</h4>
         <v-list dense>
           <v-list-item v-for="(detail, index) in product.details" :key="index">
@@ -56,7 +56,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-divider class="my-5"></v-divider>
+    <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
   </v-container>
 </template>
 
@@ -86,7 +86,6 @@ const images = ref([
   "https://wolfcenter.de/wp-content/uploads/2020/11/Shop-Depositphotos_9394936_xl-2015_300px_x_400px-300x400.jpg",
   "https://i.ebayimg.com/images/g/oXIAAOSw-XxmmPij/s-l400.jpg",
 ]);
-
 </script>
 
 <style scoped>

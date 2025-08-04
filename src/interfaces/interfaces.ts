@@ -4,11 +4,10 @@ import { User } from "firebase/auth";
 export interface Item {
   _id: string;
   description: string;
+  quantity: number;
   title: string;
   category: string;
   price: number;
-  quantity: number;
-  inStock: boolean;
   brand: string;
   variants: Variant[];
   selectedVariant: number;
@@ -16,8 +15,8 @@ export interface Item {
 }
 
 export interface PurchaseOrder {
-  _id: string;
-  items: Item[];
+  _id?: string;
+  items?: Item[];
   user: User;
   invoice: Invoice;
   status: "pending" | "paid" | "shipped" | "cancelled";
@@ -45,6 +44,18 @@ export interface Invoice {
   paid: boolean;
   paidAt?: Date;
   notes?: string;
+}
+
+export interface Inventory {
+  _id: string;
+  item: Item;
+  storageName: string;
+  quantity: number;
+  minQuantity: number;
+  maxQuantity: number;
+  createdAt: Date;
+  updatedAt: Date;
+  notes: string;
 }
 
 export interface UserAddress {

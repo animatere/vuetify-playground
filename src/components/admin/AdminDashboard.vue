@@ -59,13 +59,18 @@ function changeMenuItem(title: string) {
 
 <style scoped>
 .admin-sidebar {
-  background-color: #aeaeae;
+  background-color: #4ea8de;
   max-height: 95vh;
   width: 100px;
   margin-left: 20px;
 }
 
 .admin-sidebar-itemlist {
-  background-color: #aeaeae;
+  background-color: #4ea8de;
+}
+
+.v-list-item:hover{
+  color: white;
+  border-radius: 5px;
 }
 </style>

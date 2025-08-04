@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row style="margin-top: 25px;">
+    <v-row style="margin-top: 25px">
       <v-col v-for="order in orders" :key="order.id" cols="12" md="6" lg="4">
         <v-card
           class="order-card"
@@ -102,7 +102,7 @@
           </v-simple-table>
 
           <!-- Trennlinie zwischen den Artikeln und dem Gesamtpreis -->
-          <v-divider class="my-4"></v-divider>
+          <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
 
           <!-- Gesamtpreis inkl. MwSt. -->
           <div class="d-flex justify-between">
@@ -198,12 +198,14 @@ const orders = ref([
 // Berechnete Eigenschaften
 const totalExclVat = computed(() => {
   return (
-    selectedOrder.value?.products.reduce((sum: number, product: { price: number; quantity: number }) => {
-      return sum + product.price * product.quantity;
-    }, 0) || 0
+    selectedOrder.value?.products.reduce(
+      (sum: number, product: { price: number; quantity: number }) => {
+        return sum + product.price * product.quantity;
+      },
+      0,
+    ) || 0
   );
 });
-
 
 const totalInclVat = computed(() => {
   // Gesamtpreis mit 19% MwSt.
@@ -212,7 +214,11 @@ const totalInclVat = computed(() => {
 
 // Methoden
 function formatDate(date: string): string {
-  const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  };
   return new Date(date).toLocaleDateString("de-DE", options);
 }
 
