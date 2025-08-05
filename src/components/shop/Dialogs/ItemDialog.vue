@@ -39,13 +39,13 @@
                 v-if="selectedProduct"
               />
               <p><strong>Price:</strong> ${{ selectedProduct?.price }}</p>
-              <!-- <v-btn
+              <v-btn
                 color="primary"
-                @click="addToCart(selectedProduct, selectedQuantity)"
+                @click="addToUserCart(selectedProduct, 1, currentUserCart)"
               >
                 <v-icon class="card-actions-icon">mdi-cart</v-icon>
                 <p class="card-actions-text">Add to Cart</p>
-              </v-btn> -->
+              </v-btn>
             </v-col>
           </v-row>
         </v-container>
@@ -64,16 +64,19 @@
 </template>
 
 <script setup lang="ts">
-import { Item, Variant } from "@/interfaces/interfaces";
+import { addToCart } from "@/composable/useCart";
+import { Cart, Item, Variant } from "@/interfaces/interfaces";
 
 const props = defineProps<{
   productDialogVisible: boolean;
   selectedProduct: Item | null;
   selectedVariant: Variant | null;
+  currentUserCart: Cart | null;
 }>();
 const productDialogVisible = props.productDialogVisible;
 const selectedProduct = props.selectedProduct;
 const selectedVariant = props.selectedVariant;
+const currentUserCart = props.currentUserCart;
 
 const emit = defineEmits<{
   (e: "update:productDialogVisible", value: boolean): void;
@@ -81,6 +84,14 @@ const emit = defineEmits<{
 
 function closeDialog() {
   emit("update:productDialogVisible", false);
+}
+
+async function addToUserCart(
+  product: Item | null,
+  quantity: number,
+  currentUserCart: Cart | null,
+) {
+  await addToCart(product, quantity, currentUserCart);
 }
 </script>
 

@@ -12,6 +12,7 @@
             height: 70px;
             border: solid orangered 1px;
             border-radius: 8px;
+            margin-top: 10px;
           "
         />
       </router-link>
@@ -85,13 +86,6 @@
             @click="closeDropdown"
           >
             Item-overview
-          </router-link>
-          <router-link
-            to="/shop-single-item"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Single-Item
           </router-link>
           <router-link
             to="/shop-payment"
@@ -261,7 +255,7 @@ import { useRouter } from "vue-router";
 import { UserData } from "@/interfaces/interfaces";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/UserStore";
-import { getCurrentUserData } from "./composable/getCurrentUserData";
+import { getCurrentUserData } from "../composable/getCurrentUserData";
 
 const menuOpen = ref(false);
 const userMenuOpen = ref(false);

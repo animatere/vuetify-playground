@@ -2,7 +2,7 @@
 import { Item, UserData } from "@/interfaces/interfaces";
 import { defineStore } from "pinia";
 import axios from "axios";
-import { getCurrentUserData } from "@/components/composable/getCurrentUserData";
+import { getCurrentUserData } from "@/composable/getCurrentUserData";
 
 export const useItemStore = defineStore("itemStore", {
   state: () => ({

@@ -10,7 +10,7 @@
           style="margin-bottom: 25px"
         >
           <v-list-item-action style="width: 50px; height: 50px">
-            <v-btn icon color="red" @click="removeFromCart(product._id)">
+            <v-btn icon color="red" @click="removeFromUserCart(product._id)">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-list-item-action>
@@ -80,9 +80,17 @@
       </v-row>
     </v-card>
   </v-dialog>
+
+  <warning-dialog
+    v-if="warningDialogVisible"
+    v-model:warningDialogVisible="warningDialogVisible"
+    @confirm-remove="confirmRemoveClick()"
+  >
+  </warning-dialog>
 </template>
 
 <script setup lang="ts">
+import { removeFromCart } from "@/composable/useCart";
 import { Cart, Item } from "@/interfaces/interfaces";
 import { useCartStore } from "@/stores/CartStore";
 
@@ -95,6 +103,8 @@ const props = defineProps<{
 
 const router = useRouter();
 
+const warningDialogVisible = ref(false);
+const itemToRemove: Ref<string> = ref("");
 let cartDialogVisible = ref(props.cartDialogVisible);
 let currentUserCart = ref(props.currentUserCart);
 let quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
@@ -112,15 +122,21 @@ function proceedOrder() {
   router.push("/shop-payment");
 }
 
-async function removeFromCart(productId: string) {
-  currentUserCart.value = await cartStore.getCartByUserId();
+async function removeFromUserCart(productId: string) {
+  itemToRemove.value = productId;
+  warningDialogVisible.value = true;
 
-  currentUserCart.value.items = currentUserCart.value.items.filter(
-    (item) => item._id !== productId,
-  );
+  console.log(itemToRemove.value);
+}
 
-  await cartStore.updateCart(currentUserCart.value);
-  cartItems.value = currentUserCart.value.items;
+async function confirmRemoveClick() {
+  console.log("Confirm remove");
+  warningDialogVisible.value = false;
+
+  const updatedItems = await removeFromCart(itemToRemove.value);
+  if (currentUserCart.value) {
+    currentUserCart.value.items = updatedItems;
+  }
 }
 
 async function updateQuantity(productId: string, newQuantity: number) {

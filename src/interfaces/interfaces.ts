@@ -5,6 +5,7 @@ export interface Item {
   _id: string;
   description: string;
   quantity: number;
+  maxQuantity: number;
   title: string;
   category: string;
   price: number;
@@ -58,13 +59,6 @@ export interface Inventory {
   notes: string;
 }
 
-export interface UserAddress {
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
-}
-
 export interface Variant {
   id: number;
   color: string;
@@ -115,6 +109,19 @@ export interface UserData {
   password: string;
   loggedIn: boolean;
   registered: boolean;
+  street?: string;
+  streetNumber?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+}
+
+export interface UserAddress {
+  street: string;
+  streetNumber: string;
+  city: string;
+  postalCode: string;
+  country: string;
 }
 
 export interface Comment {

@@ -1,7 +1,26 @@
 <template>
   <v-container>
     <!-- Profilüberschrift -->
-    <v-row class="mb-6">
+    <div class="navbar-logo">
+      <v-row class="mb-6">
+        <v-col cols="12" class="text-center">
+          <img
+            src="https://img.freepik.com/vektoren-premium/ein-stilisiertes-logo-mit-einer-figur-deren-gesicht-durch-ein-schwarzes-rechteck-verdeckt-ist_948255-68.jpg"
+            alt="Logo"
+            class="logo"
+            style="
+              width: 70px;
+              height: 70px;
+              border: solid orangered 1px;
+              border-radius: 8px;
+            "
+          />
+
+          <h1 style="color: #4ea8de">Welcome Back bro!</h1>
+        </v-col>
+      </v-row>
+    </div>
+    <!-- <v-row class="mb-6">
       <v-col cols="12" class="text-center">
         <p
           v-if="defaultUser.username"
@@ -12,50 +31,19 @@
         <p v-else>Benutzer wird geladen...</p>
         <p class="profile-subtitle">Hier sind deine Profildetails.</p>
       </v-col>
-    </v-row>
+    </v-row> -->
 
     <!-- Profilinformationen -->
     <v-row>
-      <v-col cols="12" md="6">
-        <v-card class="profile-card">
-          <v-card-title>Deine Informationen</v-card-title>
-          <v-card-text>
-            <div class="info-item">
-              <span class="info-label">Benutzername:</span>
-              <span class="info-value">{{ defaultUser.username }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">E-Mail:</span>
-              <span class="info-value">{{ defaultUser.email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Status:</span>
-              <span class="info-value">
-                <v-chip
-                  :color="defaultUser.loggedIn ? 'green' : 'red'"
-                  text-color="white"
-                >
-                  {{ defaultUser.loggedIn ? "Online" : "Offline" }}
-                </v-chip>
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Registriert:</span>
-              <span class="info-value">
-                <v-chip
-                  :color="defaultUser.registered ? 'blue' : 'grey'"
-                  text-color="white"
-                >
-                  {{ defaultUser.registered ? "Ja" : "Nein" }}
-                </v-chip>
-              </span>
-            </div>
-          </v-card-text>
-        </v-card>
+      <v-col cols="12" class="text-center">
+        <profile-information-view></profile-information-view>
       </v-col>
 
+      <!-- <v-col cols="6" class="text-center">
+        <delivery-adress-view></delivery-adress-view>
+      </v-col> -->
       <!-- Bearbeitungsformular -->
-      <v-col cols="12" md="6">
+      <!-- <v-col md="6">
         <v-card class="profile-card">
           <v-card-title>Profil bearbeiten</v-card-title>
           <v-card-text>
@@ -86,15 +74,13 @@
             <v-btn color="secondary" @click="resetEditData"> Abbrechen </v-btn>
           </v-card-actions>
         </v-card>
-      </v-col>
-    </v-row>
+      </v-col> -->
 
-    <!-- Event Log (Aktivitätsprotokoll) -->
-    <v-row>
+      <!-- Event Log (Aktivitätsprotokoll) -->
       <v-col cols="12">
         <v-card class="profile-card">
           <v-card-title>Aktivitätsprotokoll</v-card-title>
-          <v-card-text style="max-height: 300px; overflow-y: auto;">
+          <v-card-text style="max-height: 300px; overflow-y: auto">
             <v-list>
               <v-list-item v-for="event in userEvents" :key="event.id">
                 <v-list-item-title>
@@ -114,7 +100,6 @@
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
@@ -124,7 +109,7 @@ import { useEventStore } from "@/stores/EventStore";
 import { storeToRefs } from "pinia";
 import { reactive, ref } from "vue";
 import { UserData } from "@/interfaces/interfaces";
-import { getCurrentUserData } from "../composable/getCurrentUserData";
+import { getCurrentUserData } from "../../composable/getCurrentUserData";
 
 const userStore = useUserStore();
 const eventStore = useEventStore();
@@ -138,6 +123,11 @@ let defaultUser = ref<UserData>({
   password: "",
   loggedIn: false,
   registered: false,
+  street: "",
+  streetNumber: "",
+  postalCode: "",
+  city: "",
+  country: "",
 });
 
 let userEvents = events;
@@ -163,8 +153,13 @@ watch(
         username: newCurrentUser.email?.split("@")[0],
         email: newCurrentUser.email as string,
         password: "Test12345",
-        loggedIn: !!newCurrentUser, // placeholder
-        registered: !newCurrentUser.emailVerified, // placeholder
+        loggedIn: !!newCurrentUser,
+        registered: !newCurrentUser.emailVerified,
+        street: "",
+        streetNumber: "",
+        postalCode: "",
+        city: "",
+        country: "",
       } as UserData;
     } else {
       defaultUser.value = {
@@ -174,6 +169,11 @@ watch(
         password: "",
         loggedIn: false,
         registered: false,
+        street: "",
+        streetNumber: "",
+        postalCode: "",
+        city: "",
+        country: "",
       };
     }
   },
@@ -205,7 +205,7 @@ function resetEditData() {
   editData.username = currentUser.value?.displayName;
   editData.email = currentUser.value?.email as string;
   // editData.password = currentUser.value.password;
-  (editData.loggedIn = !!currentUser), (editData.registered = !!currentUser);
+  ((editData.loggedIn = !!currentUser), (editData.registered = !!currentUser));
 }
 
 function clearEventLog() {
@@ -227,7 +227,7 @@ function clearEventLog() {
 .profile-card {
   margin-bottom: 20px;
   padding: 20px;
-  height: 50vh;
+  height: 100%;
 }
 
 .info-item {
@@ -247,5 +247,23 @@ function clearEventLog() {
 
 .profile-card v-list-item:last-child {
   border-bottom: none;
+}
+
+.navbar-logo {
+  display: flex; /* Flexbox aktivieren */
+  align-items: center; /* Logo und Text auf gleicher Höhe */
+}
+
+.navbar-logo a {
+  color: #333;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex; /* Flexbox aktivieren */
+  align-items: center; /* Text und Logo vertikal ausrichten */
+}
+
+.navbar-logo img {
+  margin-right: 8px; /* Abstand zwischen Logo und Text */
 }
 </style>

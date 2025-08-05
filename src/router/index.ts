@@ -12,7 +12,6 @@ import Login from "@/components/user/Login.vue";
 import SignUp from "@/components/user/SignUp.vue";
 import HomeView from "../views/HomeView.vue";
 import ItemOverview from "@/components/shop/ItemOverview.vue";
-import ItemSingleView from "@/components/shop/ItemSingleView.vue";
 import AdminDashboard from "@/components/admin/AdminDashboard.vue";
 import UserPurchaseHistory from "@/components/user/UserPurchaseHistory.vue";
 import QhLanding from "@/components/questhub/qh-landing.vue";
@@ -103,12 +102,6 @@ const router = createRouter({
       path: "/shop-item-overview",
       name: "item-overview",
       component: ItemOverview,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/shop-single-item",
-      name: "item-single-view",
-      component: ItemSingleView,
       beforeEnter: requireAuth,
     },
     {

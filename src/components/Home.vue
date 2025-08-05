@@ -54,7 +54,7 @@
 import { useUserStore } from "@/stores/UserStore";
 import { onMounted } from "vue";
 import { UserData } from "@/interfaces/interfaces";
-import { getCurrentUserData } from "./composable/getCurrentUserData";
+import { getCurrentUserData } from "../composable/getCurrentUserData";
 
 const userStore = useUserStore();
 let defaultUser = ref<UserData>({

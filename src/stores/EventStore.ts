@@ -3,7 +3,7 @@ import { UserData, UserEvent } from "@/interfaces/interfaces";
 import { defineStore } from "pinia";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { getCurrentUserData } from "@/components/composable/getCurrentUserData";
+import { getCurrentUserData } from "@/composable/getCurrentUserData";
 
 export const useEventStore = defineStore("eventStore", {
   state: () => ({

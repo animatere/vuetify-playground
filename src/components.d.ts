@@ -7,6 +7,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddressDialog: typeof import('./components/Dialogs/AddressDialog.vue')['default']
+    AddressView: typeof import('./components/Views/AddressView.vue')['default']
     AdminDashboard: typeof import('./components/admin/AdminDashboard.vue')['default']
     AdminHome: typeof import('./components/admin/admin-pages/AdminHome.vue')['default']
     AdminSettings: typeof import('./components/admin/admin-pages/AdminSettings.vue')['default']
@@ -14,16 +16,22 @@ declare module 'vue' {
     CartDialog: typeof import('./components/shop/Dialogs/CartDialog.vue')['default']
     Chatbot: typeof import('./components/shop/Chatbot.vue')['default']
     Collector: typeof import('./components/collector/Collector.vue')['default']
+    DeliveryAddressCompactView: typeof import('./components/Views/DeliveryAddressCompactView.vue')['default']
+    DeliveryAdressView: typeof import('./components/Views/DeliveryAdressView.vue')['default']
+    DoYouReallyWantTo: typeof import('./components/Dialogs/DoYouReallyWantTo.vue')['default']
     Home: typeof import('./components/Home.vue')['default']
     ImageGenerator: typeof import('./components/shop/ImageGenerator.vue')['default']
+    InvoiceAddressView: typeof import('./components/Views/InvoiceAddressView.vue')['default']
     ItemDialog: typeof import('./components/shop/Dialogs/ItemDialog.vue')['default']
     ItemOverview: typeof import('./components/shop/ItemOverview.vue')['default']
-    ItemSingleView: typeof import('./components/shop/ItemSingleView.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     Login: typeof import('./components/user/Login.vue')['default']
     Navbar: typeof import('./components/Navbar.vue')['default']
     Notification: typeof import('./components/user/Notification.vue')['default']
+    PaymentView: typeof import('./components/Views/PaymentView.vue')['default']
     ProductManagement: typeof import('./components/admin/admin-pages/ProductManagement.vue')['default']
+    ProfileInformation: typeof import('./components/Views/ProfileInformation.vue')['default']
+    ProfileInformationView: typeof import('./components/Views/ProfileInformationView.vue')['default']
     QhLanding: typeof import('./components/questhub/qh-landing.vue')['default']
     QhQuestcard: typeof import('./components/questhub/qh-questcard.vue')['default']
     QhUserquests: typeof import('./components/questhub/qh-userquests.vue')['default']
@@ -41,5 +49,6 @@ declare module 'vue' {
     UserProfile: typeof import('./components/user/UserProfile.vue')['default']
     UserPurchaseHistory: typeof import('./components/user/UserPurchaseHistory.vue')['default']
     UserSettings: typeof import('./components/user/UserSettings.vue')['default']
+    WarningDialog: typeof import('./components/Dialogs/WarningDialog.vue')['default']
   }
 }

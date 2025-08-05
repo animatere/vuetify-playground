@@ -28,7 +28,7 @@
 import { useUserStore } from "@/stores/UserStore";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { getCurrentUserData } from "./composable/getCurrentUserData";
+import { getCurrentUserData } from "../composable/getCurrentUserData";
 import { UserData } from "@/interfaces/interfaces";
 
 const userStore = useUserStore();
