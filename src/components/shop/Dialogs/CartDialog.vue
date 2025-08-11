@@ -1,7 +1,21 @@
 <template>
   <v-dialog v-model="cartDialogVisible" max-width="800px">
     <v-card>
-      <v-card-title class="text-h5 font-weight-bold">Cart</v-card-title>
+      <v-card-title class="text-h5 font-weight-bold">
+        <div class="card-title-elements">
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                class="card-title-element"
+                placeholder="Code eingeben"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-btn class="card-title-element">Aktivieren</v-btn>
+            </v-col>
+          </v-row>
+        </div>
+      </v-card-title>
       <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
       <v-list>
         <v-list-item
@@ -10,9 +24,6 @@
           style="margin-bottom: 25px"
         >
           <v-list-item-action style="width: 50px; height: 50px">
-            <v-btn icon color="red" @click="removeFromUserCart(product._id)">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
           </v-list-item-action>
           <v-list-item-avatar>
             <v-img
@@ -23,12 +34,7 @@
               alt="Item Image"
               class="rounded"
               contain
-              style="
-                width: 250px;
-                height: 150px;
-                border: solid grey 1px;
-                margin: 15px 0;
-              "
+              style="width: 250px; height: 150px; margin: 15px 0"
             ></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
@@ -58,6 +64,9 @@
                 (product.price * product.quantity).toFixed(2)
               }}</v-list-item-subtitle
             >
+            <v-btn icon color="red" @click="removeFromUserCart(product._id)">
+              <v-icon>mdi-trash-can</v-icon>
+            </v-btn>
           </v-list-item-content>
           <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
         </v-list-item>
@@ -157,3 +166,14 @@ async function updateQuantity(productId: string, newQuantity: number) {
   }
 }
 </script>
+
+<style scoped>
+/* .card-title-elements {
+  height: 100px;
+} */
+
+/* .card-title-element {
+  width: 100%;
+  height: 50px !important;
+} */
+</style>
