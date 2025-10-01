@@ -59,9 +59,6 @@ function notifyMessage(message: string, type: string) {
 }
 
 async function submitForm(submitEvent: Event) {
-  console.log("Not possible yet");
-
-  notifyMessage("Momentan nicht möglich!", "success");
   eventStore.addEvent("Benutzer hat sich eingeloggt");
   submitEvent.preventDefault();
   if (username.value !== "" && email.value !== "" && password.value !== "") {

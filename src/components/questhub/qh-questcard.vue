@@ -56,7 +56,6 @@ async function getRandomCardByCategory(category: string) {
   );
 
   if (filteredQuestCards.length > 0) {
-    console.log();
     const randomIndex = Math.floor(Math.random() * filteredQuestCards.length);
 
     questCard.value = filteredQuestCards[randomIndex];

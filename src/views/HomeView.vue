@@ -1,4 +1,3 @@
-<!-- src/views/WatchView.vue -->
 <template>
   <div>
     <Home />

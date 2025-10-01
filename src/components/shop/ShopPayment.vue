@@ -4,17 +4,15 @@
       <v-col class="CustomerInformation" lg="6" md="12" sm="12">
         <address-view></address-view>
       </v-col>
-      <v-col class="PurchaseOverview" lg="5" md="12" sm="12">
+      <v-col class="PaymentOverview" lg="5" md="12" sm="12">
         <payment-view></payment-view>
       </v-col>
     </v-row>
-
-
   </v-container>
 </template>
 
 <style>
-.PurchaseOverview {
+.PaymentOverview {
   /* background-color: rgb(202, 197, 197); */
   padding: 25px;
 }
@@ -35,7 +33,7 @@ h3 {
 }
 
 @media (max-width: 960px) {
-  .PurchaseOverview {
+  .PaymentOverview {
     padding: 20px;
   }
   .CustomerInformation {
@@ -44,7 +42,7 @@ h3 {
 }
 
 @media (max-width: 1280px) {
-  .PurchaseOverview {
+  .PaymentOverview {
     padding: 30px;
   }
   .CustomerInformation {
@@ -53,7 +51,7 @@ h3 {
 }
 
 @media (max-width: 1920px) {
-  .PurchaseOverview {
+  .PaymentOverview {
     padding: 40px;
   }
   .CustomerInformation {
@@ -62,7 +60,7 @@ h3 {
 }
 
 @media (max-width: 2560) {
-  .PurchaseOverview {
+  .PaymentOverview {
     padding: 50px;
   }
   .CustomerInformation {

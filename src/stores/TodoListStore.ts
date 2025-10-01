@@ -10,7 +10,6 @@ export const useTodoListStore = defineStore("todoList", {
   }),
 
   actions: {
-    // not completed tasks
     addTodo(text: string) {
       this.todoList.push({
         text: text,

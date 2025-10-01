@@ -1,34 +1,45 @@
-import { Cart, Item } from "@/interfaces/interfaces";
+import { Cart, CartItem, Item } from "@/interfaces/interfaces";
 import { useCartStore } from "@/stores/CartStore";
 
 export async function addToCart(
   product: Item | null,
   quantity: number,
   currentUserCart: Cart | null,
-): Promise<Item[]> {
+): Promise<CartItem[]> {
   if (!product) return [];
 
   const cartStore = useCartStore();
 
-  currentUserCart = await cartStore.getCartByUserId();
+  console.log("Product: ", product);
+  console.log("quantity: ", quantity);
+  console.log("currentUserCart: ", currentUserCart);
 
   if (!currentUserCart) {
-    await cartStore.createCart([]);
-    currentUserCart = await cartStore.getCartByUserId();
+    console.log("usercart null → neuer Warenkorb wird erstellt");
+
+    await cartStore.createCart([
+      {
+        ...product,
+        quantity,
+      },
+    ]);
+
+    const newCart = await cartStore.getCartByUserId();
+    return newCart?.cartItems ?? [];
   }
 
-  const existingItem = currentUserCart.items.find(
-    (item) =>
-      item._id === product._id &&
-      item.selectedVariant === product.selectedVariant,
+  console.log("usercart is not null");
+  const existingItem = currentUserCart.cartItems.find(
+    (item) => item.itemId === product._id,
+    // && item.selectedVariant === product.selectedVariant,
   );
 
   if (existingItem) {
     existingItem.quantity += quantity;
   } else {
-    currentUserCart.items.push({
-      ...product,
-      quantity,
+    currentUserCart.cartItems.push({
+      ...product._id,
+      quantity
     });
   }
 

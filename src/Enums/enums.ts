@@ -11,3 +11,8 @@ export enum QuestCategory {
   ACTION = "ACTION",
   BRAIN = "BRAIN",
 }
+
+export enum UserRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}

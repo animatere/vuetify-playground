@@ -1,87 +1,78 @@
-// src/stores/EventStore.ts
-import { Cart, Item, UserData } from "@/interfaces/interfaces";
+// src/stores/CartStore.ts
+import { Cart, CartItem, UserData } from "@/interfaces/interfaces";
 import { defineStore } from "pinia";
 import axios from "axios";
 import { getCurrentUserData } from "@/composable/getCurrentUserData";
 
 export const useCartStore = defineStore("cartStore", {
   state: () => ({
-    events: [] as Cart[],
+    carts: [] as Cart[],
+    currentCart: null as Cart | null, // <-- aktiv genutzter Warenkorb
   }),
   actions: {
-    async createCart(items: Item[]) {
-      let currentUser = (await getCurrentUserData()) as UserData;
-
-      if (currentUser) {
-        let userCart: Cart = {
-          items: items,
-          totalPrice: 0,
-          userId: currentUser.id,
-          status: "open",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-
-        console.log("erstelle usercart... ", userCart);
-
-        const userSettingsRef = `http://localhost:4000/carts`;
-
-        await axios.post(userSettingsRef, userCart);
-      } else {
-        console.log("Unknown Current User in EventStore");
-      }
-    },
-    async getCart(): Promise<Cart> {
+    async createCart(cartItems: CartItem[]) {
       const currentUser = (await getCurrentUserData()) as UserData;
-      const userSettingsRef = `http://localhost:4000/carts/single/?id=${currentUser.id}&userId=${currentUser.id}`;
-      let response = await axios.get(userSettingsRef);
-      let userCart: Cart = {
-        items: [],
-        totalPrice: 0,
-        userId: currentUser.id,
+
+      if (!currentUser?._id) {
+        console.warn("Unknown Current User in createCart");
+        return;
+      }
+
+      const userCart: Cart = {
+        cartItems: cartItems,
+        userId: currentUser._id,
         status: "open",
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      if (response.data) {
-        userCart = response.data as Cart;
-      }
-
-      return userCart;
+      console.log("Erstelle UserCart:", userCart);
+      const response = await axios.post(
+        "http://localhost:4000/carts",
+        userCart,
+      );
+      this.currentCart = response.data as Cart;
+      return this.currentCart;
     },
-    async getCartByUserId(): Promise<Cart> {
-      const currentUser = (await getCurrentUserData()) as UserData;
-      const userSettingsRef = `http://localhost:4000/carts/single/?userId=${currentUser.id}&userId=${currentUser.id}`;
-      let response = await axios.get(userSettingsRef);
-      let userCart: Cart = {
-        _id: "",
-        items: [],
-        totalPrice: 0,
-        userId: currentUser.id,
-        status: "open",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
 
-      if (response.data) {
-        userCart = response.data as Cart;
-      } else {
-        console.log("userCart konnte nicht für User gefunden werden...");
+    async getCartByUserId(): Promise<Cart | null> {
+      try {
+        const currentUser = (await getCurrentUserData()) as UserData;
+
+        if (!currentUser?._id) return null;
+
+        const response = await axios.get(
+          `http://localhost:4000/carts/single/?userId=${currentUser._id}`,
+        );
+
+        return response.data as Cart;
+      } catch (error) {
+        console.error("Error on getCartByUserId()", error);
+        return null;
       }
-
-      return userCart;
     },
+
     async updateCart(currentCart: Cart) {
+      console.log("Im CartStore gelandet");
+
       const currentUser = (await getCurrentUserData()) as UserData;
 
-      if (currentUser) {
-        const userSettingsRef = `http://localhost:4000/carts?userId=${currentUser.id}`;
-
-        await axios.patch(userSettingsRef, currentCart);
-      } else {
-        console.log("Unknown Current User in EventStore");
+      console.log("CURRENTUSER: ", currentUser);
+      console.log("currentCart: ", currentCart);
+      if (!currentUser?._id) {
+        console.warn("Unknown Current User in updateCart");
+        return;
       }
+
+      if (!currentCart._id) {
+        console.error("Cannot update cart without _id");
+        return;
+      }
+
+      await axios.patch(
+        `http://localhost:4000/carts/${currentCart._id}`,
+        currentCart,
+      );
     },
   },
 });

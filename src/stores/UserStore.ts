@@ -1,4 +1,3 @@
-import { UserSettings } from "@/interfaces/interfaces";
 import { defineStore } from "pinia";
 import axios from "axios";
 import {
@@ -9,23 +8,71 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "../../firebase";
+import { UserData, UserSettings } from "@/interfaces/interfaces";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    currentUser: {} as User,
+    currentUser: null as User | null,
+    userData: {} as UserData,
+    allUsers: [] as UserData[] | [],
     userSettings: {} as UserSettings,
     loading: false,
     error: "",
+    initialized: false, // wichtig für einmalige Initialisierung
   }),
 
   actions: {
     /**
-     * Registriere einen neuen Benutzer
+     * Initialisiere Auth Listener (einmal beim App-Start aufrufen!)
      */
+
+    initAuthListener() {
+      if (this.initialized) return;
+      this.initialized = true;
+
+      onAuthStateChanged(auth, async (user) => {
+        console.log("AuthStateChanged ->", user?.email);
+        this.currentUser = user;
+
+        if (user?.email) {
+          await this.getUserByEmail(user.email);
+          await this.loadSettings();
+        } else {
+          this.userData = {} as UserData;
+          this.userSettings = {} as UserSettings;
+        }
+      });
+    },
+
+    async getUserByEmail(email: string): Promise<UserData | null> {
+      try {
+        const response = await axios.post<UserData>(
+          `http://localhost:4000/users/email?email=${encodeURIComponent(email)}`,
+        );
+        this.userData = response.data;
+        return this.userData;
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Benutzers:", error);
+        return null;
+      }
+    },
+
+    async getAllUsers(): Promise<UserData[] | []> {
+      try {
+        const response = await axios.get<UserData[]>(
+          `http://localhost:4000/users/`,
+        );
+        this.allUsers = response.data;
+        return this.allUsers;
+      } catch (error) {
+        console.error("Fehler beim Abrufen des Benutzers:", error);
+        return [];
+      }
+    },
+
     async signup(email: string, password: string): Promise<boolean> {
       this.loading = true;
       this.error = "";
-
       try {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
@@ -35,7 +82,6 @@ export const useUserStore = defineStore("user", {
         this.currentUser = userCredential.user;
         console.log("Benutzer erfolgreich registriert");
 
-        // Initiale Benutzereinstellungen speichern
         const initialSettings: UserSettings = {
           id: this.currentUser.uid,
           userId: this.currentUser.uid,
@@ -47,20 +93,15 @@ export const useUserStore = defineStore("user", {
         return true;
       } catch (error: any) {
         this.error = error.message || "Registrierung fehlgeschlagen";
-        console.error("Fehler bei der Registrierung:", error);
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    /**
-     * Melde einen Benutzer an
-     */
     async login(email: string, password: string): Promise<boolean> {
       this.loading = true;
       this.error = "";
-
       try {
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -69,131 +110,103 @@ export const useUserStore = defineStore("user", {
         );
         this.currentUser = userCredential.user;
         console.log("Benutzer erfolgreich angemeldet");
-
-        // Benutzereinstellungen laden
-        await this.loadSettings();
         return true;
       } catch (error: any) {
         this.error = error.message || "Anmeldung fehlgeschlagen";
-        console.error("Fehler bei der Anmeldung:", error);
         return false;
       } finally {
         this.loading = false;
       }
     },
 
-    /**
-     * Melde den aktuellen Benutzer ab
-     */
     async logout(): Promise<void> {
-      this.loading = true;
-      this.error = "";
-
       try {
         await signOut(auth);
-        this.currentUser = {} as User;
+        this.currentUser = null;
+        this.userData = {} as UserData;
         this.userSettings = {} as UserSettings;
-        console.log("Benutzer erfolgreich abgemeldet.");
-        await window.location.reload();
       } catch (error: any) {
-        this.error = error.message || "Abmeldung fehlgeschlagen";
         console.error("Fehler bei der Abmeldung:", error);
-      } finally {
-        this.loading = false;
       }
+    },
+
+    async updateUserData(userData: UserData): Promise<boolean> {
+      try {
+        if (userData.userAddress) {
+          const ref = `http://localhost:4000/users/${userData._id}`;
+          await axios.patch(ref, userData);
+          return true;
+        }
+
+        return false;
+      } catch (err) {
+        console.error("Fehler beim Speichern der Profiledaten:", err);
+        return false;
+      }
+    },
+
+    async setUserData(userData: UserData): Promise<boolean> {
+      try {
+        if (userData) {
+          this.userData = JSON.parse(JSON.stringify(userData));
+        }
+
+        return true;
+      } catch (err) {
+        console.error("Fehler beim Speichern der Profiledaten:", err);
+        return false;
+      }
+    },
+
+    async saveSettings(settings: UserSettings): Promise<boolean> {
+      try {
+        if (!this.currentUser) return false;
+
+        settings.userId = this.currentUser.uid;
+        const ref = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
+
+        await axios.put(ref, settings);
+        this.userSettings = settings;
+        return true;
+      } catch (err) {
+        console.error("Fehler beim Speichern der Einstellungen:", err);
+        return false;
+      }
+    },
+
+    async loadSettings(): Promise<UserSettings> {
+      if (!this.currentUser) return {} as UserSettings;
+
+      try {
+        const ref = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
+        const response = await axios.get(ref);
+
+        if (response.data) {
+          this.userSettings = response.data;
+          return this.userSettings;
+        }
+      } catch (err) {
+        console.error("Fehler beim Laden der Einstellungen:", err);
+      }
+      return {} as UserSettings;
     },
 
     async checkAuth(): Promise<boolean> {
       return new Promise((resolve) => {
         onAuthStateChanged(auth, async (user) => {
+          console.log("checkAuth");
           if (user) {
             this.currentUser = user;
 
             await this.loadSettings();
-            return true;
+            return true; // ❌ Problem: return im Callback
           } else {
             this.currentUser = {} as User;
             console.log("Kein Benutzer eingeloggt.");
-            return false;
+            return false; // ❌ Problem: return im Callback
           }
         });
       });
-    },
-
-    /**
-     * Speichere die Benutzereinstellungen in Firebase
-     */
-    async saveSettings(settings: UserSettings): Promise<boolean> {
-      try {
-        if (!this.currentUser || !settings.userId) {
-          console.error(
-            "Kein Benutzer angemeldet. Kann Einstellungen nicht speichern.",
-          );
-          return false;
-        }
-
-        if (!settings.emailNotifications) settings.emailNotifications = false;
-
-        if (!settings.notifications) settings.notifications = false;
-
-        settings.userId = this.currentUser.uid;
-
-        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
-
-        // Speichere die Einstellungen spezifisch für den Benutzer
-        await axios.put(userSettingsRef, settings);
-
-        this.userSettings = settings;
-        return true;
-      } catch (err) {
-        console.error("Fehler beim Speichern der Benutzereinstellungen:", err);
-        return false;
-      }
-    },
-
-    /**
-     * Lade die Benutzereinstellungen aus Firebase
-     */
-    async loadSettings(): Promise<UserSettings> {
-      try {
-        if (!this.currentUser) {
-          console.error(
-            "Kein Benutzer angemeldet. Kann Einstellungen nicht laden.",
-          );
-          return {
-            id: "",
-            userId: "",
-            theme: "light",
-            notifications: false,
-            emailNotifications: false,
-          } as UserSettings;
-        }
-
-        const userSettingsRef = `https://vue3-training-2f8fd-default-rtdb.firebaseio.com/UserSettings/${this.currentUser.uid}.json`;
-
-        const response = await axios.get(userSettingsRef);
-
-        if (response.data) {
-          this.userSettings = response.data;
-          // console.log('Benutzereinstellungen geladen:', this.userSettings);
-          return this.userSettings as UserSettings;
-        } else {
-          console.warn(
-            "Keine Benutzereinstellungen für den aktuellen Benutzer gefunden",
-          );
-          this.currentUser = {} as User;
-          this.userSettings = {} as UserSettings;
-        }
-      } catch (err) {
-        console.error("Fehler beim Laden der Benutzereinstellungen:", err);
-      }
-      return {
-        id: "",
-        userId: "",
-        theme: "light",
-        notifications: false,
-        emailNotifications: false,
-      } as UserSettings;
     },
   },
 });

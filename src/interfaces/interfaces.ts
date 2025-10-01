@@ -1,4 +1,4 @@
-import { QuestCategory, TaskCategory } from "@/Enums/enums";
+import { QuestCategory, TaskCategory, UserRole } from "@/Enums/enums";
 import { User } from "firebase/auth";
 
 export interface Item {
@@ -23,8 +23,8 @@ export interface PurchaseOrder {
   status: "pending" | "paid" | "shipped" | "cancelled";
   createdAt: string;
   updatedAt?: string;
-  shippingAddress: UserAddress;
-  billingAddress?: UserAddress;
+  shippingAddress: Address;
+  billingAddress?: Address;
   paymentMethod: "credit_card" | "paypal" | "bank_transfer" | "cash";
   notes?: string;
 }
@@ -51,6 +51,7 @@ export interface Inventory {
   _id: string;
   item: Item;
   storageName: string;
+  storageAddress: Address;
   quantity: number;
   minQuantity: number;
   maxQuantity: number;
@@ -103,24 +104,24 @@ export interface ToDo {
 }
 
 export interface UserData {
-  id: string;
-  username: string;
+  _id?: string;
+  uid: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   loggedIn: boolean;
-  registered: boolean;
-  street?: string;
-  streetNumber?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
+  confirmed: boolean;
+  userAddress?: Address;
+  role?: UserRole;
 }
 
-export interface UserAddress {
+export interface Address {
   street: string;
   streetNumber: string;
   city: string;
-  postalCode: string;
+  postCode: string;
   country: string;
 }
 
@@ -156,11 +157,16 @@ export interface UserEvent {
 export interface Cart {
   _id?: string;
   userId: string;
-  items: Item[];
-  status: "open" | "completed";
-  totalPrice: number;
+  cartItems: CartItem[];
+  status: "open" | "completed" | "cancelled";
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CartItem {
+  itemId: string;
+  quantity: number;
+  addedAt: Date;
 }
 
 export interface QuestCard {

@@ -50,14 +50,10 @@
           </v-row>
         </v-container>
       </v-card-text>
-      <v-row>
-        <v-col cols="10"></v-col>
-        <!-- ToDo: Gibt es eine Lösung mit v-col auf eine feste position zu gehen z.B. align: right?? -->
-        <v-col>
-          <v-btn color="warning" class="closeButton" @click="closeDialog"
-            >Close</v-btn
-          >
-        </v-col>
+      <v-row justify="end">
+        <v-btn color="warning" class="closeButton" @click="closeDialog"
+          >Close</v-btn
+        >
       </v-row>
     </v-card>
   </v-dialog>
@@ -66,6 +62,11 @@
 <script setup lang="ts">
 import { addToCart } from "@/composable/useCart";
 import { Cart, Item, Variant } from "@/interfaces/interfaces";
+import { useItemStore } from "@/stores/ItemStore";
+import { storeToRefs } from "pinia";
+
+const itemStore = useItemStore();
+const { items } = storeToRefs(itemStore);
 
 const props = defineProps<{
   productDialogVisible: boolean;
@@ -74,7 +75,10 @@ const props = defineProps<{
   currentUserCart: Cart | null;
 }>();
 const productDialogVisible = props.productDialogVisible;
-const selectedProduct = props.selectedProduct;
+const selectedProduct = computed(() => {
+  if (!props.selectedProduct) return null;
+  return items.value.find((i) => i._id === props.selectedProduct!._id) || null;
+});
 const selectedVariant = props.selectedVariant;
 const currentUserCart = props.currentUserCart;
 

@@ -4,7 +4,7 @@ import { SignJWT } from "jose";
 export async function useCreateToken(user: UserData) {
   try {
     const payload = {
-      id: user.id,
+      id: user._id,
       username: user.username,
     };
     const secret = new TextEncoder().encode("my_secret_key");

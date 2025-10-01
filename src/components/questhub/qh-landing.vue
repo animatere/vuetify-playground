@@ -48,13 +48,9 @@
   </template>
   
   <script setup lang="ts">
-import { QuestCategory } from '@/Enums/enums';
+    import { QuestCategory } from '@/Enums/enums';
 
     const category = ref<QuestCategory | "">(""); 
-
-    onMounted(async () => {
-        console.log(category)
-    });
 
     function onChangeCategory(newCategory: QuestCategory | ""){
 
@@ -63,7 +59,6 @@ import { QuestCategory } from '@/Enums/enums';
 
         else{
             category.value = newCategory
-            console.log(category.value)
         }
 
     }

@@ -1,10 +1,5 @@
 <template>
-  <v-footer
-    v-if="defaultUser.id"
-    class="my-footer"
-    :absolute="!isFullHeight"
-    app
-  >
+  <v-footer class="my-footer" :absolute="!isFullHeight" app>
     <v-row justify="center" no-gutters>
       <v-btn
         v-for="link in links"
@@ -25,55 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { useUserStore } from "@/stores/UserStore";
-import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { getCurrentUserData } from "../composable/getCurrentUserData";
-import { UserData } from "@/interfaces/interfaces";
-
-const userStore = useUserStore();
-const { currentUser } = storeToRefs(userStore);
-let defaultUser = ref<UserData>({
-  id: "",
-  username: "",
-  email: "",
-  password: "Test12345",
-  loggedIn: false,
-  registered: false,
-});
-
-watch(
-  () => currentUser.value,
-  (newCurrentUser) => {
-    if (newCurrentUser.uid) {
-      defaultUser.value = {
-        id: newCurrentUser.uid.toString(),
-        username: newCurrentUser.email?.split("@")[0],
-        email: newCurrentUser.email as string,
-        password: "Test12345",
-        loggedIn: !!newCurrentUser, // placeholder
-        registered: !newCurrentUser.emailVerified, // placeholder
-      } as UserData;
-    } else {
-      defaultUser.value = {
-        id: "",
-        username: "",
-        email: "",
-        password: "",
-        loggedIn: false,
-        registered: false,
-      };
-    }
-  },
-);
-
-onMounted(async () => {
-  try {
-    defaultUser.value = await getCurrentUserData();
-  } catch (error: any) {
-    console.error("Fehler bei userStore.checkAuth():", error);
-  }
-});
 
 // Links im Footer
 const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];

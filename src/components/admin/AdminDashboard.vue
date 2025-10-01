@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-row style="margin-top:25px;">
+    <v-row style="margin-top: 25px">
       <v-col cols="2" class="admin-sidebar">
         <v-list class="admin-sidebar-itemlist">
           <v-list-item @click="changeMenuItem('Home')">
@@ -53,7 +53,6 @@ onMounted(async () => {
 
 function changeMenuItem(title: string) {
   currentMenuItem.value = title;
-  console.log(currentMenuItem.value);
 }
 </script>
 
@@ -69,7 +68,7 @@ function changeMenuItem(title: string) {
   background-color: #4ea8de;
 }
 
-.v-list-item:hover{
+.v-list-item:hover {
   color: white;
   border-radius: 5px;
 }

@@ -1,10 +1,10 @@
 <template>
   <!-- navbar for logged in user -->
-  <nav v-if="defaultUser.id" class="navbar">
+  <nav v-if="userData" class="navbar">
     <div class="navbar-logo">
       <router-link to="/home">
         <img
-          src="../assets/wowa.webp"
+          src="../../assets/wowa.webp"
           alt="Logo"
           class="logo"
           style="
@@ -23,60 +23,18 @@
     <div class="navbar-links">
       <router-link to="/home" class="nav-item">Home</router-link>
       <router-link to="/collector" class="nav-item">Collector</router-link>
+      <!-- 
+      <ShopNavbar></ShopNavbar>
 
-      <!-- <div class="dropdown">
-        <router-link to="/playground" class="nav-item" @click="closeDropdown">
-          Training
-        </router-link>
-        <div class="dropdown-content" style="background-color: #4ea8de">
-          <router-link
-            to="/counter"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Counter
-          </router-link>
-          <router-link
-            to="/catplay"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Catplay
-          </router-link>
-          <router-link to="/tasks" class="dropdown-item" @click="closeDropdown">
-            Tasks
-          </router-link>
-          <router-link
-            to="/validate-form"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Validate Forms
-          </router-link>
-          <router-link to="/todo" class="dropdown-item" @click="closeDropdown">
-            ToDo
-          </router-link>
-          <router-link
-            to="/layout"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Layout
-          </router-link>
-          <router-link to="/chat" class="dropdown-item" @click="closeDropdown">
-            Chat
-          </router-link>
-          <router-link
-            to="/table-views"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            TableViews
-          </router-link>
-        </div>
-      </div> -->
+      <QuestHubNavbar></QuestHubNavbar> -->
+
+      <!-- Shop Dropdown -->
       <div class="dropdown">
-        <router-link to="/playground" class="nav-item" @click="closeDropdown">
+        <router-link
+          to="/shop-item-overview"
+          class="nav-item"
+          @click="closeDropdown"
+        >
           Shop
         </router-link>
         <div class="dropdown-content" style="background-color: #4ea8de">
@@ -94,7 +52,14 @@
           >
             Payment Page
           </router-link>
+        </div>
+      </div>
 
+      <div class="dropdown">
+        <router-link to="/chat-bot" class="nav-item" @click="closeDropdown">
+          AI
+        </router-link>
+        <div class="dropdown-content" style="background-color: #4ea8de">
           <router-link
             to="/chat-bot"
             class="dropdown-item"
@@ -112,37 +77,17 @@
         </div>
       </div>
 
-      <div class="dropdown">
-        <router-link to="/qh-landing" class="nav-item" @click="closeDropdown">
-          QuestHub
-        </router-link>
-        <div class="dropdown-content" style="background-color: #4ea8de">
-          <router-link
-            to="/qh-landing"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Landing Page
-          </router-link>
+      <!-- <UserDropdown></UserDropdown> -->
 
-          <router-link
-            to="/qh-quests"
-            class="dropdown-item"
-            @click="closeDropdown"
-          >
-            Quests
-          </router-link>
-        </div>
-      </div>
-
+      <!-- User Dropdown Component -->
       <div class="user-dropdown">
         <v-icon
           class="mdi-account toggleUserMenu"
           icon="mdi-user"
-          @click="toggleUserMenu"
+          @click="toggleMenu"
         ></v-icon>
         <div
-          v-if="userMenuOpen"
+          v-if="menuOpen"
           style="width: 150px; right: 0"
           class="user-dropdown-menu"
         >
@@ -175,154 +120,156 @@
             Admin Dashboard
           </router-link>
           <p @click="logoutClicked" class="dropdown-item logout-button">
-            <v-icon
-              class="mdi-account"
-              icon="mdi-logout"
-              @click="toggleUserMenu"
-            ></v-icon>
+            <v-icon class="mdi-account" icon="mdi-logout"></v-icon>
             Logout
           </p>
         </div>
       </div>
-    </div>
 
-    <div class="navbar-menu" @click="toggleMenu">
-      <span :class="{ open: menuOpen }"></span>
-      <span :class="{ open: menuOpen }"></span>
-      <span :class="{ open: menuOpen }"></span>
-    </div>
-
-    <p @click="logoutClicked" class="logout-btn">
-      <v-icon
-        class="mdi-account logout-button"
-        icon="mdi-logout"
-        value="Logout"
-      ></v-icon>
-    </p>
-
-    <div v-if="menuOpen" class="navbar-dropdown">
-      <router-link to="/home" class="dropdown-item" @click="closeDropdown"
-        >Home</router-link
-      >
-      <router-link to="/watch" class="dropdown-item" @click="closeDropdown"
-        >Watch</router-link
-      >
-      <router-link
-        to="/table-views"
-        class="dropdown-item"
-        @click="closeDropdown"
-        >TableViews</router-link
-      >
-      <router-link to="/layout" class="dropdown-item" @click="closeDropdown"
-        >Layout</router-link
-      >
-      <router-link to="/tasks" class="dropdown-item" @click="closeDropdown"
-        >Tasks</router-link
-      >
-      <router-link to="/forms" class="dropdown-item" @click="closeDropdown"
-        >Forms</router-link
-      >
-      <router-link to="/todo" class="dropdown-item" @click="closeDropdown"
-        >ToDo</router-link
-      >
-      <router-link
-        to="/user-profile"
-        class="dropdown-item"
-        @click="closeDropdown"
-        >Profile</router-link
-      >
-      <router-link
-        to="/user-settings"
-        class="dropdown-item"
-        @click="closeDropdown"
-        >Settings</router-link
-      >
+      <div>
+        <h4 class="pageTitle" style="color: #ffffff">
+          Logged in: {{ currentUser?.email }}
+        </h4>
+      </div>
     </div>
   </nav>
 
   <!-- navbar for not logged in user -->
   <nav v-else class="navbar">
-    <router-link to="/home" style="text-decoration: none">
-      <v-icon class="mdi-account" icon="mdi-home"></v-icon>
-    </router-link>
+    <div class="navbar-logo">
+      <router-link to="/home">
+        <img
+          src="../assets/wowa.webp"
+          alt="Logo"
+          class="logo"
+          style="
+            width: 70px;
+            height: 70px;
+            border: solid orangered 1px;
+            border-radius: 8px;
+            margin-top: 10px;
+          "
+        />
+      </router-link>
+      <router-link to="/home">
+        <h4 class="pageTitle" style="color: #ffffff">WOWA Solutions</h4>
+      </router-link>
+    </div>
+
+    <!-- ToDo: Add links an unlogged user can see -->
+    <!-- <div class="navbar-links">
+      <router-link @click="logoutClicked" class="logout-btn">
+        Logout
+        <v-icon
+          class="mdi-account logout-button"
+          icon="mdi-logout"
+          value="Logout"
+        ></v-icon>
+      </router-link>
+    </div> -->
   </nav>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { auth } from "../../firebase";
+import { auth } from "../../../firebase";
 import { useRouter } from "vue-router";
 import { UserData } from "@/interfaces/interfaces";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/UserStore";
-import { getCurrentUserData } from "../composable/getCurrentUserData";
+import { getCurrentUserData } from "../../composable/getCurrentUserData";
 
 const menuOpen = ref(false);
-const userMenuOpen = ref(false);
 const userStore = useUserStore();
 const { currentUser } = storeToRefs(userStore);
 
 const router = useRouter();
-let defaultUser = ref<UserData>({
-  id: "",
-  username: "",
+let userData = ref<UserData | null>({
+  _id: "",
+  uid: "",
+  userName: "",
+  firstName: "",
+  lastName: "",
   email: "",
-  password: "",
+  password: "Test12345",
   loggedIn: false,
-  registered: false,
+  confirmed: false,
+  userAddress: {
+    street: "",
+    streetNumber: "",
+    city: "",
+    postCode: "",
+    country: "",
+  },
 });
 
 onMounted(async () => {
   try {
     await userStore.checkAuth();
-    defaultUser.value = await getCurrentUserData();
+    userData.value = await getCurrentUserData();
   } catch (error: any) {
     console.error("Fehler bei userStore.checkAuth():", error);
   }
 });
 
-watch(
-  () => currentUser.value,
-  (newCurrentUser) => {
-    if (newCurrentUser.uid) {
-      defaultUser.value = {
-        id: newCurrentUser.uid.toString(),
-        username: newCurrentUser.email?.split("@")[0],
-        email: newCurrentUser.email as string,
-        password: "Test12345",
-        loggedIn: !!newCurrentUser, // placeholder
-        registered: !newCurrentUser.emailVerified, // placeholder
-      } as UserData;
-    } else {
-      defaultUser.value = {
-        id: "",
-        username: "",
-        email: "",
-        password: "",
-        loggedIn: false,
-        registered: false,
-      };
-    }
-  },
-);
+// watch(
+//   () => currentUser.value,
+//   (newCurrentUser) => {
+//     if (newCurrentUser?.uid) {
+//       userData.value = {
+//         id: newCurrentUser.uid.toString(),
+//         username: newCurrentUser.email?.split("@")[0],
+//         email: newCurrentUser.email as string,
+//         password: "Test12345",
+//         loggedIn: !!newCurrentUser, // placeholder
+//         registered: !newCurrentUser.emailVerified, // placeholder
+//       } as UserData;
+//     } else {
+//       userData.value = {
+//         id: "",
+//         username: "",
+//         firstname: "",
+//         lastname: "",
+
+//         email: "",
+//         password: "",
+//         loggedIn: false,
+//         registered: false,
+//       };
+//     }
+//   },
+// );
 
 // Logout-Funktion
 async function logoutClicked() {
   await auth.signOut();
   router.push("/login");
+  userData.value = {
+    _id: "",
+    uid: "",
+    userName: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "Test12345",
+    loggedIn: false,
+    confirmed: false,
+    userAddress: {
+      street: "",
+      streetNumber: "",
+      city: "",
+      postCode: "",
+      country: "",
+    },
+  };
 }
 
 function toggleMenu() {
   menuOpen.value = !menuOpen.value;
 }
 
-function toggleUserMenu() {
-  userMenuOpen.value = !userMenuOpen.value;
-}
-
 function closeDropdown() {
   menuOpen.value = false;
-  userMenuOpen.value = false;
 }
 </script>
 

@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <!-- Profilüberschrift -->
-    <div class="navbar-logo">
-      <v-row class="mb-6">
-        <v-col cols="12" class="text-center">
+    <v-row>
+      <v-col cols="12" class="text-center">
+        <v-card>
           <img
             src="https://img.freepik.com/vektoren-premium/ein-stilisiertes-logo-mit-einer-figur-deren-gesicht-durch-ein-schwarzes-rechteck-verdeckt-ist_948255-68.jpg"
             alt="Logo"
@@ -15,23 +15,10 @@
               border-radius: 8px;
             "
           />
-
-          <h1 style="color: #4ea8de">Welcome Back bro!</h1>
-        </v-col>
-      </v-row>
-    </div>
-    <!-- <v-row class="mb-6">
-      <v-col cols="12" class="text-center">
-        <p
-          v-if="defaultUser.username"
-          style="font-weight: bold; font-size: 40px"
-        >
-          {{ defaultUser.username }}!
-        </p>
-        <p v-else>Benutzer wird geladen...</p>
-        <p class="profile-subtitle">Hier sind deine Profildetails.</p>
+          <h1 style="color: #4ea8de">Willkommen zurück!</h1>
+        </v-card>
       </v-col>
-    </v-row> -->
+    </v-row>
 
     <!-- Profilinformationen -->
     <v-row>
@@ -39,65 +26,9 @@
         <profile-information-view></profile-information-view>
       </v-col>
 
-      <!-- <v-col cols="6" class="text-center">
-        <delivery-adress-view></delivery-adress-view>
-      </v-col> -->
-      <!-- Bearbeitungsformular -->
-      <!-- <v-col md="6">
-        <v-card class="profile-card">
-          <v-card-title>Profil bearbeiten</v-card-title>
-          <v-card-text>
-            <v-form ref="profileForm" v-model="formValid">
-              <v-text-field
-                label="Benutzername"
-                v-model="defaultUser.username"
-                required
-              ></v-text-field>
-              <v-text-field
-                label="E-Mail"
-                v-model="defaultUser.email"
-                type="email"
-                required
-              ></v-text-field>
-              <v-text-field
-                label="Passwort"
-                v-model="defaultUser.password"
-                type="password"
-                required
-              ></v-text-field>
-            </v-form>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" :disabled="!formValid" @click="saveProfile">
-              Speichern
-            </v-btn>
-            <v-btn color="secondary" @click="resetEditData"> Abbrechen </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col> -->
-
       <!-- Event Log (Aktivitätsprotokoll) -->
       <v-col cols="12">
-        <v-card class="profile-card">
-          <v-card-title>Aktivitätsprotokoll</v-card-title>
-          <v-card-text style="max-height: 300px; overflow-y: auto">
-            <v-list>
-              <v-list-item v-for="event in userEvents" :key="event.id">
-                <v-list-item-title>
-                  {{ event.eventDescription }}
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ "Zeitstempel: " + event.createdAt }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="error" @click="clearEventLog" class="full-width">
-              Protokoll löschen
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <user-event-log></user-event-log>
       </v-col>
     </v-row>
   </v-container>
@@ -105,113 +36,37 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/UserStore";
-import { useEventStore } from "@/stores/EventStore";
 import { storeToRefs } from "pinia";
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { UserData } from "@/interfaces/interfaces";
 import { getCurrentUserData } from "../../composable/getCurrentUserData";
+import { useEventStore } from "@/stores/EventStore";
 
 const userStore = useUserStore();
 const eventStore = useEventStore();
-const { events } = storeToRefs(eventStore);
+
 const { currentUser } = storeToRefs(userStore);
 
-let defaultUser = ref<UserData>({
-  id: "",
-  username: "",
-  email: "",
-  password: "",
-  loggedIn: false,
-  registered: false,
-  street: "",
-  streetNumber: "",
-  postalCode: "",
-  city: "",
-  country: "",
-});
-
-let userEvents = events;
-
-onMounted(async () => {
-  try {
-    defaultUser.value = await getCurrentUserData();
-
-    // Events vom Server laden
-    const loadedEvents = await eventStore.getEvents();
-    userEvents.value = loadedEvents;
-  } catch (error: any) {
-    console.error("Fehler bei der User-Authentifizierung:", error);
-  }
-});
+let userData = ref<UserData | null>(null);
 
 watch(
   () => currentUser.value,
-  (newCurrentUser) => {
-    if (newCurrentUser.uid) {
-      defaultUser.value = {
-        id: newCurrentUser.uid.toString(),
-        username: newCurrentUser.email?.split("@")[0],
-        email: newCurrentUser.email as string,
-        password: "Test12345",
-        loggedIn: !!newCurrentUser,
-        registered: !newCurrentUser.emailVerified,
-        street: "",
-        streetNumber: "",
-        postalCode: "",
-        city: "",
-        country: "",
-      } as UserData;
+  async (newCurrentUser) => {
+    if (newCurrentUser && newCurrentUser.email) {
+      try {
+        userData.value = await getCurrentUserData();
+        console.log("UserData geladen:", userData.value);
+      } catch (error) {
+        console.error("Fehler beim Laden der UserData:", error);
+        userData.value = null;
+      }
     } else {
-      defaultUser.value = {
-        id: "",
-        username: "",
-        email: "",
-        password: "",
-        loggedIn: false,
-        registered: false,
-        street: "",
-        streetNumber: "",
-        postalCode: "",
-        city: "",
-        country: "",
-      };
+      console.log("currentUser noch nicht verfügbar");
+      userData.value = null;
     }
   },
+  { immediate: true },
 );
-
-const editData = reactive({
-  username: currentUser.value?.displayName,
-  email: currentUser.value?.email as string,
-  // ToDo: add real database: get access to all user data to load them
-  // password: currentUser.value?.password,
-  // password: "Test12345",
-  loggedIn: !!currentUser,
-  registered: !currentUser.value?.emailVerified, // ToDo: add real database: just mockup data right now
-});
-
-const formValid = ref(false);
-
-// ToDo: add real database: get access to all user data to change them
-function saveProfile() {
-  // currentUser.value.username = editData.username;
-  // currentUser.value.email = editData.email;
-  // currentUser.value.password = editData.password;
-
-  eventStore.addEvent("Profilinformationen wurden geändert.");
-}
-
-// ToDo: add real database: this mockup should be replaced with real data
-function resetEditData() {
-  editData.username = currentUser.value?.displayName;
-  editData.email = currentUser.value?.email as string;
-  // editData.password = currentUser.value.password;
-  ((editData.loggedIn = !!currentUser), (editData.registered = !!currentUser));
-}
-
-function clearEventLog() {
-  eventStore.clearEvents();
-  eventStore.getEvents();
-}
 </script>
 
 <style>

@@ -6,8 +6,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import LandingPage from "@/components/LandingPage.vue";
 import UserProfile from "@/components/user/UserProfile.vue";
 import UserSettings from "@/components/user/UserSettings.vue";
-import Tasks from "@/components/task-management/Tasks.vue";
-import ToDoApp from "@/components/todo/ToDoApp.vue";
 import Login from "@/components/user/Login.vue";
 import SignUp from "@/components/user/SignUp.vue";
 import HomeView from "../views/HomeView.vue";
@@ -66,18 +64,6 @@ const router = createRouter({
       path: "/home",
       name: "home",
       component: HomeView,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/tasks",
-      name: "tasks",
-      component: Tasks,
-      beforeEnter: requireAuth,
-    },
-    {
-      path: "/todo",
-      name: "todo",
-      component: ToDoApp,
       beforeEnter: requireAuth,
     },
     {

@@ -1,11 +1,12 @@
 <template>
   <v-app :class="currentTheme === 'dark' ? 'theme--dark' : 'theme--light'">
     <v-container fluid>
-      
+      <!-- Navbar -->
       <v-row>
         <navbar class="navbar-main"></navbar>
       </v-row>
 
+      <!-- Theme Toggler -->
       <v-row>
         <div class="theme-row">
           <v-btn @click="toggleTheme" class="theme-switcher">
@@ -14,6 +15,7 @@
         </div>
       </v-row>
 
+      <!-- Content -->
       <v-row>
         <v-main class="main-content-row">
           <router-view class="main-content-col"></router-view>
@@ -22,16 +24,15 @@
         <!-- <notification></notification> -->
       </v-row>
 
+      <!-- Footer -->
       <v-row>
         <v-footer class="footer-row">
           <app-footer></app-footer>
         </v-footer>
       </v-row>
-      
     </v-container>
   </v-app>
 </template>
-
 
 <script setup lang="ts">
 import { UserSettings } from "@/interfaces/interfaces";
@@ -45,7 +46,6 @@ const { userSettings } = storeToRefs(store);
 const theme = useTheme();
 const currentTheme = ref("light");
 const isThemeSwitching = ref(false); // Neue Variable für die Abklingzeit
-
 
 watch(
   () => userSettings.value?.theme,
@@ -78,7 +78,7 @@ async function toggleTheme() {
     if (userSettings.value) {
       const newSettings = {
         ...userSettings.value,
-        theme: newTheme
+        theme: newTheme,
       } as UserSettings;
 
       await store.saveSettings(newSettings);
@@ -94,9 +94,13 @@ async function toggleTheme() {
 </script>
 
 <style lang="css">
-  :root {
-    --header-footer-height: 150px;
-  }
+:root {
+  --header-footer-height: 150px;
+}
+
+app {
+  background: linear-gradient(135deg, #646161, #2f567e);
+}
 
 .navbar-col {
   margin: 0 !important;
@@ -169,5 +173,4 @@ nav {
   margin-top: auto;
   flex-shrink: 0;
 }
-
 </style>

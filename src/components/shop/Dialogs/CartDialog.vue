@@ -19,8 +19,8 @@
       <v-divider thickness="2" color="black" opacity="0.3"></v-divider>
       <v-list>
         <v-list-item
-          v-for="product in currentUserCart?.items"
-          :key="product._id"
+          v-for="product in mappedCartItems"
+          :key="product.itemId"
           style="margin-bottom: 25px"
         >
           <v-list-item-action style="width: 50px; height: 50px">
@@ -28,13 +28,13 @@
           <v-list-item-avatar>
             <v-img
               :src="
-                product.variants.find((x) => x.id === product.selectedVariant)
+                product.variants?.find((x) => x.id === product.selectedVariant)
                   ?.image
               "
               alt="Item Image"
               class="rounded"
               contain
-              style="width: 250px; height: 150px; margin: 15px 0"
+              style="width: 200px; height: 100px; margin: 15px 0"
             ></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
@@ -48,23 +48,27 @@
 
               <v-col>
                 <v-select
-                  v-model="product.quantity"
+                  v-if="product._id"
+                  :model-value="product.quantity"
                   :items="quantityOptions"
                   label="Quantity"
                   style="max-width: 250px"
                   @update:modelValue="
-                    (newValue) => updateQuantity(product._id, newValue)
+                    (newValue) => updateQuantity(product._id, Number(newValue))
                   "
-                ></v-select>
+                />
               </v-col>
             </v-row>
 
-            <v-list-item-subtitle style="margin-bottom: 25px"
+            <v-list-item-subtitle
+              style="margin-bottom: 25px"
+              v-if="product.price"
               >Total: ${{
                 (product.price * product.quantity).toFixed(2)
               }}</v-list-item-subtitle
             >
-            <v-btn icon color="red" @click="removeFromUserCart(product._id)">
+            <v-btn icon color="red">
+              <!-- <v-btn icon color="red" @click="removeFromUserCart(product._id)"> -->
               <v-icon>mdi-trash-can</v-icon>
             </v-btn>
           </v-list-item-content>
@@ -90,24 +94,29 @@
     </v-card>
   </v-dialog>
 
-  <warning-dialog
+  <!-- <warning-dialog
     v-if="warningDialogVisible"
     v-model:warningDialogVisible="warningDialogVisible"
     @confirm-remove="confirmRemoveClick()"
   >
-  </warning-dialog>
+  </warning-dialog> -->
 </template>
 
 <script setup lang="ts">
-import { removeFromCart } from "@/composable/useCart";
-import { Cart, Item } from "@/interfaces/interfaces";
+import { Cart, CartItem, Item } from "@/interfaces/interfaces";
 import { useCartStore } from "@/stores/CartStore";
+import { useItemStore } from "@/stores/ItemStore";
+import { storeToRefs } from "pinia";
+import { ref, computed, onMounted } from "vue";
+
+const itemStore = useItemStore();
+const { items } = storeToRefs(itemStore); // reaktive Items aus dem Store
 
 const cartStore = useCartStore();
 
 const props = defineProps<{
   cartDialogVisible: boolean;
-  currentUserCart: Cart;
+  currentUserCart: Cart | null;
 }>();
 
 const router = useRouter();
@@ -118,10 +127,33 @@ let cartDialogVisible = ref(props.cartDialogVisible);
 let currentUserCart = ref(props.currentUserCart);
 let quantityOptions = ref(Array.from({ length: 20 }, (_, i) => i + 1));
 let cartItems: Ref<Item[]> = ref([]);
+const userCart: Ref<Cart | null> = ref(null);
+
+const mappedCartItems = computed(() => {
+  if (!userCart.value) return [];
+
+  return userCart.value.cartItems.map((cartItem) => {
+    const fullItem = items.value.find((i) => i._id === cartItem.itemId);
+
+    return {
+      ...cartItem,
+      ...fullItem,
+    };
+  });
+});
 
 const emit = defineEmits<{
   (e: "update:cartDialogVisible", value: boolean): void;
 }>();
+
+onMounted(async () => {
+  try {
+    await itemStore.loadItems();
+    userCart.value = await cartStore.getCartByUserId();
+  } catch (error: any) {
+    console.error("Error on initialization: ", error);
+  }
+});
 
 function closeDialog() {
   emit("update:cartDialogVisible", false);
@@ -131,35 +163,38 @@ function proceedOrder() {
   router.push("/shop-payment");
 }
 
-async function removeFromUserCart(productId: string) {
-  itemToRemove.value = productId;
-  warningDialogVisible.value = true;
+// async function removeFromUserCart(productId: string) {
+//   itemToRemove.value = productId;
+//   warningDialogVisible.value = true;
 
-  console.log(itemToRemove.value);
-}
+// }
 
-async function confirmRemoveClick() {
-  console.log("Confirm remove");
-  warningDialogVisible.value = false;
+// async function confirmRemoveClick() {
+//   warningDialogVisible.value = false;
 
-  const updatedItems = await removeFromCart(itemToRemove.value);
-  if (currentUserCart.value) {
-    currentUserCart.value.items = updatedItems;
-  }
-}
+//   const updatedItems = await removeFromCart(itemToRemove.value);
+//   if (currentUserCart.value) {
+//     currentUserCart.value.cartItems = updatedItems;
+//   }
+// }
 
-async function updateQuantity(productId: string, newQuantity: number) {
+async function updateQuantity(
+  productId: string | undefined,
+  newQuantity: number,
+) {
   try {
-    currentUserCart.value = await cartStore.getCartByUserId();
+    console.log("PRODUCT ID: ", productId);
+    console.log("userCart.value: ", userCart.value);
+    if (userCart.value) {
+      const itemIndex = items.value.findIndex((i) => i._id === productId);
 
-    const itemIndex = currentUserCart.value.items.findIndex(
-      (i) => i._id === productId,
-    );
+      if (itemIndex !== -1) {
+        userCart.value.cartItems[itemIndex].quantity = newQuantity;
 
-    if (itemIndex !== -1) {
-      currentUserCart.value.items[itemIndex].quantity = newQuantity;
-      await cartStore.updateCart(currentUserCart.value);
-      cartItems.value = currentUserCart.value.items;
+        console.log("QUANTITY: ", userCart.value.cartItems[itemIndex].quantity);
+        console.log("USER KART: ", userCart.value);
+        await cartStore.updateCart(userCart.value);
+      }
     }
   } catch (error) {
     console.error("Error updating quantity:", error);
