@@ -13,7 +13,7 @@
       </v-btn>
       <v-col class="text-center mt-4" cols="12" style="color: black">
         {{ new Date().getFullYear() }} —
-        <strong> by Wowa Solutions GmbH</strong>
+        <strong>Created by Wowa Solutions GmbH</strong>
       </v-col>
     </v-row>
   </v-footer>
@@ -23,7 +23,7 @@
 import { computed } from "vue";
 
 // Links im Footer
-const links = ["Home", "About Us", "Team", "Services", "Blog", "Contact Us"];
+const links = ["About Us", "Team", "Services", "Contact Us"];
 
 // Dynamische Höhenberechnung für den Footer
 const isFullHeight = computed(

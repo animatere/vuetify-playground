@@ -56,7 +56,7 @@
       </div>
 
       <div class="dropdown">
-        <router-link to="/chat-bot" class="nav-item" @click="closeDropdown">
+        <router-link to="/ai-home" class="nav-item" @click="closeDropdown">
           AI
         </router-link>
         <div class="dropdown-content" style="background-color: #4ea8de">
@@ -211,34 +211,6 @@ onMounted(async () => {
     console.error("Fehler bei userStore.checkAuth():", error);
   }
 });
-
-// watch(
-//   () => currentUser.value,
-//   (newCurrentUser) => {
-//     if (newCurrentUser?.uid) {
-//       userData.value = {
-//         id: newCurrentUser.uid.toString(),
-//         username: newCurrentUser.email?.split("@")[0],
-//         email: newCurrentUser.email as string,
-//         password: "Test12345",
-//         loggedIn: !!newCurrentUser, // placeholder
-//         registered: !newCurrentUser.emailVerified, // placeholder
-//       } as UserData;
-//     } else {
-//       userData.value = {
-//         id: "",
-//         username: "",
-//         firstname: "",
-//         lastname: "",
-
-//         email: "",
-//         password: "",
-//         loggedIn: false,
-//         registered: false,
-//       };
-//     }
-//   },
-// );
 
 // Logout-Funktion
 async function logoutClicked() {
